@@ -7,10 +7,12 @@ import { AuthModule } from './auth/auth.module';
 import { PrimeNGModule } from './prime-ng/prime-ng.module';
 import { LayoutModule } from './layout/layout.module';
 import { RouterModule } from '@angular/router';
+import { NotFoundComponent } from './not-found/not-found/not-found.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
