@@ -1,4 +1,3 @@
-import { SidebarModule } from 'primeng/sidebar';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -10,8 +9,7 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { AvatarModule } from 'primeng/avatar';
 import { RippleModule } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
-
-
+import { SidebarModule } from 'primeng/sidebar';
 
 @NgModule({
   declarations: [
@@ -23,13 +21,10 @@ import { ButtonModule } from 'primeng/button';
     CommonModule,
     RouterModule,
     SidebarModule,
-    SidebarModule,
     ButtonModule,
-     RippleModule,
-      AvatarModule,
-       StyleClassModule
-
-
+    RippleModule,
+    AvatarModule,
+    StyleClassModule
   ]
 })
 export class LayoutModule { }

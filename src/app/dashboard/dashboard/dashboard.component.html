@@ -1,1 +1,44 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <!-- Resumo de Projetos -->
+  <div class="projects-summary">
+    <p-card *ngFor="let project of projects" [header]="project.name">
+      <div class="card-content">
+        <p>Progresso: {{ project.progress }}%</p>
+        <p>Status: <strong>{{ project.status }}</strong></p>
+        <p-button label="Ver Detalhes" icon="pi pi-eye" class="p-button-outlined"></p-button>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Gráfico de Progresso -->
+  <div class="chart-section">
+    <p-chart type="pie" [data]="chartData" styleClass="chart"></p-chart>
+  </div>
+
+  <!-- Tabela de Atividades Recentes -->
+  <div class="recent-activities">
+    <p-table [value]="activities">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Atividade</th>
+          <th>Projeto</th>
+          <th>Status</th>
+          <th>Data de Conclusão</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-activity>
+        <tr>
+          <td>{{ activity.name }}</td>
+          <td>{{ activity.project }}</td>
+          <td>{{ activity.status }}</td>
+          <td>{{ activity.dueDate | date }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters">
+    <input pInputText type="text" placeholder="Filtrar projetos..." [(ngModel)]="filter" />
+  </div>
+</div>

@@ -1,0 +1,23 @@
+.dashboard-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.projects-summary, .recent-activities {
+  flex: 1 1 30%;
+}
+
+.chart-section {
+  flex: 1 1 40%;
+}
+
+.filters {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.chart {
+  height: 300px;
+}

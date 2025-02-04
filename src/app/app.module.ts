@@ -8,18 +8,19 @@ import { PrimeNGModule } from './prime-ng/prime-ng.module';
 import { LayoutModule } from './layout/layout.module';
 import { RouterModule } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found/not-found.component';
-import { PrimeIcons } from 'primeng/api';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NotFoundComponent
+    NotFoundComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     AuthModule,
-    PrimeNGModule,
+    DashboardModule, // Importa o DashboardModule para acessar o DashboardComponent
+    PrimeNGModule,  // Se esse for um módulo compartilhado do PrimeNG, mantenha ele aqui para uso global
     LayoutModule,
     RouterModule,
   ],
