@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './auth/auth.module';
 import { PrimeNGModule } from './prime-ng/prime-ng.module';
+import { LayoutModule } from './layout/layout.module';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { PrimeNGModule } from './prime-ng/prime-ng.module';
     BrowserModule,
     AppRoutingModule,
     AuthModule,
-    PrimeNGModule
+    PrimeNGModule,
+    LayoutModule
   ],
   providers: [],
   bootstrap: [AppComponent]
