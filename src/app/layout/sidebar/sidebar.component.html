@@ -1,1 +1,8 @@
-<p>sidebar works!</p>
+<div class="sidebar" [class.open]="isOpen">
+  <ul>
+    <li><a routerLink="/dashboard"><i class="pi pi-home"></i> Dashboard</a></li>
+    <li><a routerLink="/projects"><i class="pi pi-folder"></i> Projetos</a></li>
+    <li><a routerLink="/reports"><i class="pi pi-chart-bar"></i> Relatórios</a></li>
+    <li><a routerLink="/profile"><i class="pi pi-user"></i> Perfil</a></li>
+  </ul>
+</div>

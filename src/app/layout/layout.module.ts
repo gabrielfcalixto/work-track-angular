@@ -4,6 +4,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { LayoutComponent } from './layout/layout.component';
 import { RouterModule } from '@angular/router';
+import { PrimeIcons } from 'primeng/api';
 
 
 
@@ -11,7 +12,7 @@ import { RouterModule } from '@angular/router';
   declarations: [
     NavbarComponent,
     SidebarComponent,
-    LayoutComponent
+    LayoutComponent,
   ],
   imports: [
     CommonModule,

@@ -8,6 +8,7 @@ import { PrimeNGModule } from './prime-ng/prime-ng.module';
 import { LayoutModule } from './layout/layout.module';
 import { RouterModule } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found/not-found.component';
+import { PrimeIcons } from 'primeng/api';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,7 @@ import { NotFoundComponent } from './not-found/not-found/not-found.component';
     AuthModule,
     PrimeNGModule,
     LayoutModule,
-    RouterModule
+    RouterModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

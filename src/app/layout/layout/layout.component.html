@@ -1,11 +1,8 @@
-<div class="layout">
-  <app-navbar></app-navbar> <!-- Navbar fixa no topo -->
+<app-navbar (toggleSidebar)="toggleSidebar()"></app-navbar>
 
-  <div class="layout-container">
-    <app-sidebar></app-sidebar> <!-- Sidebar fixa à esquerda -->
-
-    <main class="content">
-      <router-outlet></router-outlet> <!-- Conteúdo dinâmico das rotas -->
-    </main>
-  </div>
+<div class="container">
+  <app-sidebar [isOpen]="isSidebarOpen"></app-sidebar> <!-- Passando o estado -->
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
 </div>

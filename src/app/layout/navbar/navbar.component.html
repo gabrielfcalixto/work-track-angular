@@ -1,4 +1,9 @@
 <nav class="navbar">
+
+  <button (click)="emitToggleSidebar()">
+    <i class="pi pi-bars"></i> <!-- Ícone do menu -->
+  </button>
+
   <div class="logo">
     <img src="assets/logo.png" alt="Logo" />
   </div>
@@ -8,7 +13,7 @@
       </i>
     </button>
     <div class="profile-icon">
-      <i class="pi pi-user"></i>
+      <i class="pi pi-user">Profile</i>
     </div>
   </div>
 </nav>
