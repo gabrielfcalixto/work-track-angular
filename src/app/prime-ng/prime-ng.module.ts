@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
     FloatLabelModule,
     ButtonModule,
     CardModule,
+    FormsModule
   ],
   exports: [
     CommonModule,

@@ -12,10 +12,10 @@ import { PrimeNGModule } from '../prime-ng/prime-ng.module';
   ],
   imports: [
     CommonModule,
+    PrimeNGModule,
     FormsModule,
     FloatLabelModule,
-    InputTextModule,
-    PrimeNGModule
+    InputTextModule,  // Importando InputTextModule
   ]
 })
 export class AuthModule { }
