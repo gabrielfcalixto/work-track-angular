@@ -8,17 +8,28 @@ import { EditProjectComponent } from './project/projects/edit-project/edit-proje
 import { ReportComponent } from './report/report/report.component';
 import { ProfileComponent } from './profile/profile/profile.component';
 import { EditProfileComponent } from './profile/edit-profile/edit-profile.component';
+import { LayoutComponent } from './layout/layout/layout.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'projects', component: ProjectsComponent },
-  { path: 'projects/add', component: AddProjectComponent },
-  { path: 'projects/edit/:id', component: EditProjectComponent },
-  { path: 'reports', component: ReportComponent },
-  { path: 'profile', component: ProfileComponent },
-  { path: 'profile/edit', component: EditProfileComponent },
-  { path: '', redirectTo: '/login', pathMatch: 'full' }
+
+  {
+    path: '',
+    component: LayoutComponent, //Aplica o Layout para todas outras páginas
+    children: [
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'projects', component: ProjectsComponent },
+      { path: 'projects/add', component: AddProjectComponent },
+      { path: 'projects/edit/:id', component: EditProjectComponent },
+      { path: 'reports', component: ReportComponent },
+      { path: 'profile', component: ProfileComponent },
+      { path: 'profile/edit', component: EditProfileComponent },
+      { path: '', redirectTo: '/login', pathMatch: 'full' }
+
+    ]
+  },
+  {path: '**', redirectTo:''} //Rota coringa para evitar erros 404
+
 ];
 
 

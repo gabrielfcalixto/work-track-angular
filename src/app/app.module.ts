@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { AuthModule } from './auth/auth.module';
 import { PrimeNGModule } from './prime-ng/prime-ng.module';
 import { LayoutModule } from './layout/layout.module';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { LayoutModule } from './layout/layout.module';
     AppRoutingModule,
     AuthModule,
     PrimeNGModule,
-    LayoutModule
+    LayoutModule,
+    RouterModule
   ],
   providers: [],
   bootstrap: [AppComponent]
