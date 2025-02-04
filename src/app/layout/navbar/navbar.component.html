@@ -1,11 +1,10 @@
 <nav class="navbar">
 
-  <button (click)="emitToggleSidebar()">
-    <i class="pi pi-bars"></i> <!-- Ícone do menu -->
-  </button>
+  <button pButton icon="pi pi-bars" (click)="emitToggleSidebar()"></button>
+
 
   <div class="logo">
-    <img src="assets/logo.png" alt="Logo" />
+    <img [src]="logoPath" alt="Logo" />
   </div>
   <div class="navbar-actions">
     <button (click)="toggleTheme()" class="theme-toggle-btn">

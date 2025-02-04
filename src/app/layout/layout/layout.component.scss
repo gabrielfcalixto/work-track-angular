@@ -20,12 +20,3 @@ app-navbar {
 }
 
 
-
-.content {
-  flex-grow: 1;
-  margin-top: 60px; /* para não ficar atrás da navbar */
-  margin-left: 250px; /* para não ficar atrás da sidebar */
-  padding: 20px;
-  background-color: var(--background-color);
-  color: var(--text-color);
-}
