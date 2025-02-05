@@ -8,13 +8,16 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import {DialogModule } from 'primeng/dialog';
+import { CardModule } from 'primeng/card';
+import { ActivityComponent } from './activity.component';
 
 
 @NgModule({
   declarations: [
     ListActivityComponent,
     AddActivityComponent,
-    EditActivityComponent
+    EditActivityComponent,
+    ActivityComponent
   ],
   imports: [
     CommonModule,
@@ -22,7 +25,8 @@ import {DialogModule } from 'primeng/dialog';
     TableModule,
     ButtonModule,
     DialogModule,
-    InputTextModule
+    InputTextModule,
+    CardModule
   ],
   exports:[
     ListActivityComponent

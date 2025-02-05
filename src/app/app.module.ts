@@ -11,6 +11,7 @@ import { NotFoundComponent } from './not-found/not-found/not-found.component';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ProfileModule } from './profile/profile.module';
 import { ProjectModule } from './project/project.module';
+import { ActivityModule } from './activity/activity.module';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { ProjectModule } from './project/project.module';
     RouterModule,
     ProfileModule,
     RouterModule,
-    ProjectModule
+    ProjectModule,
+    ActivityModule
   ],
   providers: [],
   bootstrap: [AppComponent]

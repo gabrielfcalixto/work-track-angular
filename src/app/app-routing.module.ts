@@ -10,6 +10,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { EditProfileComponent } from './profile/edit-profile/edit-profile.component';
 import { LayoutComponent } from './layout/layout/layout.component';
 import { NotFoundComponent } from './not-found/not-found/not-found.component';
+import { ListActivityComponent } from './activity/list-activity/list-activity.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -19,13 +20,14 @@ const routes: Routes = [
     component: LayoutComponent, //Aplica o Layout para todas outras páginas
     children: [
       { path: 'dashboard', component: DashboardComponent },
+      {path: 'activity', component: ListActivityComponent},
       { path: 'projects', component: ProjectsComponent },
       { path: 'projects/add', component: AddProjectComponent },
       { path: 'projects/edit/:id', component: EditProjectComponent },
       { path: 'reports', component: ReportComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'profile/edit', component: EditProfileComponent },
-      { path: '', redirectTo: '/login', pathMatch: 'full' }
+      { path: '', redirectTo: '/login', pathMatch: 'full' },
 
     ]
   },
