@@ -12,6 +12,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { ProfileModule } from './profile/profile.module';
 import { ProjectModule } from './project/project.module';
 import { ActivityModule } from './activity/activity.module';
+import { ActivityService } from './activity/activity.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,7 @@ import { ActivityModule } from './activity/activity.module';
     ProjectModule,
     ActivityModule
   ],
-  providers: [],
+  providers: [ActivityService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

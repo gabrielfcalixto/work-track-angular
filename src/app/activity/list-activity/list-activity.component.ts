@@ -14,8 +14,13 @@ export class ListActivityComponent {
   constructor(private activityService: ActivityService) { }
 
   ngOnInit() {
-    this.activities = this.activityService.getActivityByProject(this.projetoId);
+    if (this.projetoId) {
+      this.activities = this.activityService.getActivityByProject(this.projetoId);
+    } else {
+      console.error('Erro: projetoId não está definido!');
+    }
   }
+
 
   deleteActivity(id: number) {
     this.activityService.deleteActivity(id);

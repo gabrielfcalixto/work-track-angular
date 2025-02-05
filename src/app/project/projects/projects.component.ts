@@ -11,7 +11,10 @@ export class ProjectsComponent {
   projetos = [
     { nome: 'Projeto 1', tarefas: [{ nome: 'Tarefa 1', horas: 5 }, { nome: 'Tarefa 2', horas: 3 }], status: 'Em andamento' },
     { nome: 'Projeto 2', tarefas: [{ nome: 'Tarefa 1', horas: 2 }, { nome: 'Tarefa 2', horas: 4 }], status: 'Concluído' },
-    // outros projetos...
+    { nome: 'Projeto 3', tarefas: [{ nome: 'Tarefa 1', horas: 7 }, { nome: 'Tarefa 2', horas: 1 }], status: 'Cancelado' },
+
+
+
   ];
 
   statusOptions = [
