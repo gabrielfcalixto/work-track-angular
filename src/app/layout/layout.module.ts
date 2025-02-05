@@ -13,6 +13,7 @@ import { SidebarModule } from 'primeng/sidebar';
 import { LayoutService } from './layout/layout.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Necessário para animações
+import { PrimeNGModule } from '../prime-ng/prime-ng.module';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; 
     ButtonModule,
     RippleModule,
     AvatarModule,
-    StyleClassModule
+    StyleClassModule,
   ],
   providers:[
     LayoutService
