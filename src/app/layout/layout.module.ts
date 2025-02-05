@@ -10,6 +10,9 @@ import { AvatarModule } from 'primeng/avatar';
 import { RippleModule } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
 import { SidebarModule } from 'primeng/sidebar';
+import { LayoutService } from './layout/layout.service';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Necessário para animações
 
 @NgModule({
   declarations: [
@@ -19,12 +22,17 @@ import { SidebarModule } from 'primeng/sidebar';
   ],
   imports: [
     CommonModule,
+    BrowserModule,
+    BrowserAnimationsModule,
     RouterModule,
     SidebarModule,
     ButtonModule,
     RippleModule,
     AvatarModule,
     StyleClassModule
+  ],
+  providers:[
+    LayoutService
   ]
 })
 export class LayoutModule { }

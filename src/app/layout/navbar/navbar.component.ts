@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { ThemeService } from './../../services/theme.service';
+import { SidebarComponent } from '../sidebar/sidebar.component';
 
 @Component({
   selector: 'app-navbar',
@@ -7,7 +8,8 @@ import { ThemeService } from './../../services/theme.service';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent {
-  @Output() toggleSidebar = new EventEmitter<void>(); // Emitir o evento para abrir ou fechar o sidebar
+  @ViewChild('sidebar') sidenav!: SidebarComponent; // Acesse o SideNavComponent
+
 
   isDarkMode = false;
   logoPath = 'assets/logo-hard-preta.png';
@@ -27,9 +29,7 @@ export class NavbarComponent {
     this.logoPath = this.isDarkMode ? 'assets/logo-hard-branca.png' : 'assets/logo-hard-preta.png';
   }
 
-  // Emitir o evento quando o botão for clicado
-  emitToggleSidebar(): void {
-    console.log('Botão do sidebar clicado!'); // Para depuração
-    this.toggleSidebar.emit();
+  toggleSidebar(): void {
+    this.sidenav.toggleSidebar();
   }
 }

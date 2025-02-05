@@ -1,11 +1,17 @@
-.sidebar {
-  width: 0;
-  overflow: hidden;
-  transition: width 0.3s ease-in-out;
-  background-color: aqua;
+:host {
+  display: block;
 }
 
-.sidebar.open {
-  width: 250px;
+.p-sidebar {
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.p-sidebar .p-sidebar-header {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.p-sidebar .p-sidebar-content {
+  padding: 1rem;
+}

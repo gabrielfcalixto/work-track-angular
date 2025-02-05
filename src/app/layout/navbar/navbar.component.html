@@ -1,6 +1,6 @@
 <nav class="navbar">
 
-  <button pButton icon="pi pi-bars" (click)="emitToggleSidebar()"></button>
+  <p-button (onClick)="toggleSidebar()" icon="pi pi-bars" label="Abrir Menu"></p-button>
 
 
   <div class="logo">
@@ -16,3 +16,4 @@
     </div>
   </div>
 </nav>
+<app-sidenav #sidenav></app-sidenav>

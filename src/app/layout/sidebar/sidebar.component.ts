@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
@@ -13,11 +13,16 @@ import { Sidebar } from 'primeng/sidebar';
 
 })
 export class SidebarComponent {
-  @ViewChild('sidebarRef') sidebarRef!: Sidebar;
+  sidebarVisible: boolean = false; // Controla a visibilidade do SideNav
 
-    closeCallback(e: any): void {
-        this.sidebarRef.close(e);
-    }
+  @Output() onClose: EventEmitter<void> = new EventEmitter(); // Evento para fechar o SideNav
 
-    sidebarVisible: boolean = false;
+  closeCallback(event: Event): void {
+    this.sidebarVisible = false;
+    this.onClose.emit(); // Emite o evento de fechamento
+  }
+
+  toggleSidebar(): void {
+    this.sidebarVisible = !this.sidebarVisible; // Alterna a visibilidade do SideNav
+  }
 }
