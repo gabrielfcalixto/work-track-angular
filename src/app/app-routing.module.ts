@@ -6,7 +6,7 @@ import { ProjectsComponent } from './project/projects/projects.component';
 import { AddProjectComponent } from './project/projects/add-project/add-project.component';
 import { EditProjectComponent } from './project/projects/edit-project/edit-project.component';
 import { ReportComponent } from './report/report/report.component';
-import { ProfileComponent } from './profile/profile/profile.component';
+import { ProfileComponent } from './profile/profile.component';
 import { EditProfileComponent } from './profile/edit-profile/edit-profile.component';
 import { LayoutComponent } from './layout/layout/layout.component';
 import { NotFoundComponent } from './not-found/not-found/not-found.component';

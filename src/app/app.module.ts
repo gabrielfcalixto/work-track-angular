@@ -9,6 +9,7 @@ import { LayoutModule } from './layout/layout.module';
 import { RouterModule } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found/not-found.component';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { ProfileModule } from './profile/profile.module';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
     PrimeNGModule,  // Se esse for um módulo compartilhado do PrimeNG, mantenha ele aqui para uso global
     LayoutModule,
     RouterModule,
+    ProfileModule,
+    RouterModule
   ],
   providers: [],
   bootstrap: [AppComponent]

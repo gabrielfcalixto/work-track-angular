@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProfileComponent } from './profile/profile.component';
+import { ProfileComponent } from './profile.component';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
-
+import { FormsModule } from '@angular/forms';
+import { ProfileRoutingModule } from './profile-routing.module';
 
 
 @NgModule({
@@ -11,7 +12,9 @@ import { EditProfileComponent } from './edit-profile/edit-profile.component';
     EditProfileComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
+    ProfileRoutingModule
   ]
 })
 export class ProfileModule { }
