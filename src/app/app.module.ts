@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found/not-found.component';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ProfileModule } from './profile/profile.module';
+import { ProjectModule } from './project/project.module';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ProfileModule } from './profile/profile.module';
     LayoutModule,
     RouterModule,
     ProfileModule,
-    RouterModule
+    RouterModule,
+    ProjectModule
   ],
   providers: [],
   bootstrap: [AppComponent]
