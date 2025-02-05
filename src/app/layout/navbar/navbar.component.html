@@ -1,19 +1,17 @@
 <nav class="navbar">
 
-  <p-button (onClick)="toggleSidebar()" icon="pi pi-bars" label="Abrir Menu"></p-button>
-
+<app-sidebar #sidenav ></app-sidebar>
 
   <div class="logo">
     <img [src]="logoPath" alt="Logo" />
   </div>
   <div class="navbar-actions">
     <button (click)="toggleTheme()" class="theme-toggle-btn">
-      <i class="pi" [ngClass]="isDarkMode ? 'pi-sun' : 'pi-moon'">Modo escuro
+      <i class="pi" [ngClass]="isDarkMode ? 'pi-sun' : 'pi-moon'">
       </i>
     </button>
     <div class="profile-icon">
-      <i class="pi pi-user">Profile</i>
+      <i class="pi pi-user"></i>
     </div>
   </div>
 </nav>
-<app-sidebar #sidenav></app-sidebar>
