@@ -18,7 +18,7 @@
       <td>{{ activity.hours }}</td>
       <td>
         <button pButton icon="pi pi-pencil" class="p-button-warning" (click)="openDialog(activity)"></button>
-        <button pButton icon="pi pi-trash" class="p-button-danger" (click)="deleteActivity(activity.id)"></button>
+        <button pButton icon="pi pi-trash" class="p-button-danger" (click)="confirmDelete(activity.id)"></button>
       </td>
     </tr>
   </ng-template>
@@ -42,5 +42,12 @@
   <p-footer>
     <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="closeDialog()"></button>
     <button pButton label="Salvar" icon="pi pi-check" class="p-button-primary" (click)="saveActivity()"></button>
+  </p-footer>
+</p-dialog>
+<p-dialog [(visible)]="displayDeleteConfirmation" [modal]="true" [closable]="false" header="Confirmar Exclusão">
+  <p>Tem certeza de que deseja excluir esta tarefa?</p>
+  <p-footer>
+    <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="cancelDelete()"></button>
+    <button pButton label="Excluir" icon="pi pi-trash" class="p-button-danger" (click)="deleteConfirmed()"></button>
   </p-footer>
 </p-dialog>

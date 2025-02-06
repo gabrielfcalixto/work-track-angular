@@ -13,6 +13,9 @@ export class ListActivityComponent {
   displayModal: boolean = false;
   isEdit: boolean = false;
   activityData: Activity = {id: 0, name: '', description:'', hours:0, projectId:0};
+  activityToDeleteId: number | null = null;  // Para armazenar o ID da tarefa a ser excluída
+  displayDeleteConfirmation: boolean = false;
+
 
   constructor(private activityService: ActivityService) { }
 
@@ -51,9 +54,21 @@ export class ListActivityComponent {
     this.activities = this.activityService.getActivityByProject(this.projectId); // Atualiza a lista
     this.closeDialog();
   }
+  confirmDelete(activityId: number) {
+    this.activityToDeleteId = activityId;
+    this.displayDeleteConfirmation = true;  // Exibe o popup de confirmação
+  }
 
-  deleteActivity(activityId: number) {
-    this.activityService.deleteActivity(activityId);
-    this.activities = this.activityService.getActivityByProject(this.projectId); // Atualiza a lista
+  cancelDelete() {
+    this.activityToDeleteId = null;
+    this.displayDeleteConfirmation = false;  // Fecha o popup de confirmação
+  }
+
+  deleteConfirmed() {
+    if (this.activityToDeleteId !== null) {
+      this.activityService.deleteActivity(this.activityToDeleteId);
+      this.loadActivities();
+      this.displayDeleteConfirmation = false;  // Fecha o popup de confirmação
+    }
   }
 }
