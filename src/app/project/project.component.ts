@@ -4,10 +4,10 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-projects',
-  templateUrl: './projects.component.html',
-  styleUrl: './projects.component.scss'
+  templateUrl: './project.component.html',
+  styleUrl: './project.component.scss'
 })
-export class ProjectsComponent {
+export class ProjectComponent {
   projetos = [
     { nome: 'Projeto 1', tarefas: [{ nome: 'Tarefa 1', horas: 5 }, { nome: 'Tarefa 2', horas: 3 }], status: 'Em andamento' },
     { nome: 'Projeto 2', tarefas: [{ nome: 'Tarefa 1', horas: 2 }, { nome: 'Tarefa 2', horas: 4 }], status: 'Concluído' },

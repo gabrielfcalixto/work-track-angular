@@ -10,9 +10,9 @@ import { RouterModule } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found/not-found.component';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ProfileModule } from './profile/profile.module';
-import { ProjectModule } from './project/project.module';
 import { ActivityModule } from './activity/activity.module';
 import { ActivityService } from './activity/activity.service';
+import { ProjectModule } from './project/project.module';
 
 @NgModule({
   declarations: [
