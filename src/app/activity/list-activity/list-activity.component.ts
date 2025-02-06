@@ -8,7 +8,7 @@ import { Activity } from '../activity.model';
   styleUrl: './list-activity.component.scss'
 })
 export class ListActivityComponent {
-  @Input() projectId: number = 0; // ou null se preferir
+@Input() projectId: number = 0; // ou null se preferir
   activities: Activity[] = [];
   displayModal: boolean = false;
   isEdit: boolean = false;

@@ -8,7 +8,7 @@ import { EditProjectComponent } from './project/edit-project/edit-project.compon
 import { ReportComponent } from './report/report/report.component';
 import { ProfileComponent } from './profile/profile.component';
 import { EditProfileComponent } from './profile/edit-profile/edit-profile.component';
-import { LayoutComponent } from './layout/layout/layout.component';
+import { LayoutComponent } from './layout/layout.component';
 import { NotFoundComponent } from './not-found/not-found/not-found.component';
 import { ListActivityComponent } from './activity/list-activity/list-activity.component';
 
@@ -22,11 +22,9 @@ const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       {path: 'activity', component: ListActivityComponent},
       { path: 'projects', component: ProjectsComponent },
-      { path: 'projects/add', component: AddProjectComponent },
-      { path: 'projects/edit/:id', component: EditProjectComponent },
+      { path: 'projects', component: AddProjectComponent },
       { path: 'reports', component: ReportComponent },
       { path: 'profile', component: ProfileComponent },
-      { path: 'profile/edit', component: EditProfileComponent },
       { path: '', redirectTo: '/login', pathMatch: 'full' },
 
     ]

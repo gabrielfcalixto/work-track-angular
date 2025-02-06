@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-activity',
@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrl: './activity.component.scss'
 })
 export class ActivityComponent {
-
+  projectId: number = 1; // Recebe o projectId para passar para o ListActivityComponent
 }

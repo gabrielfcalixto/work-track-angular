@@ -27,7 +27,8 @@ import { PrimeNGModule } from '../prime-ng/prime-ng.module';
     PrimeNGModule
   ],
   exports:[
-    ListActivityComponent
+    ListActivityComponent,
+    ActivityComponent
   ]
 })
 export class ActivityModule { }

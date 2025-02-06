@@ -1,29 +1,29 @@
-<p-card header="Atividades do Projeto">
-  <button pButton label="Adicionar Tarefa" icon="pi pi-plus" class="p-mb-3" (click)="openDialog()"></button>
-  <p-table [value]="activities" [paginator]="true" [rows]="5">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Nome</th>
-        <th>Descrição</th>
-        <th>Horas</th>
-        <th>Ações</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-activity>
-      <tr>
-        <td>{{ activity.name }}</td>
-        <td>{{ activity.description }}</td>
-        <td>{{ activity.hours }}</td>
-        <td>
-          <button pButton icon="pi pi-pencil" class="p-button-warning" (click)="openDialog(activity)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-danger" (click)="deleteActivity(activity.id)"></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</p-card>
+<!-- list-activity.component.html -->
+<button pButton label="Adicionar Tarefa" icon="pi pi-plus" class="p-mb-3" (click)="openDialog()"></button>
 
-<!-- Modal para adicionar/editar atividade -->
+<p-table [value]="activities" [paginator]="true" [rows]="5">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Nome</th>
+      <th>Descrição</th>
+      <th>Horas</th>
+      <th>Ações</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-activity>
+    <tr>
+      <td>{{ activity.name }}</td>
+      <td>{{ activity.description }}</td>
+      <td>{{ activity.hours }}</td>
+      <td>
+        <button pButton icon="pi pi-pencil" class="p-button-warning" (click)="openDialog(activity)"></button>
+        <button pButton icon="pi pi-trash" class="p-button-danger" (click)="deleteActivity(activity.id)"></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
 <p-dialog [(visible)]="displayModal" [modal]="true" [closable]="false" header="{{ isEdit ? 'Editar Atividade' : 'Adicionar Atividade' }}">
   <div class="p-fluid">
     <div class="p-field">
