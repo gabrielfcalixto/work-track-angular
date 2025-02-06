@@ -4,14 +4,12 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'filterProject'
 })
 export class FilterProjectPipe implements PipeTransform {
-  transform(projetos: any[], searchText: string): any[] {
-    if (!projetos || !searchText) {
-      return projetos;
+  transform(projects: any[], searchText: string): any[] {
+    if (!projects || !searchText) {
+      return projects;
     }
-
-    return projetos.filter(projeto =>
-      projeto.nome.toLowerCase().includes(searchText.toLowerCase()) ||
-      projeto.status.toLowerCase().includes(searchText.toLowerCase())
+    return projects.filter(project =>
+      project.name.toLowerCase().includes(searchText.toLowerCase())
     );
   }
 }

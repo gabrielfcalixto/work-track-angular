@@ -1,62 +1,61 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ProjectService } from './project.service';
+import { DynamicDialogRef, DynamicDialogConfig, DialogService } from 'primeng/dynamicdialog';
+import { AddProjectComponent } from './add-project/add-project.component';
+import { EditProjectComponent } from './edit-project/edit-project.component';
+import { Project } from './project.model';
+
 
 @Component({
   selector: 'app-projects',
   templateUrl: './project.component.html',
-  styleUrl: './project.component.scss'
+  styleUrl: './project.component.scss',
 })
-export class ProjectComponent {
-  projetos = [
-    { nome: 'Projeto 1', tarefas: [{ nome: 'Tarefa 1', horas: 5 }, { nome: 'Tarefa 2', horas: 3 }], status: 'Em andamento' },
-    { nome: 'Projeto 2', tarefas: [{ nome: 'Tarefa 1', horas: 2 }, { nome: 'Tarefa 2', horas: 4 }], status: 'Concluído' },
-    { nome: 'Projeto 3', tarefas: [{ nome: 'Tarefa 1', horas: 7 }, { nome: 'Tarefa 2', horas: 1 }], status: 'Cancelado' },
+export class ProjectComponent implements OnInit {
+  projects: Project[] = [];  // Usando a interface Project
 
+  constructor(
+    private projectService: ProjectService,
+    private dialogService: DialogService
+  ) {}
 
-
-  ];
-
-  statusOptions = [
-    { label: 'Em andamento', value: 'Em andamento' },
-    { label: 'Concluído', value: 'Concluído' },
-    { label: 'Cancelado', value: 'Cancelado' }
-  ];
-
-  selectedStatus: string = 'Em andamento';  // ou '' se você preferir vazio inicialmente
-  searchText: string = '';
-
-  calcularHoras(tarefas: any[]): number {
-    return tarefas.reduce((acc, tarefa) => acc + tarefa.horas, 0);
+  ngOnInit(): void {
+    this.loadProjects();
   }
 
-  gerarPDF() {
-    const doc = new jsPDF();
-    doc.text('Relatório de Projetos', 10, 10);
-    this.projetos.forEach((projeto, index) => {
-      doc.text(`${projeto.nome}:`, 10, 20 + index * 10);
-      projeto.tarefas.forEach(tarefa => {
-        doc.text(`Tarefa: ${tarefa.nome} | Horas: ${tarefa.horas}`, 20, 30 + index * 10);
-      });
+  loadProjects() {
+    this.projectService.getProjects().subscribe(data => {
+      this.projects = data; // Supondo que 'data' seja um array de objetos do tipo Project
     });
-    doc.save('relatorio_projetos.pdf');
   }
 
-  gerarExcel() {
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.projetos.map(projeto => ({
-      Projeto: projeto.nome,
-      Tarefas: projeto.tarefas.map(tarefa => `${tarefa.nome} | Horas: ${tarefa.horas}`).join(', ')
-    })));
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Projetos');
-    XLSX.writeFile(wb, 'relatorio_projetos.xlsx');
+  openAddProjectDialog() {
+    const dialogRef = this.dialogService.open(AddProjectComponent, {
+      header: 'Add New Project',
+      width: '50%',
+      data: { action: 'add' }
+    });
+
+    dialogRef.onClose.subscribe(result => {
+      if (result) {
+        this.loadProjects(); // Recarregar projetos após adicionar
+      }
+    });
   }
 
-  editarProjeto(projeto: any) {
-    // Lógica para editar o projeto
-  }
+  openEditProjectDialog(projectId: string) {
+    const dialogRef = this.dialogService.open(EditProjectComponent, {
+      header: 'Edit Project',
+      width: '50%',
+      data: { projectId, action: 'edit' }
+    });
 
-  excluirProjeto(projeto: any) {
-    // Lógica para excluir o projeto
+    dialogRef.onClose.subscribe(result => {
+      if (result) {
+        this.loadProjects(); // Recarregar projetos após editar
+      }
+    });
   }
 }

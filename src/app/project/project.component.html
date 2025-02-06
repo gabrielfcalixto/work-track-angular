@@ -1,39 +1,10 @@
-<div class="projects-container">
-  <p-card header="Gerenciamento de Projetos" class="projects-card">
-    <!-- Filtro de Projetos -->
-    <div class="filters">
-      <p-dropdown [options]="statusOptions" [(ngModel)]="selectedStatus" placeholder="Filtrar por Status" [style]="{ width: '200px' }"></p-dropdown>
-      <p-inputText [(ngModel)]="searchText" placeholder="Pesquisar Projeto" [style]="{ width: '200px' }" debounce="500"></p-inputText>
-    </div>
+<div class="project-list">
+  <button pButton label="Add Project" icon="pi pi-plus" (click)="openAddProjectDialog()"></button>
 
-    <!-- Tabela de Projetos -->
-    <p-table [value]="projetos | filterProject:searchText" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,25]" [scrollable]="true" scrollHeight="400px">
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Projeto</th>
-          <th>Total de Horas</th>
-          <th>Status</th>
-          <th>Ações</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-projeto>
-        <tr>
-          <td>{{ projeto.nome }}</td>
-          <td>{{ calcularHoras(projeto.tarefas) }}</td>
-          <td>{{ projeto.status }}</td>
-          <td>
-            <!-- Botões de Ações -->
-            <p-button icon="pi pi-pencil" label="Editar" (click)="editarProjeto(projeto)" class="p-button-warning"></p-button>
-            <p-button icon="pi pi-trash" label="Excluir" (click)="excluirProjeto(projeto)" class="p-button-danger"></p-button>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+  <input [(ngModel)]="searchText" placeholder="Search projects">
 
-    <!-- Botões para Gerar Relatórios -->
-    <div class="report-buttons">
-      <p-button label="Gerar PDF" icon="pi pi-file-pdf" (click)="gerarPDF()" class="p-button-success"></p-button>
-      <p-button label="Gerar Excel" icon="pi pi-file-excel" (click)="gerarExcel()" class="p-button-info"></p-button>
-    </div>
-  </p-card>
+  <div *ngFor="let project of projects | filterProject: searchText">
+    <div>{{ project.name }}</div>
+    <button pButton label="Edit" icon="pi pi-pencil" (click)="openEditProjectDialog(project.id)"></button>
+  </div>
 </div>

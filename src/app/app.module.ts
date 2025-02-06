@@ -6,13 +6,13 @@ import { AppComponent } from './app.component';
 import { AuthModule } from './auth/auth.module';
 import { PrimeNGModule } from './prime-ng/prime-ng.module';
 import { LayoutModule } from './layout/layout.module';
-import { RouterModule } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found/not-found.component';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ProfileModule } from './profile/profile.module';
 import { ActivityModule } from './activity/activity.module';
 import { ActivityService } from './activity/activity.service';
 import { ProjectModule } from './project/project.module';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -28,9 +28,8 @@ import { ProjectModule } from './project/project.module';
     LayoutModule,
     RouterModule,
     ProfileModule,
-    RouterModule,
-    ProjectModule,
-    ActivityModule
+    ActivityModule,
+    ProjectModule
   ],
   providers: [ActivityService],
   bootstrap: [AppComponent]
