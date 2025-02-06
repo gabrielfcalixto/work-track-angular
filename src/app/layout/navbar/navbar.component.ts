@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { ThemeService } from './../../services/theme.service';
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -14,7 +15,7 @@ export class NavbarComponent {
   isDarkMode = false;
   logoPath = 'assets/logo-hard-preta.png';
 
-  constructor(private themeService: ThemeService) {
+  constructor(private themeService: ThemeService, private router: Router) {
     this.isDarkMode = document.body.classList.contains('dark-mode');
     this.setLogo();
   }
@@ -32,4 +33,10 @@ export class NavbarComponent {
   toggleSidebar(): void {
     this.sidenav.toggleSidebar();
   }
+
+  navigateToProfile():void
+  {
+    this.router.navigate(['/profile']); // Navega para a página de Perfil
+  }
+
 }
