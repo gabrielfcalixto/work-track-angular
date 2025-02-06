@@ -1,7 +1,6 @@
 <div class="project-list">
   <button pButton label="Add Project" icon="pi pi-plus" (click)="openAddProjectDialog()"></button>
-
-  <input [(ngModel)]="searchText" placeholder="Search projects">
+<p>lorem5000</p>
 
   <div *ngFor="let project of projects | filterProject: searchText">
     <div>{{ project.name }}</div>

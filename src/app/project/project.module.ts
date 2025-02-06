@@ -23,7 +23,7 @@ import { DialogModule } from 'primeng/dialog';
     CardModule,
     InputTextModule,
     DialogModule,
-    FormsModule
+    FormsModule,
 
 
 

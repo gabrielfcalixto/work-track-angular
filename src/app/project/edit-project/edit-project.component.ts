@@ -1,5 +1,6 @@
+import { ProjectService } from './../project.service';
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { Component, Inject } from '@angular/core';
-import { ProjectsService } from '../project.service';
 
 @Component({
   selector: 'app-edit-project',

@@ -9,7 +9,7 @@ import { Project } from './project.model';
 
 
 @Component({
-  selector: 'app-projects',
+  selector: 'app-project',
   templateUrl: './project.component.html',
   styleUrl: './project.component.scss',
 })
