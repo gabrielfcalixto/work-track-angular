@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ListActivityComponent } from './list-activity/list-activity.component';
-import { AddActivityComponent } from './add-activity/add-activity.component';
-import { EditActivityComponent } from './edit-activity/edit-activity.component';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -10,14 +8,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import {DialogModule } from 'primeng/dialog';
 import { CardModule } from 'primeng/card';
 import { ActivityComponent } from './activity.component';
+import { PrimeNGModule } from '../prime-ng/prime-ng.module';
 
 
 @NgModule({
   declarations: [
-    ListActivityComponent,
-    AddActivityComponent,
-    EditActivityComponent,
-    ActivityComponent
+    ActivityComponent,
+    ListActivityComponent
   ],
   imports: [
     CommonModule,
@@ -26,7 +23,8 @@ import { ActivityComponent } from './activity.component';
     ButtonModule,
     DialogModule,
     InputTextModule,
-    CardModule
+    CardModule,
+    PrimeNGModule
   ],
   exports:[
     ListActivityComponent

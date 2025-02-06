@@ -1,4 +1,5 @@
 <p-card header="Atividades do Projeto">
+  <button pButton label="Adicionar Tarefa" icon="pi pi-plus" class="p-mb-3" (click)="openDialog()"></button>
   <p-table [value]="activities" [paginator]="true" [rows]="5">
     <ng-template pTemplate="header">
       <tr>
@@ -10,14 +11,36 @@
     </ng-template>
     <ng-template pTemplate="body" let-activity>
       <tr>
-        <td>{{ activity.nome }}</td>
-        <td>{{ activity.descricao }}</td>
-        <td>{{ activity.horas }}</td>
+        <td>{{ activity.name }}</td>
+        <td>{{ activity.description }}</td>
+        <td>{{ activity.hours }}</td>
         <td>
-          <p-button icon="pi pi-pencil" (click)="editActivity(activity)" class="p-button-warning"></p-button>
-          <p-button icon="pi pi-trash" (click)="deleteActivity(activity.id)" class="p-button-danger"></p-button>
+          <button pButton icon="pi pi-pencil" class="p-button-warning" (click)="openDialog(activity)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-danger" (click)="deleteActivity(activity.id)"></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 </p-card>
+
+<!-- Modal para adicionar/editar atividade -->
+<p-dialog [(visible)]="displayModal" [modal]="true" [closable]="false" header="{{ isEdit ? 'Editar Atividade' : 'Adicionar Atividade' }}">
+  <div class="p-fluid">
+    <div class="p-field">
+      <label for="name">Nome</label>
+      <input id="name" type="text" pInputText [(ngModel)]="activityData.name">
+    </div>
+    <div class="p-field">
+      <label for="description">Descrição</label>
+      <input id="description" type="text" pInputText [(ngModel)]="activityData.description">
+    </div>
+    <div class="p-field">
+      <label for="hours">Horas</label>
+      <input id="hours" type="number" pInputText [(ngModel)]="activityData.hours">
+    </div>
+  </div>
+  <p-footer>
+    <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="closeDialog()"></button>
+    <button pButton label="Salvar" icon="pi pi-check" class="p-button-primary" (click)="saveActivity()"></button>
+  </p-footer>
+</p-dialog>

@@ -8,26 +8,52 @@ import { Activity } from '../activity.model';
   styleUrl: './list-activity.component.scss'
 })
 export class ListActivityComponent {
-  @Input() projetoId!: number;
+  @Input() projectId: number = 0; // ou null se preferir
   activities: Activity[] = [];
+  displayModal: boolean = false;
+  isEdit: boolean = false;
+  activityData: Activity = {id: 0, name: '', description:'', hours:0, projectId:0};
 
   constructor(private activityService: ActivityService) { }
 
-  ngOnInit() {
-    if (this.projetoId) {
-      this.activities = this.activityService.getActivityByProject(this.projetoId);
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    this.loadActivities();
+  }
+  loadActivities() {
+    if (this.projectId) {
+      console.log("Projeto ID recebido:", this.projectId);
+      this.activities = this.activityService.getActivityByProject(this.projectId);
+      console.log("Atividades carregadas:", this.activities);
     } else {
-      console.error('Erro: projetoId não está definido!');
+      console.error('Erro: projectId não está definido!');
     }
   }
 
 
-  deleteActivity(id: number) {
-    this.activityService.deleteActivity(id);
-    this.activities = this.activityService.getActivityByProject(this.projetoId);
+  openDialog(activity?: Activity) {
+    this.isEdit = !!activity;
+    this.activityData = activity ? { ...activity } : { id: 0, name: '', description: '', hours: 0, projectId: this.projectId };
+    this.displayModal = true;
   }
-  editActivity(activity: Activity) {
-    console.log('Editar atividade:', activity);
-    // Aqui você pode adicionar lógica para abrir um modal ou navegar para uma página de edição.
+
+  closeDialog() {
+    this.displayModal = false;
+  }
+
+  saveActivity() {
+    if (this.isEdit) {
+      this.activityService.editActivity(this.activityData);
+    } else {
+      this.activityService.addActivity(this.activityData);
+    }
+    this.activities = this.activityService.getActivityByProject(this.projectId); // Atualiza a lista
+    this.closeDialog();
+  }
+
+  deleteActivity(activityId: number) {
+    this.activityService.deleteActivity(activityId);
+    this.activities = this.activityService.getActivityByProject(this.projectId); // Atualiza a lista
   }
 }
