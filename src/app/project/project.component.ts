@@ -2,7 +2,7 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import { Component, OnInit } from '@angular/core';
 import { ProjectService } from './project.service';
-import { DynamicDialogRef, DynamicDialogConfig, DialogService } from 'primeng/dynamicdialog';
+import {  DialogService } from 'primeng/dynamicdialog';
 import { AddProjectComponent } from './add-project/add-project.component';
 import { EditProjectComponent } from './edit-project/edit-project.component';
 import { Project } from './project.model';
