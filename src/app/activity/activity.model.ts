@@ -4,4 +4,5 @@ export interface Activity {
   description: string;
   hours: number;
   projectId: number;
+  completed?:boolean;
 }

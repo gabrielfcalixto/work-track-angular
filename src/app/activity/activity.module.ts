@@ -1,35 +1,37 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ListActivityComponent } from './list-activity/list-activity.component';
-import { AddActivityComponent } from './add-activity/add-activity.component';
-import { EditActivityComponent } from './edit-activity/edit-activity.component';
-import { FormsModule } from '@angular/forms';
-import { TableModule } from 'primeng/table';
+import { ActivityComponent } from './activity.component';
+import { Table, TableModule } from 'primeng/table';
+import { BrowserModule } from '@angular/platform-browser';
+import { DialogModule } from 'primeng/dialog';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import {DialogModule } from 'primeng/dialog';
 import { CardModule } from 'primeng/card';
-import { ActivityComponent } from './activity.component';
+import { MessageService } from 'primeng/api';
+import { AppComponent } from '../app.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
   declarations: [
-    ListActivityComponent,
-    AddActivityComponent,
-    EditActivityComponent,
+
     ActivityComponent
   ],
   imports: [
-    CommonModule,
-    FormsModule,
+    BrowserModule,
     TableModule,
-    ButtonModule,
     DialogModule,
+    ConfirmDialogModule,
+    ButtonModule,
     InputTextModule,
-    CardModule
+    CardModule,
+    FormsModule
+
+
   ],
+  providers: [MessageService],
+  bootstrap: [AppComponent],
   exports:[
-    ListActivityComponent
   ]
 })
 export class ActivityModule { }

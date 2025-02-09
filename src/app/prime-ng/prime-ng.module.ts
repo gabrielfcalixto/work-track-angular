@@ -5,7 +5,9 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { FormsModule } from '@angular/forms';
-import { PrimeIcons } from 'primeng/api';
+import { ConfirmDialogModule} from 'primeng/confirmdialog'
+import { DialogModule } from 'primeng/dialog';
+import { TableModule } from 'primeng/table';
 
 @NgModule({
   declarations: [],
@@ -16,6 +18,9 @@ import { PrimeIcons } from 'primeng/api';
     ButtonModule,
     CardModule,
     FormsModule,
+    ConfirmDialogModule,
+    DialogModule,
+    TableModule
   ],
   exports: [
     CommonModule,
@@ -24,6 +29,8 @@ import { PrimeIcons } from 'primeng/api';
     ButtonModule,
     CardModule,
     FormsModule,
+    ConfirmDialogModule,
+    DialogModule,
   ]
 })
 export class PrimeNGModule { }

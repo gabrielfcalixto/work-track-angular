@@ -13,6 +13,8 @@ import { ProfileModule } from './profile/profile.module';
 import { ProjectModule } from './project/project.module';
 import { ActivityModule } from './activity/activity.module';
 import { ActivityService } from './activity/activity.service';
+import { TableModule } from 'primeng/table';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { ActivityService } from './activity/activity.service';
     ProfileModule,
     RouterModule,
     ProjectModule,
-    ActivityModule
+    ActivityModule,
+    TableModule,
+    FormsModule
   ],
   providers: [ActivityService],
   bootstrap: [AppComponent]
