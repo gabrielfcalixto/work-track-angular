@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -16,9 +17,14 @@ export class SidebarComponent {
   menuItems = [
     { label: 'Dashboard', link: '/dashboard', icon: 'pi pi-home' },
     { label: 'Projetos', link: '/projects', icon: 'pi pi-folder' },
+    { label: 'Atividades', link: '/activity', icon: 'pi pi-list' },
     { label: 'Relatórios', link: '/reports', icon: 'pi pi-chart-bar' },
+    { label: 'Usuários', link: '/profile', icon: 'pi pi-users' },
     { label: 'Perfil', link: '/profile', icon: 'pi pi-user' }
+
   ];
+  constructor(private router: Router) {}
+
 
   closeCallback(event: Event): void {
     this.sidebarVisible = false;
