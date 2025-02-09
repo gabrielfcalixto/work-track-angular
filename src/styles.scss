@@ -12,9 +12,30 @@ body {
   color: var(--text-color);
   transition: background-color 0.3s, color 0.3s;
 }
-
 /* Quando ativar o modo escuro */
 body.dark-mode {
   --background-color: #1e1e1e;
   --text-color: #ffffff;
+}
+
+/* Estilos para o p-card no modo escuro */
+body.dark-mode .projects-card,
+body.dark-mode ::ng-deep .p-card {
+  background-color: #2b2b2b !important; /* Fundo escuro */
+  color: #ffffff !important; /* Texto branco */
+  border: 1px solid #444 !important; /* Borda para destacar */
+}
+
+/* Ajustar o título e conteúdo do p-card */
+body.dark-mode ::ng-deep .p-card .p-card-body {
+  background-color: #2b2b2b !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode ::ng-deep .p-card .p-card-title {
+  color: #ffffff !important;
+}
+
+body.dark-mode ::ng-deep .p-card .p-card-content {
+  color: #dddddd !important;
 }
