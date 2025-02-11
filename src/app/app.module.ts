@@ -15,11 +15,13 @@ import { ActivityModule } from './activity/activity.module';
 import { ActivityService } from './activity/activity.service';
 import { TableModule } from 'primeng/table';
 import { FormsModule } from '@angular/forms';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NotFoundComponent,
+    UsersComponent,
   ],
   imports: [
     BrowserModule,
