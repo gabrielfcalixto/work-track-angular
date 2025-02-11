@@ -26,7 +26,7 @@ const routes: Routes = [
       { path: 'projects/add', component: AddProjectComponent },
       { path: 'reports', component: ReportComponent },
       { path: 'profile', component: ProfileComponent },
-      {path: 'users', component: UsersComponent},
+      { path: 'users', component: UsersComponent},
       { path: '', redirectTo: '/login', pathMatch: 'full' },
 
     ]

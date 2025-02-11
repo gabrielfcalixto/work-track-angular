@@ -8,6 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { ConfirmDialogModule} from 'primeng/confirmdialog'
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
+import { ToolbarModule } from 'primeng/toolbar';
+import { DropdownModule } from 'primeng/dropdown';
 
 @NgModule({
   declarations: [],
@@ -31,6 +33,8 @@ import { TableModule } from 'primeng/table';
     FormsModule,
     ConfirmDialogModule,
     DialogModule,
+    ToolbarModule,
+    DropdownModule
   ]
 })
 export class PrimeNGModule { }
