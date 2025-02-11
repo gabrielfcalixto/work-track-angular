@@ -65,30 +65,8 @@
     <p-button label="Salvar Alterações" icon="pi pi-check" (click)="saveEdit()" class="p-button-warning"></p-button>
   </div>
 </p-dialog>
+<p-confirmDialog></p-confirmDialog>
 
-<!-- Diálogo de Confirmação de Exclusão -->
-<p-confirmDialog
-  header="Confirmar Exclusão"
-  icon="pi pi-exclamation-triangle"
-  [(visible)]="displayDeleteDialog">
-
-  <p>Tem certeza que deseja excluir esta atividade?</p>
-
-  <p-footer>
-    <p-button
-      label="Não"
-      icon="pi pi-times"
-      (click)="displayDeleteDialog = false"
-      class="p-button-text">
-    </p-button>
-    <p-button
-      label="Sim"
-      icon="pi pi-check"
-      (click)="deleteActivity()"
-      class="p-button-danger">
-    </p-button>
-  </p-footer>
-</p-confirmDialog>
 
 <!-- Diálogo para Adicionar Horas -->
 <p-dialog header="Adicionar Horas" [(visible)]="displayAddHoursDialog" [modal]="true">

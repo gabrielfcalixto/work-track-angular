@@ -6,7 +6,6 @@ import { ConfirmationService, MessageService } from 'primeng/api';
   selector: 'app-activity',
   templateUrl: './activity.component.html',
   styleUrl: './activity.component.scss',
-  providers: [ConfirmationService, MessageService]
 })
 export class ActivityComponent implements OnInit {
   activities: Activity[] = [];
@@ -102,18 +101,26 @@ export class ActivityComponent implements OnInit {
   // No seu componente, adicione isso à sua lógica de confirmação de exclusão:
 
 confirmDelete(activity: Activity) {
-  this.selectedActivity = activity;
-  this.displayDeleteDialog = true;  // Apenas define como true para abrir o diálogo
+  this.confirmationService.confirm(
+    {
+      message: 'Tem certeza que deseja excluir esta atividade?',
+      header: 'Excluir Atividade',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.deleteActivity(activity);
+      },
+      reject: () => {
+        // No caso de rejeitar a exclusão, nada acontece
+      }
+    } as any);
+
+}
+deleteActivity(activity: Activity) {
+  this.activityService.deleteActivity(activity.id);
+  this.displayDeleteDialog = false;  // Fecha o diálogo após a exclusão
+  this.loadActivities();
+  this.messageService.add({ severity: 'warn', summary: 'Excluído', detail: 'Atividade removida!' });
 }
 
-deleteActivity() {
-  if (this.selectedActivity) {
-    this.activityService.deleteActivity(this.selectedActivity.id);
-    this.displayDeleteDialog = false;  // Fecha o diálogo após a exclusão
-    this.loadActivities();
-    this.messageService.add({ severity: 'warn', summary: 'Excluído', detail: 'Atividade removida!' });
-  }
-
-}
 
 }

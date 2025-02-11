@@ -7,7 +7,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { AppComponent } from '../app.component';
 import { FormsModule } from '@angular/forms';
 
@@ -25,11 +25,13 @@ import { FormsModule } from '@angular/forms';
     ButtonModule,
     InputTextModule,
     CardModule,
-    FormsModule
+    FormsModule,
 
 
   ],
-  providers: [MessageService],
+  providers: [MessageService,
+    ConfirmationService
+  ],
   bootstrap: [AppComponent],
   exports:[
   ]
