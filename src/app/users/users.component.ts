@@ -16,9 +16,10 @@ export class UsersComponent implements OnInit {
   displayEditDialog = false;
   displayPermissionDialog = false;
   displayDeleteDialog = false;
-  searchTerm = '';
-
+  searchTerm: string = '';
   newUser: Users = { id: 0, name: '', email: '', role: 'user', active: true };
+  roles = [{name: 'admin'}, {name: 'User'}];
+
 
   constructor(
     private usersService: UsersService,
@@ -73,20 +74,16 @@ export class UsersComponent implements OnInit {
     }
   }
 
-  confirmDelete(users: Users) {
-    this.confirmationService.confirm({
-      message: 'Tem certeza que deseja excluir este usuário?',
-      header: 'Excluir Usuário',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.deleteUser(users);
-      }
-    });
+  confirmDelete(user: Users) {
+    this.selectedUser ={...user};
+    this.displayDeleteDialog = true;
   }
 
-  deleteUser(users: Users) {
-    this.usersService.deleteUser(users.id);
-    this.loadUsers();
-    this.messageService.add({ severity: 'warn', summary: 'Usuário removido', detail: 'Usuário foi excluído!' });
+  deleteUser(user: Users) {
+    if(!user) return;
+      this.usersService.deleteUser(user.id);
+      this.loadUsers();
+      this.displayDeleteDialog = false;
+      this.messageService.add({ severity: 'warn', summary: 'Usuário removido', detail: 'Usuário foi excluído!' });
   }
 }

@@ -30,4 +30,86 @@
       </tr>
     </ng-template>
   </p-table>
+
+  <!-- Adicionar Usuário Dialog -->
+  <p-dialog header="Adicionar Usuário" [(visible)]="displayAddDialog" [modal]="true" [responsive]="true">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="name">Nome</label>
+        <input id="name" [(ngModel)]="newUser.name" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="email">E-mail</label>
+        <input id="email" [(ngModel)]="newUser.email" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="role">Função</label>
+        <p-dropdown [(ngModel)]="newUser.role" [options]="roles" optionLabel="name"></p-dropdown>
+      </div>
+    </div>
+    <p-footer>
+      <p-button label="Cancelar" icon="pi pi-times" (click)="displayAddDialog = false"></p-button>
+      <p-button label="Salvar" icon="pi pi-check" (click)="addUser()"></p-button>
+    </p-footer>
+  </p-dialog>
+
+  <!-- Editar Usuário Dialog -->
+  <p-dialog header="Editar Usuário" [(visible)]="displayEditDialog" [modal]="true" [responsive]="true">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="name">Nome</label>
+        <input id="name" [ngModel]="selectedUser?.name || ''" (ngModelChange)="selectedUser!.name = $event" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="email">E-mail</label>
+        <input id="email" [ngModel]="selectedUser?.email || ''" (ngModelChange)="selectedUser!.email = $event" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="role">Função</label>
+        <p-dropdown
+  [ngModel]="selectedUser?.role || 'user'"
+  (ngModelChange)="selectedUser!.role = $event"
+  [options]="roles"
+  optionLabel="name">
+</p-dropdown>
+      </div>
+    </div>
+    <p-footer>
+      <p-button label="Cancelar" icon="pi pi-times" (click)="displayEditDialog = false"></p-button>
+      <p-button label="Salvar" icon="pi pi-check" (click)="saveEdit()"></p-button>
+    </p-footer>
+  </p-dialog>
+
+  <!-- Permissões Dialog -->
+  <p-dialog header="Permissões" [(visible)]="displayPermissionDialog" [modal]="true" [responsive]="true">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="role">Função</label>
+        <p-dropdown
+        [ngModel]="selectedUser?.role || 'user'"
+        (ngModelChange)="selectedUser!.role = $event"
+        [options]="roles"
+        optionLabel="name"
+        optionValue="value">
+      </p-dropdown>
+
+      </div>
+    </div>
+    <p-footer>
+      <p-button label="Cancelar" icon="pi pi-times" (click)="displayPermissionDialog = false"></p-button>
+      <p-button label="Salvar" icon="pi pi-check" (click)="savePermissions()"></p-button>
+    </p-footer>
+  </p-dialog>
+
+  <!-- Excluir Usuário Dialog -->
+  <p-dialog header="Excluir Usuário" [(visible)]="displayDeleteDialog" [modal]="true" [responsive]="true">
+    <p>Tem certeza que deseja excluir este usuário?</p>
+    <p-footer>
+      <p-button label="Cancelar" icon="pi pi-times" (click)="displayDeleteDialog = false"></p-button>
+      <p-button label="Excluir" icon="pi pi-check" severity="danger"
+  (click)="selectedUser ? deleteUser(selectedUser) : null">
+</p-button>
+
+    </p-footer>
+  </p-dialog>
 </p-card>
