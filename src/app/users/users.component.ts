@@ -48,10 +48,11 @@ export class UsersComponent implements OnInit {
     this.displayAddDialog = true;
   }
   addUser() {
-    this.usersService.addUser(this.newUser).subscribe(() =>{
-      this.loadUsers();
+    this.usersService.addUser(this.newUser).subscribe(() => {
       this.displayAddDialog = false;
       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário adicionado!' });
+      this.loadUsers();
+
     });
   }
 
