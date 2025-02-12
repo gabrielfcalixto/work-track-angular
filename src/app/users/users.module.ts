@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { UsersComponent } from './users.component';
 import { PrimeNGModule } from '../prime-ng/prime-ng.module';
 import { ToolbarModule } from 'primeng/toolbar';
+import { HttpClientModule } from '@angular/common/http';
 
 
 
@@ -12,6 +13,7 @@ import { ToolbarModule } from 'primeng/toolbar';
   imports: [
     CommonModule,
     PrimeNGModule,
+    HttpClientModule
 
 
   ]

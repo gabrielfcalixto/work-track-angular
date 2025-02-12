@@ -17,8 +17,8 @@ export class UsersComponent implements OnInit {
   displayPermissionDialog = false;
   displayDeleteDialog = false;
   searchTerm: string = '';
-  newUser: Users = { id: 0, name: '', email: '', role: 'user', active: true };
-  roles = [{name: 'admin'}, {name: 'User'}];
+  newUser: Users = { id: 0, name: '', login:'', password:'', email: '', role: 'user' };
+  roles = [{name: 'admin'}, {name: 'user'}];
 
 
   constructor(
@@ -32,32 +32,41 @@ export class UsersComponent implements OnInit {
   }
 
   loadUsers() {
-    this.users = this.usersService.getUsers();
+    this.usersService.getUsers().subscribe(
+      users => {
+        console.log(users);  // Verifique se os usuários estão sendo retornados
+        this.users = users;
+      },
+      error => {
+        console.error('Erro ao carregar os usuários:', error);
+      }
+    );
   }
 
   openAddDialog() {
-    this.newUser = { id: 0, name: '', email: '', role: 'user', active: true };
+    this.newUser = { id: 0, name: '', login:'', password:'', email: '', role: ''};
     this.displayAddDialog = true;
   }
-
   addUser() {
-    this.usersService.addUser(this.newUser);
-    this.displayAddDialog = false;
-    this.loadUsers();
-    this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário adicionado!' });
+    this.usersService.addUser(this.newUser).subscribe(() =>{
+      this.loadUsers();
+      this.displayAddDialog = false;
+      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário adicionado!' });
+    });
   }
 
-  openEditDialog(users: Users) {
-    this.selectedUser = { ...users };
+  openEditDialog(user: Users) {
+    this.selectedUser = { ...user };
     this.displayEditDialog = true;
   }
 
   saveEdit() {
     if (this.selectedUser) {
-      this.usersService.editUser(this.selectedUser);
+      this.usersService.editUser(this.selectedUser).subscribe(() =>{
       this.displayEditDialog = false;
       this.loadUsers();
       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado!' });
+    });
     }
   }
 
@@ -68,9 +77,10 @@ export class UsersComponent implements OnInit {
 
   savePermissions() {
     if (this.selectedUser) {
-      this.usersService.updatePermissions(this.selectedUser);
+      this.usersService.updatePermissions(this.selectedUser).subscribe(() =>{
       this.displayPermissionDialog = false;
       this.messageService.add({ severity: 'info', summary: 'Permissões atualizadas', detail: 'Permissões do usuário foram alteradas!' });
+    });
     }
   }
 
@@ -81,9 +91,10 @@ export class UsersComponent implements OnInit {
 
   deleteUser(user: Users) {
     if(!user) return;
-      this.usersService.deleteUser(user.id);
+      this.usersService.deleteUser(user.id).subscribe(() => {
       this.loadUsers();
       this.displayDeleteDialog = false;
       this.messageService.add({ severity: 'warn', summary: 'Usuário removido', detail: 'Usuário foi excluído!' });
+    });
   }
 }

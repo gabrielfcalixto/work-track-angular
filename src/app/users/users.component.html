@@ -43,6 +43,14 @@
         <input id="email" [(ngModel)]="newUser.email" pInputText />
       </div>
       <div class="p-field">
+        <label for="login">Login</label>
+        <input id="login" [(ngModel)]="newUser.login" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="password">Senha</label>
+        <input id="password" [(ngModel)]="newUser.password" pInputText />
+      </div>
+      <div class="p-field">
         <label for="role">Função</label>
         <p-dropdown [(ngModel)]="newUser.role" [options]="roles" optionLabel="name"></p-dropdown>
       </div>
@@ -63,6 +71,14 @@
       <div class="p-field">
         <label for="email">E-mail</label>
         <input id="email" [ngModel]="selectedUser?.email || ''" (ngModelChange)="selectedUser!.email = $event" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="login">Login</label>
+        <input id="login" [ngModel]="selectedUser?.login || ''" (ngModelChange)="selectedUser!.login = $event" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="password">Senha</label>
+        <input id="password" [ngModel]="selectedUser?.password || ''" (ngModelChange)="selectedUser!.password = $event" pInputText />
       </div>
       <div class="p-field">
         <label for="role">Função</label>

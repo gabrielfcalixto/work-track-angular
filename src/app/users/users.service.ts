@@ -1,39 +1,35 @@
 import { Injectable } from '@angular/core';
 import { Users } from './users.model';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
-  private users: Users[] = [
-    { id: 1, name: 'Admin', email: 'admin@example.com', role: 'admin', active: true },
-    { id: 2, name: 'Usuário Comum', email: 'user@example.com', role: 'user', active: true }
-  ];
+  private apiUrl = 'http://localhost:8080/user';
 
-  getUsers(): Users[] {
-    return [...this.users];
+  constructor(private http: HttpClient){}
+  getUsers(): Observable<Users[]> {
+    return this.http.get<Users[]>(`${this.apiUrl}`);
   }
 
-  addUser(user: Users) {
-    user.id = this.users.length + 1;
-    this.users.push(user);
+  addUser(user: Users): Observable<Users> {
+    return this.http.post<Users>(this.apiUrl, user);
+
   }
 
-  editUser(updatedUser: Users) {
-    const index = this.users.findIndex(user => user.id === updatedUser.id);
-    if (index !== -1) {
-      this.users[index] = updatedUser;
-    }
+  editUser(user: Users) {
+    return this.http.put<Users>(`${this.apiUrl}/${user.id}`, user);
+
   }
 
   updatePermissions(user: Users) {
-    const index = this.users.findIndex(u => u.id === user.id);
-    if (index !== -1) {
-      this.users[index].role = user.role;
-    }
+    return this.http.patch<Users>(`${this.apiUrl}/${user.id}/permissions`, { role: user.role });
+
   }
 
   deleteUser(userId: number) {
-    this.users = this.users.filter(user => user.id !== userId);
+    return this.http.delete<void>(`${this.apiUrl}/${userId}`);
   }
 }

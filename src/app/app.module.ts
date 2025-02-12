@@ -16,6 +16,7 @@ import { ActivityService } from './activity/activity.service';
 import { TableModule } from 'primeng/table';
 import { FormsModule } from '@angular/forms';
 import { UsersComponent } from './users/users.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { UsersComponent } from './users/users.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     AuthModule,
     DashboardModule, // Importa o DashboardModule para acessar o DashboardComponent
     PrimeNGModule,  // Se esse for um módulo compartilhado do PrimeNG, mantenha ele aqui para uso global
