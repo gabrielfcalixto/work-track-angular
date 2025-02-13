@@ -17,7 +17,7 @@ export class UsersComponent implements OnInit {
   displayPermissionDialog = false;
   displayDeleteDialog = false;
   searchTerm: string = '';
-  newUser: Users = { id: 0, name: '', login:'', password:'', email: '', role: '' };
+  newUser: Users = { name: '', login:'', password:'', email: '', role: '' };
 
 
   constructor(
@@ -43,7 +43,7 @@ export class UsersComponent implements OnInit {
   }
 
   openAddDialog() {
-    this.newUser = { id: 0, name: '', login:'', password:'', email: '', role: ''};
+    this.newUser = { name: '', login:'', password:'', email: '', role: ''};
     this.displayAddDialog = true;
   }
   addUser() {
@@ -90,11 +90,13 @@ export class UsersComponent implements OnInit {
   }
 
   deleteUser(user: Users) {
-    if(!user) return;
-      this.usersService.deleteUser(user.id).subscribe(() => {
+    if (!user || user.id === undefined) return; // Garante que o ID está presente
+
+    this.usersService.deleteUser(user.id).subscribe(() => {
       this.loadUsers();
       this.displayDeleteDialog = false;
       this.messageService.add({ severity: 'warn', summary: 'Usuário removido', detail: 'Usuário foi excluído!' });
     });
   }
+
 }
