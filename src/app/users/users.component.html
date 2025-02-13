@@ -52,7 +52,8 @@
       </div>
       <div class="p-field">
         <label for="role">Função</label>
-        <p-dropdown [(ngModel)]="newUser.role" [options]="roles" optionLabel="name"></p-dropdown>
+        <input id="role" [(ngModel)]="newUser.role" pInputText />
+
       </div>
     </div>
     <p-footer>
@@ -81,14 +82,11 @@
         <input id="password" [ngModel]="selectedUser?.password || ''" (ngModelChange)="selectedUser!.password = $event" pInputText />
       </div>
       <div class="p-field">
-        <label for="role">Função</label>
-        <p-dropdown
-  [ngModel]="selectedUser?.role || 'user'"
-  (ngModelChange)="selectedUser!.role = $event"
-  [options]="roles"
-  optionLabel="name">
-</p-dropdown>
+        <label for="role">Senha</label>
+        <input id="role" [ngModel]="selectedUser?.role || ''" (ngModelChange)="selectedUser!.role = $event" pInputText />
       </div>
+
+
     </div>
     <p-footer>
       <p-button label="Cancelar" icon="pi pi-times" (click)="displayEditDialog = false"></p-button>
@@ -104,7 +102,6 @@
         <p-dropdown
         [ngModel]="selectedUser?.role || 'user'"
         (ngModelChange)="selectedUser!.role = $event"
-        [options]="roles"
         optionLabel="name"
         optionValue="value">
       </p-dropdown>

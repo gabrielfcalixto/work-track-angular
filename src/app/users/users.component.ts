@@ -17,8 +17,7 @@ export class UsersComponent implements OnInit {
   displayPermissionDialog = false;
   displayDeleteDialog = false;
   searchTerm: string = '';
-  newUser: Users = { id: 0, name: '', login:'', password:'', email: '', role: 'user' };
-  roles = [{name: 'admin'}, {name: 'user'}];
+  newUser: Users = { id: 0, name: '', login:'', password:'', email: '', role: '' };
 
 
   constructor(
