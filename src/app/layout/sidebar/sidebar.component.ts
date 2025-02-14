@@ -9,11 +9,12 @@ import { Router } from '@angular/router';
 
 })
 export class SidebarComponent {
-  sidebarVisible: boolean = false; // Controla a visibilidade do SideNav
+  sidebarVisible: boolean = false; // visibilidade do SideNav
 
-  @Output() onClose: EventEmitter<void> = new EventEmitter(); // Evento para fechar o SideNav
+  @Output() onClose: EventEmitter<void> = new EventEmitter(); // fechar o SideNav
+  constructor(private router: Router) {}
 
-  // Adicionando os itens do menu
+  //itens do menu
   menuItems = [
     { label: 'Dashboard', link: '/dashboard', icon: 'pi pi-home' },
     { label: 'Projetos', link: '/projects', icon: 'pi pi-folder' },
@@ -23,15 +24,14 @@ export class SidebarComponent {
     { label: 'Perfil', link: '/profile', icon: 'pi pi-user' }
 
   ];
-  constructor(private router: Router) {}
 
 
   closeCallback(event: Event): void {
     this.sidebarVisible = false;
-    this.onClose.emit(); // Emite o evento de fechamento
+    this.onClose.emit(); // evento de fechamento
   }
 
   toggleSidebar(): void {
-    this.sidebarVisible = !this.sidebarVisible; // Alterna a visibilidade do SideNav
+    this.sidebarVisible = !this.sidebarVisible; // alterna visibilidade do SideNav
   }
 }
