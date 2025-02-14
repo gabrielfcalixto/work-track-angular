@@ -1,8 +1,7 @@
-export interface Activity {
+export interface Task {
   id: number;
   name: string;
   description: string;
   hours: number;
-  projectId: number;
-  completed?:boolean;
+  status: string;
 }

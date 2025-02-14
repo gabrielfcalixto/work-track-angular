@@ -10,7 +10,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { EditProfileComponent } from './profile/edit-profile/edit-profile.component';
 import { LayoutComponent } from './layout/layout/layout.component';
 import { NotFoundComponent } from './not-found/not-found/not-found.component';
-import { ActivityComponent } from './activity/activity.component';
+import { ActivityComponent } from './task/task.component';
 import { UsersComponent } from './users/users.component';
 
 const routes: Routes = [

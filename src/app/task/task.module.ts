@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { ActivityComponent } from './activity.component';
 import { Table, TableModule } from 'primeng/table';
 import { BrowserModule } from '@angular/platform-browser';
 import { DialogModule } from 'primeng/dialog';
@@ -15,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
 
-    ActivityComponent
+    TaskComponent
   ],
   imports: [
     BrowserModule,
@@ -36,4 +35,4 @@ import { FormsModule } from '@angular/forms';
   exports:[
   ]
 })
-export class ActivityModule { }
+export class TaskModule { }
