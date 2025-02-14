@@ -7,11 +7,10 @@ import { AddProjectComponent } from './project/add-project/add-project.component
 import { EditProjectComponent } from './project/edit-project/edit-project.component';
 import { ReportComponent } from './report/report/report.component';
 import { ProfileComponent } from './profile/profile.component';
-import { EditProfileComponent } from './profile/edit-profile/edit-profile.component';
 import { LayoutComponent } from './layout/layout/layout.component';
 import { NotFoundComponent } from './not-found/not-found/not-found.component';
-import { ActivityComponent } from './task/task.component';
 import { UsersComponent } from './users/users.component';
+import { TaskComponent } from './task/task.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -21,7 +20,7 @@ const routes: Routes = [
     component: LayoutComponent, //Aplica o Layout para todas outras páginas
     children: [
       { path: 'dashboard', component: DashboardComponent },
-      {path: 'activity', component: ActivityComponent},
+      {path: 'tasks', component: TaskComponent},
       { path: 'projects', component: ProjectsComponent },
       { path: 'projects/add', component: AddProjectComponent },
       { path: 'reports', component: ReportComponent },

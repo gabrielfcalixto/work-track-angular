@@ -30,7 +30,7 @@
         <td>{{ task.status }}</td>
         <td>
           <p-button icon="pi pi-pencil" (click)="openEditDialog(task)"></p-button>
-          <p-button icon="pi pi-key" (click)="openPermissionDialog(task)"></p-button>
+          <p-button icon="pi pi-key" (click)="openStatusDialog(task)"></p-button>
           <p-button icon="pi pi-trash" (click)="confirmDelete(task)" severity="danger"></p-button>
         </td>
       </tr>
@@ -88,4 +88,31 @@
       <p-button label="Salvar" icon="pi pi-check" (click)="saveEdit()"></p-button>
     </p-footer>
   </p-dialog>
+   <!-- Status Dialog -->
+   <p-dialog header="Status" [(visible)]="displayPermissionDialog" [modal]="true" [responsive]="true">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="status">Status</label>
+        <div class="p-field">
+          <label for="status">Status</label>
+          <input id="status" [ngModel]="selectedTask?.status || ''" (ngModelChange)="selectedTask!.status = $event" pInputText />
+        </div>
+      </div>
+      </div>
+    <p-footer>
+      <p-button label="Cancelar" icon="pi pi-times" (click)="displayPermissionDialog = false"></p-button>
+      <p-button label="Salvar" icon="pi pi-check" (click)="saveStatus()"></p-button>
+    </p-footer>
+  </p-dialog>
+    <!-- Excluir Usuário Dialog -->
+    <p-dialog header="Excluir Tarefa" [(visible)]="displayDeleteDialog" [modal]="true" [responsive]="true">
+      <p>Tem certeza que deseja excluir essa tarefa?</p>
+      <p-footer>
+        <p-button label="Cancelar" icon="pi pi-times" (click)="displayDeleteDialog = false"></p-button>
+        <p-button label="Excluir" icon="pi pi-check" severity="danger"
+    (click)="selectedTask ? deleteUser(selectedTask) : null">
+  </p-button>
+
+      </p-footer>
+    </p-dialog>
 </p-card>

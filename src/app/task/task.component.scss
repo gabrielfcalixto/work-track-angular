@@ -1,69 +1,11 @@
-.activity-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  padding: 20px;
+.p-toolbar-group-left {
+  flex: 1;
+}
 
-  .p-card {
-    width: 100%;
-    max-width: 800px;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-  }
+.p-toolbar-group-right {
+  text-align: right;
+}
 
-  .p-fluid {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .p-field {
-    display: flex;
-    flex-direction: column;
-
-    label {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    input {
-      width: 100%;
-    }
-  }
-
-  .p-button-success {
-    margin-top: 10px;
-    width: 100%;
-  }
-
-  .p-table {
-    margin-top: 20px;
-  }
-
-  th {
-    background-color: #f8f9fa;
-    text-align: left;
-    padding: 10px;
-  }
-
-  td {
-    padding: 10px;
-    vertical-align: middle;
-  }
-
-  .p-button {
-    margin-right: 5px;
-  }
-
-  .p-button-warning {
-    background-color: #ffc107;
-    color: #000;
-  }
-
-  .p-button-danger {
-    background-color: #dc3545;
-    color: #fff;
-  }
+.p-button {
+  margin-left: 5px;
 }

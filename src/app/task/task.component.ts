@@ -108,12 +108,12 @@ export class TaskComponent implements OnInit {
     }
   }
 
-  openPermissionDialog(task: Task) {
+  openStatusDialog(task: Task) {
     this.selectedTask = { ...task };
     this.displayPermissionDialog = true;
   }
 
-  savePermissions() {
+  saveStatus() {
     if (this.selectedTask) {
       this.taskService.updateStatus(this.selectedTask).subscribe(() =>{
       this.displayPermissionDialog = false;
