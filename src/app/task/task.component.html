@@ -68,19 +68,19 @@
     <div class="p-fluid">
       <div class="p-field">
         <label for="name">Nome</label>
-        <input id="name" [(ngModel)]="selectedTask?.name" pInputText />
+        <input id="name" [(ngModel)]="selectedTask.name" pInputText *ngIf="selectedTask"  />
       </div>
       <div class="p-field">
         <label for="description">Descrição</label>
-        <input id="description" [(ngModel)]="selectedTask?.description" pInputText />
+        <input id="description" [(ngModel)]="selectedTask.description" pInputText *ngIf="selectedTask" />
       </div>
       <div class="p-field">
         <label for="hours">Horas</label>
-        <input id="hours" type="number" [(ngModel)]="selectedTask?.hours" pInputText />
+        <input id="hours" type="number" [(ngModel)]="selectedTask.hours" pInputText *ngIf="selectedTask"  />
       </div>
       <div class="p-field">
         <label for="status">Status</label>
-        <input id="status" [(ngModel)]="selectedTask?.status" pInputText />
+        <input id="status" [(ngModel)]="selectedTask.status" pInputText  *ngIf="selectedTask" />
       </div>
     </div>
     <p-footer>
