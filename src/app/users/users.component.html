@@ -8,18 +8,20 @@
     </div>
   </p-toolbar>
 
-  <p-table [value]="users" [paginator]="true" [rows]="5" [globalFilterFields]="['name', 'email']">
+  <p-table [value]="users" [paginator]="true" [rows]="10" [globalFilterFields]="['name', 'login', 'email']">
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="name">Nome <p-sortIcon field="name"></p-sortIcon></th>
+        <th pSortableColumn="login">Login <p-sortIcon field="login"></p-sortIcon></th>
         <th pSortableColumn="email">E-mail <p-sortIcon field="email"></p-sortIcon></th>
-        <th>Função</th>
+        <th pSortableColumn="funcao">Função <p-sortIcon field="funcao"></p-sortIcon></th>
         <th>Ações</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-user>
       <tr>
         <td>{{ user.name }}</td>
+        <td>{{ user.login }}</td>
         <td>{{ user.email }}</td>
         <td>{{ user.role }}</td>
         <td>
@@ -53,7 +55,6 @@
       <div class="p-field">
         <label for="role">Função</label>
         <input id="role" [(ngModel)]="newUser.role" pInputText />
-
       </div>
     </div>
     <p-footer>

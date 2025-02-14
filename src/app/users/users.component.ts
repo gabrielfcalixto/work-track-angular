@@ -19,7 +19,6 @@ export class UsersComponent implements OnInit {
   searchTerm: string = '';
   newUser: Users = { name: '', login:'', password:'', email: '', role: '' };
 
-
   constructor(
     private usersService: UsersService,
     private confirmationService: ConfirmationService,
@@ -64,14 +63,14 @@ export class UsersComponent implements OnInit {
     if (this.selectedUser) {
       this.usersService.editUser(this.selectedUser).subscribe(() =>{
       this.displayEditDialog = false;
-      this.loadUsers();
       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado!' });
+      this.loadUsers();
     });
     }
   }
 
-  openPermissionDialog(users: Users) {
-    this.selectedUser = { ...users };
+  openPermissionDialog(user: Users) {
+    this.selectedUser = { ...user };
     this.displayPermissionDialog = true;
   }
 
@@ -91,11 +90,10 @@ export class UsersComponent implements OnInit {
 
   deleteUser(user: Users) {
     if (!user || user.id === undefined) return; // Garante que o ID está presente
-
     this.usersService.deleteUser(user.id).subscribe(() => {
-      this.loadUsers();
       this.displayDeleteDialog = false;
       this.messageService.add({ severity: 'warn', summary: 'Usuário removido', detail: 'Usuário foi excluído!' });
+      this.loadUsers();
     });
   }
 
