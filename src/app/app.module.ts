@@ -11,18 +11,20 @@ import { NotFoundComponent } from './not-found/not-found/not-found.component';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ProfileModule } from './profile/profile.module';
 import { ProjectModule } from './project/project.module';
-import { ActivityModule } from './task/task.module';
-import { ActivityService } from './task/task.service';
+import { TaskModule } from './task/task.module';
+import { TaskService } from './task/task.service';
 import { TableModule } from 'primeng/table';
 import { FormsModule } from '@angular/forms';
 import { UsersComponent } from './users/users.component';
 import { HttpClientModule } from '@angular/common/http';
+import { TaskComponent } from './task/task.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NotFoundComponent,
     UsersComponent,
+    TaskComponent
   ],
   imports: [
     BrowserModule,
@@ -36,11 +38,11 @@ import { HttpClientModule } from '@angular/common/http';
     ProfileModule,
     RouterModule,
     ProjectModule,
-    ActivityModule,
     TableModule,
-    FormsModule
+    FormsModule,
+    TaskModule
   ],
-  providers: [ActivityService],
+  providers: [TaskService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,38 +1,19 @@
 import { NgModule } from '@angular/core';
-import { Table, TableModule } from 'primeng/table';
-import { BrowserModule } from '@angular/platform-browser';
-import { DialogModule } from 'primeng/dialog';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { CardModule } from 'primeng/card';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { AppComponent } from '../app.component';
-import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { PrimeNGModule } from '../prime-ng/prime-ng.module';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
   declarations: [
 
-    TaskComponent
   ],
   imports: [
-    BrowserModule,
-    TableModule,
-    DialogModule,
-    ConfirmDialogModule,
-    ButtonModule,
-    InputTextModule,
-    CardModule,
-    FormsModule,
+    CommonModule,
+    PrimeNGModule,
+    HttpClientModule
 
 
   ],
-  providers: [MessageService,
-    ConfirmationService
-  ],
-  bootstrap: [AppComponent],
-  exports:[
-  ]
 })
 export class TaskModule { }

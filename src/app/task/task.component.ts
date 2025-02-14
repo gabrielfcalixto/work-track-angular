@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
-import { Task } from 'zone.js/lib/zone-impl';
+import { Task } from './task.model';
+import { TaskService } from './task.service';
 
 
 @Component({
@@ -12,14 +13,14 @@ import { Task } from 'zone.js/lib/zone-impl';
   providers: [ConfirmationService, MessageService]
 })
 export class TaskComponent implements OnInit {
-  tasks: Task[] = [];
-  selectedUser: Task | null = null;
+  task: Task[] = [];
+  selectedTask: Task | null = null;
   displayAddDialog = false;
   displayEditDialog = false;
   displayPermissionDialog = false;
   displayDeleteDialog = false;
   searchTerm: string = '';
-  newTask: Task = { name: '', description:'', hours:'', status: ''};
+  newTask: Task = { name: '', description:'', hours: 0, status: ''};
 
   constructor(
     private taskService: TaskService,
@@ -32,7 +33,7 @@ export class TaskComponent implements OnInit {
   }
 
   loadTask() {
-    this.taskService.getTask().subscribe(
+    this.taskService.getTasks().subscribe(
       task => {
         console.log(task);  // Verifique se os usuários estão sendo retornados
         this.task = task;
@@ -44,11 +45,11 @@ export class TaskComponent implements OnInit {
   }
 
   openAddDialog() {
-    this.newTask = { name: '', description:'', hours:'', status: ''};
+    this.newTask = { name: '', description:'', hours:0, status: ''};
     this.displayAddDialog = true;
   }
-  addUser() {
-    this.taskService.addUser(this.newTask).subscribe(() => {
+  addTask() {
+    this.taskService.addTask(this.newTask).subscribe(() => {
       this.displayAddDialog = false;
       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Task adicionada!' });
       this.loadTask();
@@ -93,13 +94,13 @@ export class TaskComponent implements OnInit {
 
 
   openEditDialog(task: Task) {
-    this.selectedUser = { ...task };
+    this.selectedTask = { ...task };
     this.displayEditDialog = true;
   }
 
   saveEdit() {
     if (this.selectedTask) {
-      this.taskService.editUser(this.selectedTask).subscribe(() =>{
+      this.taskService.editTask(this.selectedTask).subscribe(() =>{
       this.displayEditDialog = false;
       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Tarefa atualizada!' });
       this.loadTask();
@@ -108,13 +109,13 @@ export class TaskComponent implements OnInit {
   }
 
   openPermissionDialog(task: Task) {
-    this.selectedUser = { ...task };
+    this.selectedTask = { ...task };
     this.displayPermissionDialog = true;
   }
 
   savePermissions() {
     if (this.selectedTask) {
-      this.taskService.updatePermissions(this.selectedTask).subscribe(() =>{
+      this.taskService.updateStatus(this.selectedTask).subscribe(() =>{
       this.displayPermissionDialog = false;
       this.messageService.add({ severity: 'info', summary: 'Status atualizado', detail: 'Status da tarefa foi alterado!' });
     });

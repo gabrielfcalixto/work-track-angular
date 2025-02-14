@@ -1,84 +1,91 @@
-<p-card header="Atividades do Projeto">
-  <p-button label="Adicionar Atividade" icon="pi pi-plus" (click)="openAddDialog()" class="p-button-success mb-3"></p-button>
+<p-card>
+  <p-toolbar>
+    <div class="p-toolbar-group-left">
+      <p-inputText [(ngModel)]="searchTerm" placeholder="Buscar tarefa..." />
+    </div>
+    <div class="p-toolbar-group-right">
+      <p-button label="Adicionar" icon="pi pi-plus" (click)="openAddDialog()"></p-button>
+    </div>
+    <div class="report-buttons">
+      <p-button label="Gerar PDF" icon="pi pi-file-pdf" (click)="gerarPDF()" class="p-button-success"></p-button>
+      <p-button label="Gerar Excel" icon="pi pi-file-excel" (click)="gerarExcel()" class="p-button-info"></p-button>
+    </div>
+  </p-toolbar>
 
-  <p-table [value]="activities" [paginator]="true" [rows]="5">
+  <p-table [value]="task" [paginator]="true" [rows]="10" [globalFilterFields]="['name', 'description', 'hours', 'status']">
     <ng-template pTemplate="header">
       <tr>
-        <th>Nome</th>
-        <th>Descrição</th>
-        <th>Horas</th>
-        <th>Status</th>
+        <th pSortableColumn="name">Nome <p-sortIcon field="name"></p-sortIcon></th>
+        <th pSortableColumn="description">Descrição <p-sortIcon field="description"></p-sortIcon></th>
+        <th pSortableColumn="hours">Horas <p-sortIcon field="hours"></p-sortIcon></th>
+        <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
         <th>Ações</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-activity>
+    <ng-template pTemplate="body" let-task>
       <tr>
-        <td>{{ activity.name }}</td>
-        <td>{{ activity.description }}</td>
-        <td>{{ activity.hours }}</td>
+        <td>{{ task.name }}</td>
+        <td>{{ task.description }}</td>
+        <td>{{ task.hours }}</td>
+        <td>{{ task.status }}</td>
         <td>
-          <span [ngClass]="{'text-success': activity.completed, 'text-danger': !activity.completed}">
-            {{ activity.completed ? 'Concluído' : 'Pendente' }}
-          </span>
-        </td>
-        <td>
-          <p-button icon="pi pi-clock" label="Adicionar Horas" (click)="openAddHoursDialog(activity)" class="p-button-info p-button-sm"></p-button>
-          <p-button icon="pi pi-check" (click)="completeActivity(activity)" class="p-button-success p-button-sm"></p-button>
-          <p-button icon="pi pi-pencil" (click)="openEditDialog(activity)" class="p-button-warning p-button-sm"></p-button>
-          <p-button icon="pi pi-trash" (click)="confirmDelete(activity)" class="p-button-danger p-button-sm"></p-button>
+          <p-button icon="pi pi-pencil" (click)="openEditDialog(task)"></p-button>
+          <p-button icon="pi pi-key" (click)="openPermissionDialog(task)"></p-button>
+          <p-button icon="pi pi-trash" (click)="confirmDelete(task)" severity="danger"></p-button>
         </td>
       </tr>
     </ng-template>
   </p-table>
-</p-card>
 
-<!-- Diálogo para Adicionar Atividade -->
-<p-dialog header="Adicionar Atividade" [(visible)]="displayAddDialog" [modal]="true">
-  <div class="p-fluid">
-    <div class="p-field">
-      <label for="nome">Nome</label>
-      <input id="nome" type="text" pInputText [(ngModel)]="newActivity.name">
-    </div>
-    <div class="p-field">
-      <label for="descricao">Descrição</label>
-      <input id="descricao" type="text" pInputText [(ngModel)]="newActivity.description">
-    </div>
-    <div class="p-field">
-      <label for="horas">Horas</label>
-      <input id="horas" type="number" pInputText [(ngModel)]="newActivity.hours">
-    </div>
-    <p-button label="Salvar" icon="pi pi-check" (click)="addActivity()" class="p-button-success"></p-button>
-  </div>
-</p-dialog>
-
-<!-- Diálogo para Editar Atividade -->
-<p-dialog header="Editar Atividade" [(visible)]="displayEditDialog" [modal]="true">
-  <div class="p-fluid" *ngIf="selectedActivity">
-    <div class="p-field">
-      <label for="editNome">Nome</label>
-      <input id="editNome" type="text" pInputText [(ngModel)]="selectedActivity.name">
-    </div>
-    <div class="p-field">
-      <label for="editDescricao">Descrição</label>
-      <input id="editDescricao" type="text" pInputText [(ngModel)]="selectedActivity.description">
-    </div>
-    <p-button label="Salvar Alterações" icon="pi pi-check" (click)="saveEdit()" class="p-button-warning"></p-button>
-  </div>
-</p-dialog>
-<p-confirmDialog></p-confirmDialog>
-
-
-<!-- Diálogo para Adicionar Horas -->
-<p-dialog header="Adicionar Horas" [(visible)]="displayAddHoursDialog" [modal]="true">
-  <div class="p-fluid">
-    <div class="p-field">
-      <label for="hoursToAdd">Horas a adicionar</label>
-      <input id="hoursToAdd" type="number" pInputText [(ngModel)]="hoursToAdd" min="0" />
+  <!-- Adicionar Tarefa Dialog -->
+  <p-dialog header="Adicionar Tarefa" [(visible)]="displayAddDialog" [modal]="true" [responsive]="true">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="name">Nome</label>
+        <input id="name" [(ngModel)]="newTask.name" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="description">Descrição</label>
+        <input id="description" [(ngModel)]="newTask.description" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="hours">Horas</label>
+        <input id="hours" type="number" [(ngModel)]="newTask.hours" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="status">Status</label>
+        <input id="status" [(ngModel)]="newTask.status" pInputText />
+      </div>
     </div>
     <p-footer>
-      <p-button label="Cancelar" icon="pi pi-times" (click)="displayAddHoursDialog = false" class="p-button-text"></p-button>
-      <p-button label="Adicionar" icon="pi pi-check" (click)="addActivityHours()" class="p-button-success"></p-button>
+      <p-button label="Cancelar" icon="pi pi-times" (click)="displayAddDialog = false"></p-button>
+      <p-button label="Salvar" icon="pi pi-check" (click)="addTask()"></p-button>
     </p-footer>
-  </div>
-</p-dialog>
+  </p-dialog>
 
+  <!-- Editar Tarefa Dialog -->
+  <p-dialog header="Editar Tarefa" [(visible)]="displayEditDialog" [modal]="true" [responsive]="true">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="name">Nome</label>
+        <input id="name" [(ngModel)]="selectedTask?.name" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="description">Descrição</label>
+        <input id="description" [(ngModel)]="selectedTask?.description" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="hours">Horas</label>
+        <input id="hours" type="number" [(ngModel)]="selectedTask?.hours" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="status">Status</label>
+        <input id="status" [(ngModel)]="selectedTask?.status" pInputText />
+      </div>
+    </div>
+    <p-footer>
+      <p-button label="Cancelar" icon="pi pi-times" (click)="displayEditDialog = false"></p-button>
+      <p-button label="Salvar" icon="pi pi-check" (click)="saveEdit()"></p-button>
+    </p-footer>
+  </p-dialog>
+</p-card>
