@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { UsersService } from './users.service';
 import { Users } from './users.model';
+import { LoginComponent } from '../auth/login/login.component';
+import jsPDF from 'jspdf';
+import * as XLSX from 'xlsx';
+
 
 @Component({
   selector: 'app-user-management',
@@ -53,6 +57,42 @@ export class UsersComponent implements OnInit {
 
     });
   }
+    gerarPDF() {
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text('Relatório de Usuários', 10, 10);
+
+      let y = 20; // Posição inicial
+
+      this.users.forEach((user, index) => {
+        doc.setFontSize(12);
+        doc.text(`Nome: ${user.name}`, 10, y);
+        doc.text(`Login: ${user.login}`, 10, y + 6);
+        doc.text(`Email: ${user.email}`, 10, y + 12);
+        doc.text(`Função: ${user.role}`, 10, y + 18);
+
+        y += 30; // Ajusta o espaçamento entre os usuários
+      });
+
+      doc.save('relatorio_usuarios.pdf');
+    }
+
+
+    gerarExcel() {
+      const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
+        this.users.map(user => ({
+          Nome: user.name,
+          Login: user.login,
+          Email: user.email,
+          Função: user.role
+        }))
+      );
+
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Usuários');
+      XLSX.writeFile(wb, 'relatorio_usuarios.xlsx');
+    }
+
 
   openEditDialog(user: Users) {
     this.selectedUser = { ...user };
