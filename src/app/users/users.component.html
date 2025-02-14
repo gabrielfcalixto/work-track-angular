@@ -83,11 +83,9 @@
         <input id="password" [ngModel]="selectedUser?.password || ''" (ngModelChange)="selectedUser!.password = $event" pInputText />
       </div>
       <div class="p-field">
-        <label for="role">Senha</label>
+        <label for="role">Role</label>
         <input id="role" [ngModel]="selectedUser?.role || ''" (ngModelChange)="selectedUser!.role = $event" pInputText />
       </div>
-
-
     </div>
     <p-footer>
       <p-button label="Cancelar" icon="pi pi-times" (click)="displayEditDialog = false"></p-button>
@@ -100,15 +98,12 @@
     <div class="p-fluid">
       <div class="p-field">
         <label for="role">Função</label>
-        <p-dropdown
-        [ngModel]="selectedUser?.role || 'user'"
-        (ngModelChange)="selectedUser!.role = $event"
-        optionLabel="name"
-        optionValue="value">
-      </p-dropdown>
-
+        <div class="p-field">
+          <label for="role">Role</label>
+          <input id="role" [ngModel]="selectedUser?.role || ''" (ngModelChange)="selectedUser!.role = $event" pInputText />
+        </div>
       </div>
-    </div>
+      </div>
     <p-footer>
       <p-button label="Cancelar" icon="pi pi-times" (click)="displayPermissionDialog = false"></p-button>
       <p-button label="Salvar" icon="pi pi-check" (click)="savePermissions()"></p-button>
