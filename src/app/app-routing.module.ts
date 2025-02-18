@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './auth/login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { ReportComponent } from './report/report/report.component';
 import { ProfileComponent } from './profile/profile.component';
 import { LayoutComponent } from './layout/layout/layout.component';
 import { NotFoundComponent } from './not-found/not-found/not-found.component';
@@ -20,7 +19,6 @@ const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       {path: 'tasks', component: TaskComponent},
       { path: 'projects', component: ProjectComponent },
-      { path: 'reports', component: ReportComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'users', component: UsersComponent},
       { path: '', redirectTo: '/login', pathMatch: 'full' },
