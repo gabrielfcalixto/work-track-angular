@@ -18,13 +18,15 @@ import { FormsModule } from '@angular/forms';
 import { UsersComponent } from './users/users.component';
 import { HttpClientModule } from '@angular/common/http';
 import { TaskComponent } from './task/task.component';
+import { ProjectComponent } from './project/project.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NotFoundComponent,
     UsersComponent,
-    TaskComponent
+    TaskComponent,
+    ProjectComponent
   ],
   imports: [
     BrowserModule,
@@ -40,7 +42,8 @@ import { TaskComponent } from './task/task.component';
     ProjectModule,
     TableModule,
     FormsModule,
-    TaskModule
+    TaskModule,
+    ProjectModule
   ],
   providers: [TaskService],
   bootstrap: [AppComponent]

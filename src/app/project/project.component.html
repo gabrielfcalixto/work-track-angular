@@ -1,0 +1,122 @@
+<p-card>
+  <p-toolbar>
+    <div class="p-toolbar-group-left">
+      <p-inputText [(ngModel)]="searchTerm" placeholder="Buscar tarefa..." />
+    </div>
+    <div class="p-toolbar-group-right">
+      <p-button label="Adicionar" icon="pi pi-plus" (click)="openAddDialog()"></p-button>
+    </div>
+    <div class="report-buttons">
+      <p-button label="Gerar PDF" icon="pi pi-file-pdf" (click)="gerarPDF()" class="p-button-success"></p-button>
+      <p-button label="Gerar Excel" icon="pi pi-file-excel" (click)="gerarExcel()" class="p-button-info"></p-button>
+    </div>
+  </p-toolbar>
+
+  <p-table [value]="project" [paginator]="true" [rows]="10" [globalFilterFields]="['name', 'description', 'hours', 'status']">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="name">Nome <p-sortIcon field="name"></p-sortIcon></th>
+        <th pSortableColumn="description">Descrição <p-sortIcon field="description"></p-sortIcon></th>
+        <th pSortableColumn="hours">Horas <p-sortIcon field="hours"></p-sortIcon></th>
+        <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+        <th>Ações</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-project>
+      <tr>
+        <td>{{ project.name }}</td>
+        <td>{{ project.description }}</td>
+        <td>{{ project.hours }}</td>
+        <td>{{ project.status }}</td>
+        <td>
+          <p-button icon="pi pi-pencil" (click)="openEditDialog(project)"></p-button>
+          <p-button icon="pi pi-key" (click)="openStatusDialog(project)"></p-button>
+          <p-button icon="pi pi-trash" (click)="confirmDelete(project)" severity="danger"></p-button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Adicionar Tarefa Dialog -->
+  <p-dialog header="Adicionar Tarefa" [(visible)]="displayAddDialog" [modal]="true" [responsive]="true">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="name">Nome</label>
+        <input id="name" [(ngModel)]="newProject
+        .name" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="description">Descrição</label>
+        <input id="description" [(ngModel)]="newProject
+        .description" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="hours">Horas</label>
+        <input id="hours" type="number" [(ngModel)]="newProject
+        .hours" pInputText />
+      </div>
+      <div class="p-field">
+        <label for="status">Status</label>
+        <input id="status" [(ngModel)]="newProject
+        .status" pInputText />
+      </div>
+    </div>
+    <p-footer>
+      <p-button label="Cancelar" icon="pi pi-times" (click)="displayAddDialog = false"></p-button>
+      <p-button label="Salvar" icon="pi pi-check" (click)="addProject()"></p-button>
+    </p-footer>
+  </p-dialog>
+
+  <!-- Editar Tarefa Dialog -->
+  <p-dialog header="Editar Projeto" [(visible)]="displayEditDialog" [modal]="true" [responsive]="true">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="name">Nome</label>
+        <input id="name" [(ngModel)]="selectedProject.name" pInputText *ngIf="selectedProject"  />
+      </div>
+      <div class="p-field">
+        <label for="description">Descrição</label>
+        <input id="description" [(ngModel)]="selectedProject.description" pInputText *ngIf="selectedProject" />
+      </div>
+      <div class="p-field">
+        <label for="hours">Horas</label>
+        <input id="hours" type="number" [(ngModel)]="selectedProject.hours" pInputText *ngIf="selectedProject"  />
+      </div>
+      <div class="p-field">
+        <label for="status">Status</label>
+        <input id="status" [(ngModel)]="selectedProject.status" pInputText  *ngIf="selectedProject" />
+      </div>
+    </div>
+    <p-footer>
+      <p-button label="Cancelar" icon="pi pi-times" (click)="displayEditDialog = false"></p-button>
+      <p-button label="Salvar" icon="pi pi-check" (click)="saveEdit()"></p-button>
+    </p-footer>
+  </p-dialog>
+   <!-- Status Dialog -->
+   <p-dialog header="Status" [(visible)]="displayPermissionDialog" [modal]="true" [responsive]="true">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="status">Status</label>
+        <div class="p-field">
+          <label for="status">Status</label>
+          <input id="status" [ngModel]="selectedProject?.status || ''" (ngModelChange)="selectedProject!.status = $event" pInputText />
+        </div>
+      </div>
+      </div>
+    <p-footer>
+      <p-button label="Cancelar" icon="pi pi-times" (click)="displayPermissionDialog = false"></p-button>
+      <p-button label="Salvar" icon="pi pi-check" (click)="saveStatus()"></p-button>
+    </p-footer>
+  </p-dialog>
+    <!-- Excluir Usuário Dialog -->
+    <p-dialog header="Excluir Tarefa" [(visible)]="displayDeleteDialog" [modal]="true" [responsive]="true">
+      <p>Tem certeza que deseja excluir essa tarefa?</p>
+      <p-footer>
+        <p-button label="Cancelar" icon="pi pi-times" (click)="displayDeleteDialog = false"></p-button>
+        <p-button label="Excluir" icon="pi pi-check" severity="danger"
+    (click)="selectedProject ? deleteUser(selectedProject) : null">
+  </p-button>
+
+      </p-footer>
+    </p-dialog>
+</p-card>
