@@ -1,41 +1,43 @@
 @import "primeicons/primeicons.css";
 
-@import "primeng/resources/themes/lara-light-blue/theme.css";
+// @import "primeng/resources/themes/lara-dark-teal/theme.css";
+
+// @import "primeng/resources/themes/lara-light-teal/theme.css";
 @import "primeng/resources/primeng.css";
 
 
-/* Estilos padrão */
-body {
-  --background-color: #ffffff;
-  --text-color: #000000;
-  background-color: var(--background-color);
-  color: var(--text-color);
-  transition: background-color 0.3s, color 0.3s;
-}
-/* Quando ativar o modo escuro */
-body.dark-mode {
-  --background-color: #1e1e1e;
-  --text-color: #ffffff;
-}
+// /* Estilos padrão */
+// body {
+//   --background-color: #ffffff;
+//   --text-color: #000000;
+//   background-color: var(--background-color);
+//   color: var(--text-color);
+//   transition: background-color 0.3s, color 0.3s;
+// }
+// /* Quando ativar o modo escuro */
+// body.dark-mode {
+//   --background-color: #1e1e1e;
+//   --text-color: #ffffff;
+// }
 
-/* Estilos para o p-card no modo escuro */
-body.dark-mode .projects-card,
-body.dark-mode ::ng-deep .p-card {
-  background-color: #2b2b2b !important; /* Fundo escuro */
-  color: #ffffff !important; /* Texto branco */
-  border: 1px solid #444 !important; /* Borda para destacar */
-}
+// /* Estilos para o p-card no modo escuro */
+// body.dark-mode .projects-card,
+// body.dark-mode ::ng-deep .p-card {
+//   background-color: #2b2b2b !important; /* Fundo escuro */
+//   color: #ffffff !important; /* Texto branco */
+//   border: 1px solid #444 !important; /* Borda para destacar */
+// }
 
-/* Ajustar o título e conteúdo do p-card */
-body.dark-mode ::ng-deep .p-card .p-card-body {
-  background-color: #2b2b2b !important;
-  color: #ffffff !important;
-}
+// /* Ajustar o título e conteúdo do p-card */
+// body.dark-mode ::ng-deep .p-card .p-card-body {
+//   background-color: #2b2b2b !important;
+//   color: #ffffff !important;
+// }
 
-body.dark-mode ::ng-deep .p-card .p-card-title {
-  color: #ffffff !important;
-}
+// body.dark-mode ::ng-deep .p-card .p-card-title {
+//   color: #ffffff !important;
+// }
 
-body.dark-mode ::ng-deep .p-card .p-card-content {
-  color: #dddddd !important;
-}
+// body.dark-mode ::ng-deep .p-card .p-card-content {
+//   color: #dddddd !important;
+// }

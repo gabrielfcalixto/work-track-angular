@@ -4,6 +4,9 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class ThemeService {
+  private themeLinkId = 'theme-link';
+  private darkTheme = 'assets/themes/lara-dark-teal/theme.css';
+  private lightTheme = 'assets/themes/lara-light-teal/theme.css';
   private darkModeKey = 'dark-mode';
 
   constructor() {
@@ -11,15 +14,28 @@ export class ThemeService {
   }
 
   toggleTheme(): void {
-    document.body.classList.toggle('dark-mode');
-    const isDarkMode = document.body.classList.contains('dark-mode');
+    const isDarkMode = document.body.classList.toggle('dark-mode');
     localStorage.setItem(this.darkModeKey, JSON.stringify(isDarkMode));
+    this.setTheme(isDarkMode ? this.darkTheme : this.lightTheme);
   }
 
   private loadTheme(): void {
     const savedTheme = localStorage.getItem(this.darkModeKey);
-    if (savedTheme === 'true') {
-      document.body.classList.add('dark-mode');
+    const isDarkMode = savedTheme === 'true';
+    document.body.classList.toggle('dark-mode', isDarkMode);
+    this.setTheme(isDarkMode ? this.darkTheme : this.lightTheme);
+  }
+
+  private setTheme(themePath: string): void {
+    let themeLink = document.getElementById(this.themeLinkId) as HTMLLinkElement;
+
+    if (!themeLink) {
+      themeLink = document.createElement('link');
+      themeLink.id = this.themeLinkId;
+      themeLink.rel = 'stylesheet';
+      document.head.appendChild(themeLink);
     }
+
+    themeLink.href = themePath;
   }
 }
