@@ -14,11 +14,13 @@ import { ProjectModule } from './project/project.module';
 import { TaskModule } from './task/task.module';
 import { TaskService } from './task/task.service';
 import { TableModule } from 'primeng/table';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UsersComponent } from './users/users.component';
 import { HttpClientModule } from '@angular/common/http';
 import { TaskComponent } from './task/task.component';
 import { ProjectComponent } from './project/project.component';
+import { TimeEntryComponent } from './time-entry/time-entry.component';
+import { TimeEntryModule } from './time-entry/time-entry.module';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,8 @@ import { ProjectComponent } from './project/project.component';
     NotFoundComponent,
     UsersComponent,
     TaskComponent,
-    ProjectComponent
+    ProjectComponent,
+    TimeEntryComponent
   ],
   imports: [
     BrowserModule,
@@ -43,7 +46,9 @@ import { ProjectComponent } from './project/project.component';
     TableModule,
     FormsModule,
     TaskModule,
-    ProjectModule
+    ProjectModule,
+    TimeEntryModule,
+    ReactiveFormsModule
   ],
   providers: [TaskService],
   bootstrap: [AppComponent]
