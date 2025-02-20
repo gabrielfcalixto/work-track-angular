@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './auth/login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProfileComponent } from './profile/profile.component';
-import { LayoutComponent } from './layout/layout/layout.component';
+import { LayoutComponent } from './layout/layout.component';
 import { NotFoundComponent } from './not-found/not-found/not-found.component';
 import { UsersComponent } from './users/users.component';
 import { TaskComponent } from './task/task.component';
