@@ -8,6 +8,7 @@ import { NotFoundComponent } from './not-found/not-found/not-found.component';
 import { UsersComponent } from './users/users.component';
 import { TaskComponent } from './task/task.component';
 import { ProjectComponent } from './project/project.component';
+import { TimeEntryComponent } from './time-entry/time-entry.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -21,6 +22,8 @@ const routes: Routes = [
       { path: 'projects', component: ProjectComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'users', component: UsersComponent},
+      {path:'time-entry', component: TimeEntryComponent},
+
       { path: '', redirectTo: '/login', pathMatch: 'full' },
 
     ]
