@@ -12,26 +12,22 @@ import { TimeEntryComponent } from './time-entry/time-entry.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: '', redirectTo: '/login', pathMatch: 'full' }, // Movido para fora do LayoutComponent
 
   {
     path: '',
-    component: LayoutComponent, //Aplica o Layout para todas outras páginas
+    component: LayoutComponent, // Aplica o Layout para todas outras páginas
     children: [
       { path: 'dashboard', component: DashboardComponent },
-      {path: 'tasks', component: TaskComponent},
+      { path: 'tasks', component: TaskComponent },
       { path: 'projects', component: ProjectComponent },
       { path: 'profile', component: ProfileComponent },
-      { path: 'users', component: UsersComponent},
-      {path:'time-entry', component: TimeEntryComponent},
-
-      { path: '', redirectTo: '/login', pathMatch: 'full' },
-
+      { path: 'users', component: UsersComponent },
+      { path: 'time-entry', component: TimeEntryComponent },
     ]
   },
-  {path: '**', component:NotFoundComponent} //Rota coringa para evitar erros 404
-
+  { path: '**', component: NotFoundComponent } // Rota coringa para evitar erros 404
 ];
-
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

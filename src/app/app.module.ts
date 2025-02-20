@@ -21,6 +21,7 @@ import { TaskComponent } from './task/task.component';
 import { ProjectComponent } from './project/project.component';
 import { TimeEntryComponent } from './time-entry/time-entry.component';
 import { TimeEntryModule } from './time-entry/time-entry.module';
+import { LoginComponent } from './auth/login/login.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,7 @@ import { TimeEntryModule } from './time-entry/time-entry.module';
     UsersComponent,
     TaskComponent,
     ProjectComponent,
-    TimeEntryComponent
+    TimeEntryComponent,
   ],
   imports: [
     BrowserModule,
@@ -40,7 +41,6 @@ import { TimeEntryModule } from './time-entry/time-entry.module';
     PrimeNGModule,  // Se esse for um módulo compartilhado do PrimeNG, mantenha ele aqui para uso global
     LayoutModule,
     RouterModule,
-    ProfileModule,
     RouterModule,
     ProjectModule,
     TableModule,
@@ -48,7 +48,8 @@ import { TimeEntryModule } from './time-entry/time-entry.module';
     TaskModule,
     ProjectModule,
     TimeEntryModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ProfileModule
   ],
   providers: [TaskService],
   bootstrap: [AppComponent]

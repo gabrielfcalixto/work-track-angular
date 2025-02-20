@@ -1,28 +1,6 @@
-// :host {
-//   display: block;
-// }
-
-// .p-sidebar {
-//   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-//   border-radius: 8px;
-//   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-// }
-
-// .p-sidebar .p-sidebar-header {
-//   padding: 1.5rem;
-//   border-bottom: 1px solid #e5e7eb;
-//   font-weight: 600;
-//   font-size: 1.1rem;
-// }
-
-// .p-sidebar .p-sidebar-content {
-//   padding: 1.5rem;
-//   font-size: 1rem;
-// }
-
-// .p-sidebar:hover {
-//   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-// }
+:host {
+  display: block;
+}
 
 .sidebar-container {
   display: flex;
@@ -71,7 +49,7 @@
         cursor: pointer;
         padding: 1rem;
         border-radius: 5px;
-        color: #555;
+        color: #555; // Cor padrão (modo claro)
         text-decoration: none;
         transition: background-color 0.2s, color 0.2s;
 
@@ -112,10 +90,60 @@
       font-weight: bold;
     }
   }
+
   .active-menu-item {
     background-color: #e0e0e0;
     font-weight: bold;
     border-radius: 5px;
   }
+}
 
+/* Estilos do modo escuro */
+:host-context(.dark-theme) {
+  .sidebar-container {
+    background-color: #1e1e1e; // Fundo escuro
+
+    .sidebar-header {
+      border-bottom: 1px solid #444;
+    }
+
+    .close-button {
+      color: #fff;
+
+      &:hover {
+        background-color: #333;
+      }
+    }
+
+    .sidebar-menu {
+      ul {
+        .menu-item {
+          color: #ddd; // Texto claro no modo escuro
+
+          &:hover {
+            background-color: #333;
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid #444;
+
+      .profile-section {
+        color: #ddd;
+
+        &:hover {
+          background-color: #333;
+          color: #fff;
+        }
+      }
+    }
+
+    .active-menu-item {
+      background-color: #444;
+      color: #fff;
+    }
+  }
 }
