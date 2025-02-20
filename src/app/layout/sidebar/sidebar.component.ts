@@ -18,9 +18,11 @@ export class SidebarComponent {
   menuItems = [
     { label: 'Dashboard', link: '/dashboard', icon: 'pi pi-home' },
     { label: 'Projetos', link: '/projects', icon: 'pi pi-folder' },
-    { label: 'Atividades', link: '/activity', icon: 'pi pi-list' },
-    { label: 'Relatórios', link: '/reports', icon: 'pi pi-chart-bar' },
-    { label: 'Usuários', link: '/profile', icon: 'pi pi-users' },
+    { label: 'Tarefas', link: '/tasks', icon: 'pi pi-list' },
+    // { label: 'Relatórios', link: '/reports', icon: 'pi pi-chart-bar' },
+    { label: 'Lançamento', link: '/time-entry', icon: 'pi pi-users' },
+
+    { label: 'Usuários', link: '/users', icon: 'pi pi-users' },
     { label: 'Perfil', link: '/profile', icon: 'pi pi-user' }
 
   ];
@@ -33,5 +35,9 @@ export class SidebarComponent {
 
   toggleSidebar(): void {
     this.sidebarVisible = !this.sidebarVisible; // alterna visibilidade do SideNav
+  }
+  navigateTo(link: string): void {
+    this.router.navigate([link]);
+    this.sidebarVisible = false;
   }
 }
