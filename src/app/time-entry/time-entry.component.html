@@ -5,6 +5,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th>Tarefa</th>
+        <th>Descrição</th>
         <th>Data</th>
         <th>Início</th>
         <th>Fim</th>
@@ -14,6 +15,7 @@
     <ng-template pTemplate="body" let-entry>
       <tr>
         <td>{{ entry.taskId }}</td>
+        <td>{{entry.description}}</td>
         <td>{{ entry.entryDate }}</td>
         <td>{{ entry.startTime }}</td>
         <td>{{ entry.endTime }}</td>
@@ -28,6 +30,10 @@
         <div class="p-field">
           <label for="task">Tarefa</label>
           <input id="task" type="text" pInputText formControlName="taskId">
+        </div>
+        <div class="p-field">
+          <label for="text">Descrição</label>
+          <input id="text" type="text" pInputText formControlName="description">
         </div>
         <div class="p-field">
           <label for="date">Data</label>
