@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { UsersService } from './users.service';
 import { Users } from './users.model';
-import { LoginComponent } from '../auth/login/login.component';
+import { LoginComponent } from '../login/login.component';
 import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 

@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './login/login.module';
 import { PrimeNGModule } from './prime-ng/prime-ng.module';
 import { LayoutModule } from './layout/layout.module';
 import { RouterModule } from '@angular/router';
@@ -21,7 +21,7 @@ import { TaskComponent } from './task/task.component';
 import { ProjectComponent } from './project/project.component';
 import { TimeEntryComponent } from './time-entry/time-entry.component';
 import { TimeEntryModule } from './time-entry/time-entry.module';
-import { LoginComponent } from './auth/login/login.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -30,23 +30,20 @@ import { LoginComponent } from './auth/login/login.component';
     UsersComponent,
     TaskComponent,
     ProjectComponent,
-    TimeEntryComponent,
+    TimeEntryComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    AuthModule,
     DashboardModule,
     PrimeNGModule,
     LayoutModule,
-    RouterModule,
-    RouterModule,
+    RouterModule, // Mantido apenas uma vez
     ProjectModule,
     TableModule,
     FormsModule,
     TaskModule,
-    ProjectModule,
     TimeEntryModule,
     ReactiveFormsModule,
     ProfileModule

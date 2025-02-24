@@ -22,7 +22,8 @@ import { DropdownModule } from 'primeng/dropdown';
     FormsModule,
     ConfirmDialogModule,
     DialogModule,
-    TableModule
+    TableModule,
+    DropdownModule
   ],
   exports: [
     CommonModule,

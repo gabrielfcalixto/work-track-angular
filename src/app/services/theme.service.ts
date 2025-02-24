@@ -25,6 +25,11 @@ export class ThemeService {
     document.body.classList.toggle('dark-mode', isDarkMode);
     this.setTheme(isDarkMode ? this.darkTheme : this.lightTheme);
   }
+  getTheme(): string {
+    // Verifica se o body possui a classe 'dark-mode'
+    return document.body.classList.contains('dark-mode') ? 'lara-dark' : 'lara-light';
+  }
+
 
   private setTheme(themePath: string): void {
     let themeLink = document.getElementById(this.themeLinkId) as HTMLLinkElement;
