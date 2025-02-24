@@ -15,7 +15,6 @@ export class LoginComponent implements OnInit {
   constructor(private router: Router, private themeService: ThemeService) {}
 
   ngOnInit(): void {
-    // Verifica se o tema atual é escuro
     this.isDarkMode = document.body.classList.contains('dark-mode');
   }
 

@@ -39,11 +39,7 @@ export class NavbarComponent {
     this.router.navigate(['/profile']); // Navega para a página de Perfil
   }
   logout(): void {
-    // Aqui você pode adicionar a lógica de logout, como limpar tokens ou sessões
-    // Exemplo: chamar um serviço de autenticação
-    // this.authService.logout();
 
-    // Redirecionar para a página de login após logout
     this.router.navigate(['/login']);
   }
 
