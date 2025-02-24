@@ -37,8 +37,8 @@ import { LoginComponent } from './auth/login/login.component';
     AppRoutingModule,
     HttpClientModule,
     AuthModule,
-    DashboardModule, // Importa o DashboardModule para acessar o DashboardComponent
-    PrimeNGModule,  // Se esse for um módulo compartilhado do PrimeNG, mantenha ele aqui para uso global
+    DashboardModule,
+    PrimeNGModule,
     LayoutModule,
     RouterModule,
     RouterModule,

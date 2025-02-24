@@ -10,14 +10,9 @@ export class LoginComponent {
   username: string = '';
   password: string = '';
 
-  constructor(private router: Router) {}  // Injete o Router no construtor
+  constructor(private router: Router) {}
 
   onSubmit() {
-    // Aqui você pode adicionar a lógica para verificar o login
-    if (this.username === 'admin' && this.password === 'password') {  // Exemplo de validação simples
-      this.router.navigate(['/dashboard']);  // Redireciona para o dashboard
-    } else {
-      alert('Invalid credentials');  // Exibe um alerta simples caso o login falhe
-    }
+      this.router.navigate(['/dashboard']);
   }
 }
