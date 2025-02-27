@@ -1,20 +1,28 @@
+import { ProfileService } from './profile.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.scss'
+  styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-  user = {
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    username: 'johndoe',
-    joinDate: '2022-01-01'
-  };
+  user: any = null; // Inicializa sem usuário
 
-  constructor() { }
+  constructor(private profileService: ProfileService) {}
 
   ngOnInit(): void {
+    this.loadUserProfile();
+  }
+
+  loadUserProfile(): void {
+    this.profileService.getUser().subscribe(
+      (data) => {
+        this.user = data; // Preenche com os dados vindos do backend
+      },
+      (error) => {
+        console.error('Erro ao carregar perfil:', error);
+      }
+    );
   }
 }

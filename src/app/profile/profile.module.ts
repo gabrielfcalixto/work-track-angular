@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ProfileComponent } from './profile.component';
 import { FormsModule } from '@angular/forms';
 import { ProfileRoutingModule } from './profile-routing.module';
-
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
 
 @NgModule({
   declarations: [
@@ -12,7 +12,8 @@ import { ProfileRoutingModule } from './profile-routing.module';
   imports: [
     CommonModule,
     FormsModule,
-    ProfileRoutingModule
+    ProfileRoutingModule,
+    ProgressSpinnerModule
   ]
 })
 export class ProfileModule { }

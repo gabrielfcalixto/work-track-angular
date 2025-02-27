@@ -1,23 +1,28 @@
-<div class="profile-container">
+<!-- Se os dados ainda não foram carregados, mostra o loading -->
+<div *ngIf="!user" class="loading">
+  <p-progressSpinner></p-progressSpinner>
+</div>
+
+<div class="profile-container" *ngIf="user">
   <div class="profile-header">
-    <h1>Your Profile</h1>
+    <h1>Perfil</h1>
   </div>
   <div class="profile-info">
     <div class="info-item">
-      <strong>Full Name: </strong>
-      <span>{{ user.name }}</span>
+      <strong>Nome completo: </strong>
+      <span>{{ user?.name }}</span>
     </div>
     <div class="info-item">
       <strong>Email: </strong>
-      <span>{{ user.email }}</span>
+      <span>{{ user?.email }}</span>
     </div>
     <div class="info-item">
       <strong>Username: </strong>
-      <span>{{ user.username }}</span>
+      <span>{{ user?.username }}</span>
     </div>
     <div class="info-item">
       <strong>Join Date: </strong>
-      <span>{{ user.joinDate }}</span>
+      <span>{{ user?.joinDate }}</span>
     </div>
     <a routerLink="edit/" class="edit-btn">Edit Profile</a>
   </div>
