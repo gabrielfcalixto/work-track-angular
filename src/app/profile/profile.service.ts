@@ -10,6 +10,11 @@ export class ProfileService {
 
   constructor(private http: HttpClient) {}
 
+
+
+  getUserById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
   getUser(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/profile`);
   }
@@ -17,4 +22,6 @@ export class ProfileService {
   updateUser(userData: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/update`, userData);
   }
+
+
 }

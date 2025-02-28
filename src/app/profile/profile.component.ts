@@ -12,8 +12,12 @@ export class ProfileComponent implements OnInit {
   constructor(private profileService: ProfileService) {}
 
   ngOnInit(): void {
-    this.loadUserProfile();
+    const userId = 1; // Troque pelo ID correto do usuário (futuramente, pode pegar do token JWT)
+    this.profileService.getUserById(userId).subscribe((data) => {
+      this.user = data;
+    });
   }
+
 
   loadUserProfile(): void {
     this.profileService.getUser().subscribe(
