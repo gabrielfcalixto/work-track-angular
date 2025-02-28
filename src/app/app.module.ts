@@ -16,12 +16,13 @@ import { TaskService } from './task/task.service';
 import { TableModule } from 'primeng/table';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UsersComponent } from './users/users.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { TaskComponent } from './task/task.component';
 import { ProjectComponent } from './project/project.component';
 import { TimeEntryComponent } from './time-entry/time-entry.component';
 import { TimeEntryModule } from './time-entry/time-entry.module';
 import { LoginComponent } from './login/login.component';
+import { AuthInterceptor } from './auth/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,10 @@ import { LoginComponent } from './login/login.component';
     ReactiveFormsModule,
     ProfileModule
   ],
-  providers: [TaskService],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+
+    TaskService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
