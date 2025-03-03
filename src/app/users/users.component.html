@@ -12,6 +12,7 @@
       <p-button label="Gerar Excel" icon="pi pi-file-excel" (click)="gerarExcel()" class="p-button-info"></p-button>
     </div>
   </p-toolbar>
+  <p-progressSpinner *ngIf="loading" [style]="{'width': '50px', 'height': '50px'}"></p-progressSpinner>
 
   <p-table [value]="users" [paginator]="true" [rows]="10" [globalFilterFields]="['name', 'login', 'email']">
     <ng-template pTemplate="header">
@@ -38,7 +39,6 @@
     </ng-template>
   </p-table>
 
-  <!-- Adicionar Usuário Dialog -->
   <p-dialog header="Adicionar Usuário" [(visible)]="displayAddDialog" [modal]="true" [responsive]="true">
     <div class="p-fluid">
       <div class="p-field">
@@ -54,12 +54,17 @@
         <input id="login" [(ngModel)]="newUser.login" pInputText />
       </div>
       <div class="p-field">
-        <label for="password">Senha</label>
-        <input id="password" [(ngModel)]="newUser.password" pInputText />
-      </div>
-      <div class="p-field">
         <label for="role">Função</label>
-        <input id="role" [(ngModel)]="newUser.role" pInputText />
+        <p-dropdown
+        id="role"
+        [(ngModel)]="newUser.role"
+        [options]="roles"
+        optionLabel="name"
+        placeholder="Selecione o papel"
+        [showClear]="true"
+        appendTo="body">
+      </p-dropdown>
+
       </div>
     </div>
     <p-footer>
@@ -83,14 +88,18 @@
         <label for="login">Login</label>
         <input id="login" [ngModel]="selectedUser?.login || ''" (ngModelChange)="selectedUser!.login = $event" pInputText />
       </div>
-      <div class="p-field">
-        <label for="password">Senha</label>
-        <input id="password" [ngModel]="selectedUser?.password || ''" (ngModelChange)="selectedUser!.password = $event" pInputText />
-      </div>
+
       <div class="p-field">
         <label for="role">Role</label>
-        <input id="role" [ngModel]="selectedUser?.role || ''" (ngModelChange)="selectedUser!.role = $event" pInputText />
-      </div>
+        <p-dropdown
+        id="role"
+        [(ngModel)]="newUser.role"
+        [options]="roles"
+        optionLabel="name"
+        placeholder="Selecione o papel"
+        [showClear]="true"
+        appendTo="body">
+      </p-dropdown>      </div>
     </div>
     <p-footer>
       <p-button label="Cancelar" icon="pi pi-times" (click)="displayEditDialog = false"></p-button>
@@ -102,11 +111,16 @@
   <p-dialog header="Permissões" [(visible)]="displayPermissionDialog" [modal]="true" [responsive]="true">
     <div class="p-fluid">
       <div class="p-field">
-        <label for="role">Função</label>
         <div class="p-field">
-          <label for="role">Role</label>
-          <input id="role" [ngModel]="selectedUser?.role || ''" (ngModelChange)="selectedUser!.role = $event" pInputText />
-        </div>
+          <p-dropdown
+          id="role"
+          [(ngModel)]="newUser.role"
+          [options]="roles"
+          optionLabel="name"
+          placeholder="Selecione o papel"
+          [showClear]="true"
+          appendTo="body">
+        </p-dropdown>        </div>
       </div>
       </div>
     <p-footer>
@@ -119,7 +133,8 @@
   <p-dialog header="Excluir Usuário" [(visible)]="displayDeleteDialog" [modal]="true" [responsive]="true">
     <p>Tem certeza que deseja excluir este usuário?</p>
     <p-footer>
-      <p-button label="Cancelar" icon="pi pi-times" (click)="displayDeleteDialog = false"></p-button>
+      <p-button label="Cancelar" icon="pi pi-times" (click)="displayDeleteDialog = false">
+  </p-button>
       <p-button label="Excluir" icon="pi pi-check" severity="danger"
   (click)="selectedUser ? deleteUser(selectedUser) : null">
 </p-button>

@@ -21,7 +21,13 @@ export class UsersComponent implements OnInit {
   displayPermissionDialog = false;
   displayDeleteDialog = false;
   searchTerm: string = '';
-  newUser: Users = { name: '', login:'', password:'', email: '', role: '' };
+  newUser: any = {}; // Defina as propriedades do novo usuário
+  roles: any[] = [
+    { name: 'User', value: 'USER' },
+    { name: 'Manager', value: 'MANAGER' },
+    { name: 'Admin', value: 'ADMIN' }
+  ];
+
 
   constructor(
     private usersService: UsersService,
@@ -33,30 +39,39 @@ export class UsersComponent implements OnInit {
     this.loadUsers();
   }
 
+  loading: boolean = false;
+
   loadUsers() {
+    this.loading = true;
     this.usersService.getUsers().subscribe(
       users => {
         console.log(users);  // Verifique se os usuários estão sendo retornados
         this.users = users;
+        this.loading = false;
       },
       error => {
         console.error('Erro ao carregar os usuários:', error);
+        this.loading = false;
       }
     );
   }
 
   openAddDialog() {
-    this.newUser = { name: '', login:'', password:'', email: '', role: ''};
+    this.newUser = {};
     this.displayAddDialog = true;
   }
   addUser() {
+    if (!this.newUser.name || !this.newUser.email || !this.newUser.login || !this.newUser.role) {
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Todos os campos são obrigatórios!' });
+      return;
+    }
     this.usersService.addUser(this.newUser).subscribe(() => {
       this.displayAddDialog = false;
       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário adicionado!' });
       this.loadUsers();
-
     });
   }
+
     gerarPDF() {
       const doc = new jsPDF();
       doc.setFontSize(16);
@@ -100,14 +115,20 @@ export class UsersComponent implements OnInit {
   }
 
   saveEdit() {
+    if (!this.selectedUser?.name || !this.selectedUser?.email || !this.selectedUser?.login || !this.selectedUser?.role) {
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Todos os campos são obrigatórios!' });
+      return;
+    }
+
     if (this.selectedUser) {
-      this.usersService.editUser(this.selectedUser).subscribe(() =>{
-      this.displayEditDialog = false;
-      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado!' });
-      this.loadUsers();
-    });
+      this.usersService.editUser(this.selectedUser).subscribe(() => {
+        this.displayEditDialog = false;
+        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado!' });
+        this.loadUsers();
+      });
     }
   }
+
 
   openPermissionDialog(user: Users) {
     this.selectedUser = { ...user };
