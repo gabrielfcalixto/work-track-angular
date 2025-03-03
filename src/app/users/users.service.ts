@@ -3,54 +3,50 @@ import { Users } from './users.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
-  private apiUrl = 'http://localhost:8080/user';
+  private apiUrl = `${environment.apiUrl}/user`; // URL configurada no environment
 
-  constructor(private http: HttpClient){}
-
-  // Função para gerar os headers com token
-  private createHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token'); // Ou onde você armazena o token
-    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
-  }
+  constructor(private http: HttpClient) {}
 
   getUsers(): Observable<Users[]> {
-    const headers = this.createHeaders();
-    return this.http.get<Users[]>(`${this.apiUrl}`, { headers })
-      .pipe(catchError(this.handleError)); // Usa o catchError para tratar o erro
+    return this.http.get<Users[]>(this.apiUrl).pipe(catchError(this.handleError));
   }
 
   addUser(user: Users): Observable<Users> {
-    const headers = this.createHeaders();
-    return this.http.post<Users>(`${this.apiUrl}/addUser`, user, { headers })
-      .pipe(catchError(this.handleError)); // Usa o catchError para tratar o erro
+    return this.http.post<Users>(`${this.apiUrl}/addUser`, user)
+      .pipe(catchError(this.handleError));
   }
 
   editUser(user: Users): Observable<Users> {
-    const headers = this.createHeaders();
-    return this.http.put<Users>(`${this.apiUrl}/${user.id}`, user, { headers })
-      .pipe(catchError(this.handleError)); // Usa o catchError para tratar o erro
+    return this.http.put<Users>(`${this.apiUrl}/${user.id}`, user)
+      .pipe(catchError(this.handleError));
   }
 
   updatePermissions(user: Users): Observable<Users> {
-    const headers = this.createHeaders();
-    return this.http.patch<Users>(`${this.apiUrl}/${user.id}/permissions`, { role: user.role }, { headers })
-      .pipe(catchError(this.handleError)); // Usa o catchError para tratar o erro
+    return this.http.patch<Users>(`${this.apiUrl}/${user.id}/permissions`, { role: user.role })
+      .pipe(catchError(this.handleError));
   }
 
-  deleteUser(userId: number): Observable<void> {
-    const headers = this.createHeaders();
-    return this.http.delete<void>(`${this.apiUrl}/${userId}`, { headers })
-      .pipe(catchError(this.handleError)); // Usa o catchError para tratar o erro
+  deleteUser(userId: number): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/${userId}`)
+      .pipe(catchError(this.handleError));
   }
 
   private handleError(error: any) {
-    // Trate o erro conforme necessário
-    console.error('Erro na requisição:', error);
-    return throwError('Algo deu errado. Tente novamente.');
+    let errorMessage = 'Erro desconhecido. Tente novamente.';
+    if (error.error instanceof ErrorEvent) {
+      // Erro no cliente
+      errorMessage = `Erro: ${error.error.message}`;
+    } else if (error.status && error.error?.message) {
+      // Erro do backend com mensagem de resposta
+      errorMessage = `Erro ${error.status}: ${error.error.message}`;
+    }
+    console.error(errorMessage);
+    return throwError(errorMessage);
   }
 }
