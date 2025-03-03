@@ -38,8 +38,21 @@ export class LoginComponent implements OnInit {
       },
       (error) => {
         console.error('Erro ao logar', error);
-        this.errorMessage = error.error || 'Falha no login';
+        if (error.status === 0) {
+          // Erro de rede (não conseguiu se conectar ao servidor)
+          this.errorMessage = 'Não foi possível conectar ao servidor. Verifique sua conexão.';
+        } else if (error.status === 401) {
+          // Não autorizado
+          this.errorMessage = 'Credenciais inválidas. Verifique seu nome de usuário e senha.';
+        } else if (error.status === 400) {
+          // Erro de validação de entrada
+          this.errorMessage = 'Por favor, preencha todos os campos corretamente.';
+        } else {
+          // Outros erros
+          this.errorMessage = 'Ocorreu um erro inesperado. Tente novamente mais tarde.';
+        }
       }
     );
   }
+
 }

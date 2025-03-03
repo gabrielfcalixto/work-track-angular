@@ -14,3 +14,20 @@
   flex-direction: column;
   gap: 20px;
 }
+.theme-toggle-btn {
+  position: fixed;          /* Faz o botão ficar fixo na tela */
+  top: 10px;                /* Distância do topo */
+  right: 10px;              /* Distância da borda direita */
+  z-index: 1000;            /* Garante que o botão fique sobre outros elementos */
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+  color: white;             /* Cor do ícone */
+  border: none;             /* Remove bordas */
+  padding: 10px;            /* Espaçamento interno */
+  border-radius: 50%;       /* Deixa o botão redondo */
+  cursor: pointer;         /* Aparece como um ponteiro ao passar o mouse */
+  transition: background-color 0.3s ease; /* Transição suave de cor */
+}
+
+.theme-toggle-btn:hover {
+  background-color: rgba(0, 0, 0, 0.8); /* Escurece o fundo quando o mouse passa sobre */
+}
