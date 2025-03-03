@@ -1,29 +1,54 @@
-<!-- Se os dados ainda não foram carregados, mostra o loading -->
+<!-- Template -->
 <div *ngIf="!user" class="loading">
-  <p-progressSpinner></p-progressSpinner>
+  <p-progressSpinner
+    styleClass="custom-spinner"
+    strokeWidth="4"
+    animationDuration="1s">
+  </p-progressSpinner>
 </div>
 
 <div class="profile-container" *ngIf="user">
-  <div class="profile-header">
-    <h1>Perfil</h1>
-  </div>
-  <div class="profile-info">
-    <div class="info-item">
-      <strong>Nome completo: </strong>
-      <span>{{ user?.name }}</span>
+  <p-card class="profile-card">
+    <div class="profile-header">
+      <div class="avatar-container">
+        <p-avatar
+          [image]="user.profilePicture || defaultAvatar"
+          size="xlarge"
+          shape="circle"
+          class="profile-avatar">
+        </p-avatar>
+        <p-fileUpload
+          mode="basic"
+          accept="image/*"
+          [maxFileSize]="5000000"
+          chooseLabel="Alterar foto"
+          class="upload-button"
+          (onUpload)="onUpload($event)"
+          [auto]="true"
+          customUpload="true"
+          (uploadHandler)="uploadProfilePicture($event)">
+        </p-fileUpload>
+      </div>
+      <h1>{{ user.name }}</h1>
     </div>
-    <div class="info-item">
-      <strong>Email: </strong>
-      <span>{{ user?.email }}</span>
+
+    <div class="profile-info">
+      <p-fieldset legend="Informações do Perfil" class="info-fieldset">
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Email:</strong>
+            <span>{{ user.email }}</span>
+          </div>
+          <div class="info-item">
+            <strong>Username:</strong>
+            <span>{{ user.username }}</span>
+          </div>
+          <div class="info-item">
+            <strong>Data de Entrada:</strong>
+            <span>{{ user.joinDate | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+      </p-fieldset>
     </div>
-    <div class="info-item">
-      <strong>Username: </strong>
-      <span>{{ user?.username }}</span>
-    </div>
-    <div class="info-item">
-      <strong>Join Date: </strong>
-      <span>{{ user?.joinDate }}</span>
-    </div>
-    <a routerLink="edit/" class="edit-btn">Edit Profile</a>
-  </div>
+  </p-card>
 </div>
