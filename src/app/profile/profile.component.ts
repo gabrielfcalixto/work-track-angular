@@ -1,7 +1,7 @@
-// Component TypeScript
 import { Component, OnInit } from '@angular/core';
 import { ProfileService } from './profile.service';
 import { MessageService } from 'primeng/api';
+import { AuthService } from '../auth/auth.service'; // Serviço de autenticação
 
 @Component({
   selector: 'app-profile',
@@ -11,9 +11,10 @@ import { MessageService } from 'primeng/api';
 })
 export class ProfileComponent implements OnInit {
   user: any = null;
-  defaultAvatar = 'https://via.placeholder.com/150'; // Avatar padrão
+  defaultAvatar = 'https://images.pexels.com/photos/7915359/pexels-photo-7915359.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
 
   constructor(
+    private authService: AuthService, // Adicionando o serviço de autenticação
     private profileService: ProfileService,
     private messageService: MessageService
   ) {}
@@ -23,9 +24,21 @@ export class ProfileComponent implements OnInit {
   }
 
   loadUserProfile(): void {
-    const userId = 1; // Substituir por lógica de autenticação real
-    this.profileService.getUserById(userId).subscribe({
+    const loggedUser = this.authService.getLoggedUser(); // Obtém o usuário autenticado
+    console.log('Usuário logado:', loggedUser); // 👀 Verificar no console
+
+    if (!loggedUser || !loggedUser.id) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Usuário não autenticado'
+      });
+      return;
+    }
+
+    this.profileService.getUserById(loggedUser.id).subscribe({
       next: (data) => {
+        console.log('Dados do perfil carregados:', data); // 👀 Verificar no console
         this.user = data;
       },
       error: (error) => {
@@ -39,11 +52,28 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+
   uploadProfilePicture(event: any): void {
-    const file = event.files[0];
+    console.log('Evento de upload:', event); // 👀 Verificar se o evento está correto
+
+    const file = event.files ? event.files[0] : null;
+    console.log('Arquivo selecionado:', file); // 👀 Verificar se o arquivo está presente
+
+    if (!file) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Nenhum arquivo selecionado'
+      });
+      return;
+    }
+
     this.profileService.uploadProfilePicture(file).subscribe({
       next: (response) => {
-        this.user.profilePicture = response.url;
+        console.log('Resposta do upload:', response); // 👀 Verificar a resposta da API
+        if (this.user) {
+          this.user.profilePicture = response.url;
+        }
         this.messageService.add({
           severity: 'success',
           summary: 'Sucesso',
@@ -51,6 +81,7 @@ export class ProfileComponent implements OnInit {
         });
       },
       error: (error) => {
+        console.error('Erro ao fazer upload:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
@@ -61,6 +92,10 @@ export class ProfileComponent implements OnInit {
   }
 
   onUpload(event: any): void {
-    // Handler necessário para p-fileUpload
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Upload Concluído',
+      detail: 'Arquivo enviado com sucesso'
+    });
   }
 }

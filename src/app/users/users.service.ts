@@ -18,7 +18,7 @@ export class UsersService {
   }
 
   addUser(user: Users): Observable<Users> {
-    return this.http.post<Users>(`${this.apiUrl}/addUser`, user)
+    return this.http.post<Users>(`${this.apiUrl}/add`, user)
       .pipe(catchError(this.handleError));
   }
 

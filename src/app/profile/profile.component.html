@@ -25,9 +25,10 @@
           class="upload-button"
           (onUpload)="onUpload($event)"
           [auto]="true"
-          customUpload="true"
+          [customUpload]="true"
           (uploadHandler)="uploadProfilePicture($event)">
         </p-fileUpload>
+
       </div>
       <h1>{{ user.name }}</h1>
     </div>
