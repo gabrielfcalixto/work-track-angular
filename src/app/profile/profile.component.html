@@ -1,4 +1,3 @@
-<!-- Template -->
 <div *ngIf="!user" class="loading">
   <p-progressSpinner
     styleClass="custom-spinner"
@@ -28,24 +27,24 @@
           [customUpload]="true"
           (uploadHandler)="uploadProfilePicture($event)">
         </p-fileUpload>
-
       </div>
       <h1>{{ user.name }}</h1>
+      <button pButton type="button" label="Redefinir Senha" class="p-button-warning" (click)="showResetPasswordDialog()"></button>
     </div>
 
     <div class="profile-info">
       <p-fieldset legend="Informações do Perfil" class="info-fieldset">
         <div class="info-grid">
           <div class="info-item">
-            <strong>Email:</strong>
+            <strong>Email: </strong>
             <span>{{ user.email }}</span>
           </div>
           <div class="info-item">
-            <strong>Username:</strong>
-            <span>{{ user.username }}</span>
+            <strong>Username: </strong>
+            <span>{{ user.login }}</span>
           </div>
           <div class="info-item">
-            <strong>Data de Entrada:</strong>
+            <strong>Data de Entrada: </strong>
             <span>{{ user.joinDate | date:'dd/MM/yyyy' }}</span>
           </div>
         </div>
@@ -53,3 +52,43 @@
     </div>
   </p-card>
 </div>
+
+<!-- Diálogo para redefinir senha -->
+<p-dialog
+  header="Redefinir Senha"
+  [(visible)]="displayResetPasswordDialog"
+  [modal]="true"
+  [style]="{ width: '400px' }"
+  [draggable]="false"
+  [resizable]="false">
+  <div class="reset-password-form">
+    <p>Insira sua senha antiga e a nova senha:</p>
+
+    <!-- Campo de senha antiga com input normal -->
+    <div class="p-field">
+      <label for="oldPassword">Senha Antiga</label>
+      <input
+        id="oldPassword"
+        [(ngModel)]="oldPassword"
+        placeholder="Digite sua senha antiga"
+        type="text"
+        class="p-inputtext p-component full-width">
+    </div>
+
+    <!-- Campo de nova senha com input normal -->
+    <div class="p-field">
+      <label for="newPassword">Nova Senha</label>
+      <input
+        id="newPassword"
+        [(ngModel)]="newPassword"
+        placeholder="Digite sua nova senha"
+        type="text"
+        class="p-inputtext p-component full-width">
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Cancelar" class="p-button-text" (click)="hideResetPasswordDialog()"></button>
+    <button pButton type="button" label="Salvar" class="p-button-success" (click)="resetPassword()"></button>
+  </ng-template>
+</p-dialog>

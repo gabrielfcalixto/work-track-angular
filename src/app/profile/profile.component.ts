@@ -13,6 +13,13 @@ export class ProfileComponent implements OnInit {
   user: any = null;
   defaultAvatar = 'https://images.pexels.com/photos/7915359/pexels-photo-7915359.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
 
+
+
+  // Variáveis para o diálogo de redefinição de senha
+  displayResetPasswordDialog: boolean = false;
+  oldPassword: string = '';
+  newPassword: string = '';
+
   constructor(
     private authService: AuthService, // Adicionando o serviço de autenticação
     private profileService: ProfileService,
@@ -98,4 +105,46 @@ export class ProfileComponent implements OnInit {
       detail: 'Arquivo enviado com sucesso'
     });
   }
+
+  // Métodos para o diálogo de redefinição de senha
+  showResetPasswordDialog(): void {
+    this.displayResetPasswordDialog = true;
+  }
+
+  hideResetPasswordDialog(): void {
+    this.displayResetPasswordDialog = false;
+    this.oldPassword = '';
+    this.newPassword = '';
+  }
+
+  resetPassword(): void {
+    if (!this.oldPassword || !this.newPassword) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Preencha todos os campos'
+      });
+      return;
+    }
+
+    this.authService.resetPassword(this.user.id, this.oldPassword, this.newPassword).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Senha redefinida com sucesso'
+        });
+        this.hideResetPasswordDialog();
+      },
+      error: (error) => {
+        console.error('Erro ao redefinir senha:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Falha ao redefinir senha'
+        });
+      }
+    });
+  }
 }
+

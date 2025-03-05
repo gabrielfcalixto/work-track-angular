@@ -1,5 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +9,7 @@ import { Router } from '@angular/router';
 export class AuthService {
   private loggedUser: { id: number | null; name: string; email: string } = { id: null, name: '', email: '' };
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
   /**
    * Obtém os dados do usuário logado a partir do token armazenado.
@@ -61,5 +63,9 @@ export class AuthService {
       console.error('Erro ao verificar expiração do token:', error);
       return true;
     }
+  }
+
+  resetPassword(userId: string, oldPassword: string, newPassword: string): Observable<any> {
+    return this.http.post('/api/auth/reset-password', { userId, oldPassword, newPassword });
   }
 }

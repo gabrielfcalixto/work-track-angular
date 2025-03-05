@@ -30,4 +30,6 @@ export class ProfileService {
     formData.append('file', file);
     return this.http.post<{ url: string }>(`${this.apiUrl}/upload-profile-picture`, formData);
   }
+
+
 }
