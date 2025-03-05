@@ -8,9 +8,11 @@
       <i class="pi" [ngClass]="isDarkMode ? 'pi-sun' : 'pi-moon'">
       </i>
     </button>
+    <!-- Foto de perfil do usuário -->
     <div class="profile-icon" (click)="navigateToProfile()">
-      <i class="pi pi-user"></i>
+      <!-- <img [src]="profilePicture" alt="Perfil" class="profile-avatar"> -->
     </div>
+
     <div class="logout-icon" (click)="logout()">
       <i class="pi pi-sign-out"></i>
     </div>
