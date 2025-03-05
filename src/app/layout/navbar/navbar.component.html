@@ -10,7 +10,7 @@
     </button>
     <!-- Foto de perfil do usuário -->
     <div class="profile-icon" (click)="navigateToProfile()">
-      <!-- <img [src]="profilePicture" alt="Perfil" class="profile-avatar"> -->
+      <!-- <img *ngIf="user.profilePicturePath" [src]="user.profilePicturePath" alt="Foto de Perfil" /> -->
     </div>
 
     <div class="logout-icon" (click)="logout()">

@@ -63,45 +63,6 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-
-  uploadProfilePicture(event: any): void {
-    console.log('Evento de upload:', event); // 👀 Verificar se o evento está correto
-
-    const file = event.files ? event.files[0] : null;
-    console.log('Arquivo selecionado:', file); // 👀 Verificar se o arquivo está presente
-
-    if (!file) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Aviso',
-        detail: 'Nenhum arquivo selecionado'
-      });
-      return;
-    }
-
-    this.profileService.uploadProfilePicture(file).subscribe({
-      next: (response) => {
-        console.log('Resposta do upload:', response); // 👀 Verificar a resposta da API
-        if (this.user) {
-          this.user.profilePicture = response.url;
-        }
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Foto de perfil atualizada'
-        });
-      },
-      error: (error) => {
-        console.error('Erro ao fazer upload:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: 'Falha ao atualizar foto de perfil'
-        });
-      }
-    });
-  }
-
   onUpload(event: any): void {
     this.messageService.add({
       severity: 'info',
@@ -142,5 +103,37 @@ export class ProfileComponent implements OnInit {
         }
       });
   }
+
+  getProfilePicture(userId: number): void {
+    this.userService.getProfilePicture(userId).subscribe((data) => {
+      const file = new Blob([data], { type: 'image/jpeg' }); // Ou outro tipo conforme necessário
+      const fileURL = URL.createObjectURL(file);
+      this.user.profilePicturePath = fileURL; // Aqui você cria uma URL local para a imagem
+    });
+  }
+
+  // Função que é chamada ao processar o upload personalizado
+  uploadProfilePicture(event: any): void {
+    this.loadingService.show(); // ✅ Garante que o loading some
+    const formData = new FormData();
+
+    // Adiciona a imagem ao FormData
+    formData.append('profilePicture', event.files[0], event.files[0].name);
+
+    // Envia o FormData para o backend através do UserService
+    this.userService.uploadProfilePicture(this.user.id, formData).subscribe({
+      next: (response) => {
+        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Foto de perfil alterada!' });
+        this.user.profilePicture = response.profilePicture; // Atualiza a imagem do usuário com a resposta do backend
+        this.loadingService.hide(); // ✅ Garante que o loading some
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao alterar a foto de perfil' });
+        this.loadingService.hide(); // ✅ Garante que o loading some
+      }
+    });
+  }
 }
+
+
 

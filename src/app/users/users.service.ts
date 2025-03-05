@@ -42,6 +42,17 @@ export class UsersService {
     return this.http.put(`${this.apiUrl}/${userId}/change-password`, payload, { headers });
   }
 
+    // Método para buscar a imagem de perfil
+    getProfilePicture(userId: number): Observable<Blob> {
+      return this.http.get<Blob>(`${this.apiUrl}/profile-picture/${userId}`, { responseType: 'blob' as 'json' });
+    }
+    // Função para alterar a foto do perfil
+    uploadProfilePicture(userId: number, formData: FormData): Observable<any> {
+      const headers = new HttpHeaders().set('Authorization', 'Bearer YOUR_TOKEN'); // Se necessário, adicione o token de autenticação
+
+      return this.http.post<any>(`${this.apiUrl}/upload-profile-picture/${userId}`, formData, { headers });
+    }
+
 
 
   private handleError(error: any) {
