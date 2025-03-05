@@ -65,7 +65,4 @@ export class AuthService {
     }
   }
 
-  resetPassword(userId: string, oldPassword: string, newPassword: string): Observable<any> {
-    return this.http.post('/api/auth/reset-password', { userId, oldPassword, newPassword });
-  }
 }

@@ -25,6 +25,8 @@ export class ProfileService {
   }
 
 
+
+
   uploadProfilePicture(file: File): Observable<{ url: string }> {
     const formData = new FormData();
     formData.append('file', file);

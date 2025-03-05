@@ -36,6 +36,13 @@ export class UsersService {
     return this.http.delete<{ message: string }>(`${this.apiUrl}/${userId}`)
       .pipe(catchError(this.handleError));
   }
+  changePassword(userId: number, oldPassword: string, newPassword: string): Observable<any> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const payload = { oldPassword, newPassword };
+    return this.http.put(`${this.apiUrl}/${userId}/change-password`, payload, { headers });
+  }
+
+
 
   private handleError(error: any) {
     let errorMessage = 'Erro desconhecido. Tente novamente.';
@@ -49,4 +56,7 @@ export class UsersService {
     console.error(errorMessage);
     return throwError(errorMessage);
   }
+
+
+
 }

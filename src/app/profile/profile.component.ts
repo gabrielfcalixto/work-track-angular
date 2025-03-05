@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProfileService } from './profile.service';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../auth/auth.service'; // Serviço de autenticação
+import { UsersService } from '../users/users.service';
 
 @Component({
   selector: 'app-profile',
@@ -21,7 +22,8 @@ export class ProfileComponent implements OnInit {
   newPassword: string = '';
 
   constructor(
-    private authService: AuthService, // Adicionando o serviço de autenticação
+    private userService: UsersService, // Adicionando o serviço de autenticação
+    private authService: AuthService, // Injetando o serviço de autenticação
     private profileService: ProfileService,
     private messageService: MessageService
   ) {}
@@ -117,34 +119,34 @@ export class ProfileComponent implements OnInit {
     this.newPassword = '';
   }
 
-  resetPassword(): void {
-    if (!this.oldPassword || !this.newPassword) {
+  resetPassword() {
+    if (this.oldPassword && this.newPassword) {
+      this.userService.changePassword(this.user.id, this.oldPassword, this.newPassword)
+        .subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Senha alterada com sucesso!'
+            });
+            this.hideResetPasswordDialog();
+          },
+          error: (error) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: error.error?.error || 'Erro ao alterar a senha'
+            });
+          }
+        });
+    } else {
       this.messageService.add({
         severity: 'warn',
         summary: 'Aviso',
-        detail: 'Preencha todos os campos'
+        detail: 'Preencha todos os campos antes de continuar'
       });
-      return;
     }
-
-    this.authService.resetPassword(this.user.id, this.oldPassword, this.newPassword).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Senha redefinida com sucesso'
-        });
-        this.hideResetPasswordDialog();
-      },
-      error: (error) => {
-        console.error('Erro ao redefinir senha:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: 'Falha ao redefinir senha'
-        });
-      }
-    });
   }
-}
 
+
+}
