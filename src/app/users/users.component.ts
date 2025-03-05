@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { UsersService } from './users.service';
-import { Users } from './users.model';
-import { LoginComponent } from '../login/login.component';
+import { Users, Role } from './users.model'; // Importando o tipo 'Role' também
 import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
-
 
 @Component({
   selector: 'app-user-management',
@@ -21,13 +19,12 @@ export class UsersComponent implements OnInit {
   displayPermissionDialog = false;
   displayDeleteDialog = false;
   searchTerm: string = '';
-  newUser: any = {}; // Defina as propriedades do novo usuário
-  roles: any[] = [
+  newUser: Users = { name: '', login: '', email: '', role: { name: '', value: '' } };  // Definição inicial para o tipo Users
+  roles: Role[] = [
     { name: 'User', value: 'USER' },
     { name: 'Manager', value: 'MANAGER' },
     { name: 'Admin', value: 'ADMIN' }
   ];
-
 
   constructor(
     private usersService: UsersService,
@@ -57,57 +54,30 @@ export class UsersComponent implements OnInit {
   }
 
   openAddDialog() {
-    this.newUser = {};
+    this.newUser = { name: '', login: '', email: '', role: { name: '', value: '' } };  // Resetando os campos
     this.displayAddDialog = true;
   }
+
   addUser() {
     if (!this.newUser.name || !this.newUser.email || !this.newUser.login || !this.newUser.role) {
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Todos os campos são obrigatórios!' });
       return;
     }
-    this.usersService.addUser(this.newUser).subscribe(() => {
+
+    // Garantir que o role seja uma string
+    const userToSend = {
+      ...this.newUser,
+      role: typeof this.newUser.role === 'object' ? this.newUser.role.value : this.newUser.role // Convertendo para string se for um objeto
+    };
+
+    console.log('JSON enviado:', userToSend); // Log para verificar antes de enviar
+
+    this.usersService.addUser(userToSend).subscribe(() => {
       this.displayAddDialog = false;
       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário adicionado!' });
       this.loadUsers();
     });
   }
-
-    gerarPDF() {
-      const doc = new jsPDF();
-      doc.setFontSize(16);
-      doc.text('Relatório de Usuários', 10, 10);
-
-      let y = 20; // Posição inicial
-
-      this.users.forEach((user, index) => {
-        doc.setFontSize(12);
-        doc.text(`Nome: ${user.name}`, 10, y);
-        doc.text(`Login: ${user.login}`, 10, y + 6);
-        doc.text(`Email: ${user.email}`, 10, y + 12);
-        doc.text(`Função: ${user.role}`, 10, y + 18);
-
-        y += 30; // Ajusta o espaçamento entre os usuários
-      });
-
-      doc.save('relatorio_usuarios.pdf');
-    }
-
-
-    gerarExcel() {
-      const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
-        this.users.map(user => ({
-          Nome: user.name,
-          Login: user.login,
-          Email: user.email,
-          Função: user.role
-        }))
-      );
-
-      const wb: XLSX.WorkBook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Usuários');
-      XLSX.writeFile(wb, 'relatorio_usuarios.xlsx');
-    }
-
 
   openEditDialog(user: Users) {
     this.selectedUser = { ...user };
@@ -120,15 +90,20 @@ export class UsersComponent implements OnInit {
       return;
     }
 
-    if (this.selectedUser) {
-      this.usersService.editUser(this.selectedUser).subscribe(() => {
-        this.displayEditDialog = false;
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado!' });
-        this.loadUsers();
-      });
-    }
-  }
+    // Garantir que o role seja uma string
+    const userToSend = {
+      ...this.selectedUser,
+      role: typeof this.selectedUser.role === 'object' ? this.selectedUser.role.value : this.selectedUser.role // Convertendo para string se for um objeto
+    };
 
+    console.log('JSON enviado na edição:', userToSend); // Log para depuração
+
+    this.usersService.editUser(userToSend).subscribe(() => {
+      this.displayEditDialog = false;
+      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado!' });
+      this.loadUsers();
+    });
+  }
 
   openPermissionDialog(user: Users) {
     this.selectedUser = { ...user };
@@ -137,15 +112,15 @@ export class UsersComponent implements OnInit {
 
   savePermissions() {
     if (this.selectedUser) {
-      this.usersService.updatePermissions(this.selectedUser).subscribe(() =>{
-      this.displayPermissionDialog = false;
-      this.messageService.add({ severity: 'info', summary: 'Permissões atualizadas', detail: 'Permissões do usuário foram alteradas!' });
-    });
+      this.usersService.updatePermissions(this.selectedUser).subscribe(() => {
+        this.displayPermissionDialog = false;
+        this.messageService.add({ severity: 'info', summary: 'Permissões atualizadas', detail: 'Permissões do usuário foram alteradas!' });
+      });
     }
   }
 
   confirmDelete(user: Users) {
-    this.selectedUser ={...user};
+    this.selectedUser = { ...user };
     this.displayDeleteDialog = true;
   }
 
@@ -156,6 +131,41 @@ export class UsersComponent implements OnInit {
       this.messageService.add({ severity: 'warn', summary: 'Usuário removido', detail: 'Usuário foi excluído!' });
       this.loadUsers();
     });
+  }
+
+  gerarPDF() {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('Relatório de Usuários', 10, 10);
+
+    let y = 20; // Posição inicial
+
+    this.users.forEach((user, index) => {
+      doc.setFontSize(12);
+      doc.text(`Nome: ${user.name}`, 10, y);
+      doc.text(`Login: ${user.login}`, 10, y + 6);
+      doc.text(`Email: ${user.email}`, 10, y + 12);
+      doc.text(`Função: ${user.role}`, 10, y + 18);
+
+      y += 30; // Ajusta o espaçamento entre os usuários
+    });
+
+    doc.save('relatorio_usuarios.pdf');
+  }
+
+  gerarExcel() {
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
+      this.users.map(user => ({
+        Nome: user.name,
+        Login: user.login,
+        Email: user.email,
+        Função: user.role
+      }))
+    );
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Usuários');
+    XLSX.writeFile(wb, 'relatorio_usuarios.xlsx');
   }
 
 }
