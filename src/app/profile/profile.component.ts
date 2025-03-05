@@ -1,3 +1,4 @@
+import { LoadingService } from './../loading/loading.service';
 import { Component, OnInit } from '@angular/core';
 import { ProfileService } from './profile.service';
 import { MessageService } from 'primeng/api';
@@ -25,7 +26,8 @@ export class ProfileComponent implements OnInit {
     private userService: UsersService, // Adicionando o serviço de autenticação
     private authService: AuthService, // Injetando o serviço de autenticação
     private profileService: ProfileService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private loadingService: LoadingService
   ) {}
 
   ngOnInit(): void {
@@ -120,33 +122,25 @@ export class ProfileComponent implements OnInit {
   }
 
   resetPassword() {
-    if (this.oldPassword && this.newPassword) {
-      this.userService.changePassword(this.user.id, this.oldPassword, this.newPassword)
-        .subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Sucesso',
-              detail: 'Senha alterada com sucesso!'
-            });
-            this.hideResetPasswordDialog();
-          },
-          error: (error) => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro',
-              detail: error.error?.error || 'Erro ao alterar a senha'
-            });
-          }
-        });
-    } else {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Aviso',
-        detail: 'Preencha todos os campos antes de continuar'
-      });
+    if (!this.oldPassword || !this.newPassword) {
+      this.messageService.add({ severity: 'warn', summary: 'Aviso', detail: 'Preencha todos os campos' });
+      return;
     }
+
+    this.loadingService.show(); // ⏳ Mostra o loading
+
+    this.userService.changePassword(this.user.id, this.oldPassword, this.newPassword)
+      .subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Senha alterada!' });
+          this.hideResetPasswordDialog();
+          this.loadingService.hide(); // ✅ Garante que o loading some
+        },
+        error: (error) => {
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: error.error?.error || 'Erro ao alterar a senha' });
+          this.loadingService.hide(); // ✅ Esconde o loading em caso de erro
+        }
+      });
   }
-
-
 }
+
