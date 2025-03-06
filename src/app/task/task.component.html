@@ -1,32 +1,37 @@
 <p-card>
   <p-toolbar>
-    <div class="p-toolbar-group-left">
-      <p-inputText [(ngModel)]="searchTerm" placeholder="Buscar tarefa..." />
+    <div class="p-d-flex p-jc-between p-p-2">
+      <input
+        pInputText
+        type="text"
+        [(ngModel)]="searchText"
+        (input)="filterTasks()"
+        placeholder="Pesquisar..."
+      />
     </div>
     <div class="p-toolbar-group-right">
       <p-button label="Adicionar" icon="pi pi-plus" (click)="openAddDialog()"></p-button>
     </div>
-    <div class="report-buttons">
-      <p-button label="Gerar PDF" icon="pi pi-file-pdf" (click)="gerarPDF()" class="p-button-success"></p-button>
-      <p-button label="Gerar Excel" icon="pi pi-file-excel" (click)="gerarExcel()" class="p-button-info"></p-button>
-    </div>
   </p-toolbar>
 
-  <p-table [value]="task" [paginator]="true" [rows]="10" [globalFilterFields]="['name', 'description', 'hours', 'status']">
+  <p-table [value]="filteredTasks" [paginator]="true" [rows]="10">
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="name">Nome <p-sortIcon field="name"></p-sortIcon></th>
         <th pSortableColumn="description">Descrição <p-sortIcon field="description"></p-sortIcon></th>
-        <th pSortableColumn="hours">Horas <p-sortIcon field="hours"></p-sortIcon></th>
+        <th pSortableColumn="estimatedHours">Horas <p-sortIcon field="estimatedHours"></p-sortIcon></th>
+        <th pSortableColumn="totalHours">Horas lançadas <p-sortIcon field="totalHours"></p-sortIcon></th>
         <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
         <th>Ações</th>
       </tr>
     </ng-template>
+
     <ng-template pTemplate="body" let-task>
       <tr>
         <td>{{ task.name }}</td>
         <td>{{ task.description }}</td>
-        <td>{{ task.hours }}</td>
+        <td>{{ task.estimatedHours }}</td>
+        <td>{{ task.totalHours }}</td>
         <td>{{ task.status }}</td>
         <td>
           <p-button icon="pi pi-pencil" (click)="openEditDialog(task)"></p-button>
@@ -36,6 +41,8 @@
       </tr>
     </ng-template>
   </p-table>
+
+
 
   <!-- Adicionar Tarefa Dialog -->
   <p-dialog header="Adicionar Tarefa" [(visible)]="displayAddDialog" [modal]="true" [responsive]="true">
@@ -49,12 +56,20 @@
         <input id="description" [(ngModel)]="newTask.description" pInputText />
       </div>
       <div class="p-field">
-        <label for="hours">Horas</label>
-        <input id="hours" type="number" [(ngModel)]="newTask.hours" pInputText />
+        <label for="estimatedHours">Horas estimadas</label>
+        <input id="estimatedHours" type="number" [(ngModel)]="newTask.estimatedHours" pInputText />
       </div>
       <div class="p-field">
         <label for="status">Status</label>
-        <input id="status" [(ngModel)]="newTask.status" pInputText />
+        <p-dropdown
+          id="status"
+          [(ngModel)]="newTask.status"
+          [options]="statusOptions"
+          optionLabel="name"
+          placeholder="Selecione o status"
+          [showClear]="true"
+          appendTo="body">
+        </p-dropdown>
       </div>
     </div>
     <p-footer>
@@ -68,19 +83,31 @@
     <div class="p-fluid">
       <div class="p-field">
         <label for="name">Nome</label>
-        <input id="name" [(ngModel)]="selectedTask.name" pInputText *ngIf="selectedTask"  />
+        <input id="name" [(ngModel)]="selectedTask.name" pInputText *ngIf="selectedTask" />
       </div>
       <div class="p-field">
         <label for="description">Descrição</label>
         <input id="description" [(ngModel)]="selectedTask.description" pInputText *ngIf="selectedTask" />
       </div>
       <div class="p-field">
-        <label for="hours">Horas</label>
-        <input id="hours" type="number" [(ngModel)]="selectedTask.hours" pInputText *ngIf="selectedTask"  />
+        <label for="estimatedHours">Horas estimadas</label>
+        <input id="estimatedHours" type="number" [(ngModel)]="selectedTask.estimatedHours" pInputText *ngIf="selectedTask" />
+      </div>
+      <div class="p-field">
+        <label for="totalHours">Horas lançadas</label>
+        <input id="totalHours" type="number" [(ngModel)]="selectedTask.totalHours" pInputText *ngIf="selectedTask" />
       </div>
       <div class="p-field">
         <label for="status">Status</label>
-        <input id="status" [(ngModel)]="selectedTask.status" pInputText  *ngIf="selectedTask" />
+        <p-dropdown
+          id="status"
+          [(ngModel)]="newTask.status"
+          [options]="statusOptions"
+          optionLabel="name"
+          placeholder="Selecione o status"
+          [showClear]="true"
+          appendTo="body">
+        </p-dropdown>
       </div>
     </div>
     <p-footer>
@@ -88,31 +115,41 @@
       <p-button label="Salvar" icon="pi pi-check" (click)="saveEdit()"></p-button>
     </p-footer>
   </p-dialog>
-   <!-- Status Dialog -->
-   <p-dialog header="Status" [(visible)]="displayPermissionDialog" [modal]="true" [responsive]="true">
+
+  <!-- Status Dialog com Dropdown -->
+  <p-dialog header="Status" [(visible)]="displayPermissionDialog" [modal]="true" [responsive]="true">
     <div class="p-fluid">
       <div class="p-field">
         <label for="status">Status</label>
-        <div class="p-field">
-          <label for="status">Status</label>
-          <input id="status" [ngModel]="selectedTask?.status || ''" (ngModelChange)="selectedTask!.status = $event" pInputText />
-        </div>
+        <p-dropdown
+          id="status"
+          *ngIf="selectedTask"
+          [(ngModel)]="selectedTask.status"
+          [options]="statusOptions"
+          optionLabel="name"
+          placeholder="Selecione o status"
+          [showClear]="true"
+          appendTo="body">
+        </p-dropdown>
       </div>
-      </div>
+    </div>
     <p-footer>
       <p-button label="Cancelar" icon="pi pi-times" (click)="displayPermissionDialog = false"></p-button>
       <p-button label="Salvar" icon="pi pi-check" (click)="saveStatus()"></p-button>
     </p-footer>
   </p-dialog>
-    <!-- Excluir Usuário Dialog -->
-    <p-dialog header="Excluir Tarefa" [(visible)]="displayDeleteDialog" [modal]="true" [responsive]="true">
-      <p>Tem certeza que deseja excluir essa tarefa?</p>
-      <p-footer>
-        <p-button label="Cancelar" icon="pi pi-times" (click)="displayDeleteDialog = false"></p-button>
-        <p-button label="Excluir" icon="pi pi-check" severity="danger"
-    (click)="selectedTask ? deleteUser(selectedTask) : null">
-  </p-button>
 
-      </p-footer>
-    </p-dialog>
+  <!-- Excluir Tarefa Dialog -->
+  <p-dialog header="Excluir Tarefa" [(visible)]="displayDeleteDialog" [modal]="true" [responsive]="true">
+    <p>Tem certeza que deseja excluir essa tarefa?</p>
+    <p-footer>
+      <p-button label="Cancelar" icon="pi pi-times" (click)="displayDeleteDialog = false"></p-button>
+      <p-button label="Excluir" icon="pi pi-check" severity="danger" (click)="selectedTask ? deleteTask(selectedTask) : null"></p-button>
+    </p-footer>
+  </p-dialog>
+
+  <div class="report-buttons">
+    <p-button label="Gerar PDF" icon="pi pi-file-pdf" (click)="gerarPDF()" class="p-button-success"></p-button>
+    <p-button label="Gerar Excel" icon="pi pi-file-excel" (click)="gerarExcel()" class="p-button-info"></p-button>
+  </div>
 </p-card>

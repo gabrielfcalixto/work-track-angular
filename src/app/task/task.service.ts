@@ -25,8 +25,7 @@ export class TaskService {
   }
 
   updateStatus(task: Task) {
-    return this.http.patch<Task>(`${this.apiUrl}/${task.id}/status`, { role: task.status });
-
+    return this.http.patch<Task>(`${this.apiUrl}/${task.id}/status`, { status: task.status });
   }
 
   deleteTask(taskId: number) {

@@ -13,14 +13,21 @@ import { TaskService } from './task.service';
   providers: [ConfirmationService, MessageService]
 })
 export class TaskComponent implements OnInit {
-  task: Task[] = [];
+  tasks: Task[] = [];
   selectedTask: Task | null = null;
   displayAddDialog = false;
   displayEditDialog = false;
   displayPermissionDialog = false;
   displayDeleteDialog = false;
-  searchTerm: string = '';
-  newTask: Task = { name: '', description:'', hours: 0, status: ''};
+  filteredTasks: Task[] = [];
+  searchText: string = '';
+  statusOptions = [
+    { name: 'Pendente', value: 'PENDENTE' },
+    { name: 'Em andamento', value: 'EM_ANDAMENTO' },
+    { name: 'Concluída', value: 'CONCLUIDA' },
+  ];
+
+  newTask: Task = { name: '', description: '', estimatedHours: 0, totalHours: 0, status: '' };
 
   constructor(
     private taskService: TaskService,
@@ -34,9 +41,10 @@ export class TaskComponent implements OnInit {
 
   loadTask() {
     this.taskService.getTasks().subscribe(
-      task => {
-        console.log(task);  // Verifique se os usuários estão sendo retornados
-        this.task = task;
+      tasks => {
+        console.log(tasks); // Verifique se as tarefas estão sendo retornadas
+        this.tasks = tasks;
+        this.filteredTasks = tasks; // Atualize filteredTasks com os dados recebidos
       },
       error => {
         console.error('Erro ao carregar as tasks:', error);
@@ -44,16 +52,31 @@ export class TaskComponent implements OnInit {
     );
   }
 
+  filterTasks() {
+    if (!this.searchText) {
+      this.filteredTasks = this.tasks; // Se não houver texto de pesquisa, exibe todas as tarefas
+      return;
+    }
+
+    const searchLower = this.searchText.toLowerCase();
+    this.filteredTasks = this.tasks.filter(task =>
+      task.name.toLowerCase().includes(searchLower) ||
+      task.description.toLowerCase().includes(searchLower) ||
+      task.estimatedHours.toString().includes(searchLower) || // Corrigido
+      task.totalHours.toString().includes(searchLower) || // Corrigido
+      task.status.toLowerCase().includes(searchLower)
+    );
+  }
   openAddDialog() {
-    this.newTask = { name: '', description:'', hours:0, status: ''};
+    this.newTask = { name: '', description: '', estimatedHours: 0, totalHours: 0, status: '' };
     this.displayAddDialog = true;
   }
+
   addTask() {
     this.taskService.addTask(this.newTask).subscribe(() => {
       this.displayAddDialog = false;
-      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Task adicionada!' });
+      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Tarefa adicionada!' });
       this.loadTask();
-
     });
   }
     gerarPDF() {
@@ -63,12 +86,14 @@ export class TaskComponent implements OnInit {
 
       let y = 20; // Posição inicial
 
-      this.task.forEach((task, index) => {
+      this.tasks.forEach((task, index) => {
         doc.setFontSize(12);
         doc.text(`Nome: ${task.name}`, 10, y);
         doc.text(`Description: ${task.description}`, 10, y + 6);
-        doc.text(`Horas: ${task.hours}`, 10, y + 12);
-        doc.text(`Status: ${task.status}`, 10, y + 18);
+        doc.text(`Horas Estimadas: ${task.estimatedHours}`, 10, y + 12);
+        doc.text(`Horas Lançadas: ${task.totalHours}`, 10, y + 18);
+
+        doc.text(`Status: ${task.status}`, 10, y + 24);
 
         y += 30; // Ajusta o espaçamento entre os usuários
       });
@@ -79,10 +104,12 @@ export class TaskComponent implements OnInit {
 
     gerarExcel() {
       const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
-        this.task.map(task => ({
+        this.tasks.map(task => ({
           Nome: task.name,
           Descrição: task.description,
-          Horas: task.hours,
+          Horas_Estimadas: task.estimatedHours,
+          Horas_Totais: task.totalHours,
+
           Status: task.status
         }))
       );
@@ -128,7 +155,7 @@ export class TaskComponent implements OnInit {
     this.displayDeleteDialog = true;
   }
 
-  deleteUser(task: Task) {
+  deleteTask(task: Task) {
     if (!task || task.id === undefined) return; // Garante que o ID está presente
     this.taskService.deleteTask(task.id).subscribe(() => {
       this.displayDeleteDialog = false;
@@ -136,5 +163,4 @@ export class TaskComponent implements OnInit {
       this.loadTask();
     });
   }
-
 }

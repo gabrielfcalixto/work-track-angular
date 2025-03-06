@@ -12,6 +12,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { DropdownModule } from 'primeng/dropdown';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
+
 @NgModule({
   declarations: [],
   imports: [
@@ -23,9 +24,9 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     FormsModule,
     ConfirmDialogModule,
     DialogModule,
-    TableModule,
     DropdownModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    TableModule
   ],
   exports: [
     CommonModule,
@@ -38,7 +39,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     DialogModule,
     ToolbarModule,
     DropdownModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    TableModule
   ]
 })
 export class PrimeNGModule { }
