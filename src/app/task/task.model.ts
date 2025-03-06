@@ -1,3 +1,4 @@
+import { Project } from './../project/project.model';
 export interface Task {
   id?: number;
   name: string;
@@ -5,4 +6,5 @@ export interface Task {
   estimatedHours: number;
   totalHours: number;
   status: string;
+  projectId?: number;
 }

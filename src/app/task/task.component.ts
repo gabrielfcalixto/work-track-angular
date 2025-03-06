@@ -4,6 +4,8 @@ import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import { Task } from './task.model';
 import { TaskService } from './task.service';
+import { ProjectService } from '../project/project.service';
+import { Project } from '../project/project.model';
 
 
 @Component({
@@ -14,6 +16,7 @@ import { TaskService } from './task.service';
 })
 export class TaskComponent implements OnInit {
   tasks: Task[] = [];
+  projects: Project[] = []; // Lista de projetos
   selectedTask: Task | null = null;
   displayAddDialog = false;
   displayEditDialog = false;
@@ -27,16 +30,20 @@ export class TaskComponent implements OnInit {
     { name: 'Concluída', value: 'CONCLUIDA' },
   ];
 
-  newTask: Task = { name: '', description: '', estimatedHours: 0, totalHours: 0, status: '' };
+  newTask: Task = { name: '', description: '', estimatedHours: 0, totalHours: 0, status: '', projectId: undefined };
+
 
   constructor(
     private taskService: TaskService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private projectService: ProjectService, // Adicione este serviço
+
   ) {}
 
   ngOnInit() {
     this.loadTask();
+    this.loadProjects();
   }
 
   loadTask() {
@@ -48,6 +55,18 @@ export class TaskComponent implements OnInit {
       },
       error => {
         console.error('Erro ao carregar as tasks:', error);
+      }
+    );
+  }
+
+  loadProjects() {
+    this.projectService.getProjects().subscribe(
+      (projects) => {
+        console.log(projects); // Verifique se os projetos estão sendo retornados
+        this.projects = projects;
+      },
+      (error) => {
+        console.error('Erro ao carregar os projetos:', error);
       }
     );
   }

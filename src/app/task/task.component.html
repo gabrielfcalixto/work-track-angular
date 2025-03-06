@@ -45,38 +45,52 @@
 
 
   <!-- Adicionar Tarefa Dialog -->
-  <p-dialog header="Adicionar Tarefa" [(visible)]="displayAddDialog" [modal]="true" [responsive]="true">
-    <div class="p-fluid">
-      <div class="p-field">
-        <label for="name">Nome</label>
-        <input id="name" [(ngModel)]="newTask.name" pInputText />
-      </div>
-      <div class="p-field">
-        <label for="description">Descrição</label>
-        <input id="description" [(ngModel)]="newTask.description" pInputText />
-      </div>
-      <div class="p-field">
-        <label for="estimatedHours">Horas estimadas</label>
-        <input id="estimatedHours" type="number" [(ngModel)]="newTask.estimatedHours" pInputText />
-      </div>
-      <div class="p-field">
-        <label for="status">Status</label>
-        <p-dropdown
-          id="status"
-          [(ngModel)]="newTask.status"
-          [options]="statusOptions"
-          optionLabel="name"
-          placeholder="Selecione o status"
-          [showClear]="true"
-          appendTo="body">
-        </p-dropdown>
-      </div>
+<p-dialog header="Adicionar Tarefa" [(visible)]="displayAddDialog" [modal]="true" [responsive]="true">
+  <div class="p-fluid">
+    <div class="p-field">
+      <label for="name">Nome</label>
+      <input id="name" [(ngModel)]="newTask.name" pInputText />
     </div>
-    <p-footer>
-      <p-button label="Cancelar" icon="pi pi-times" (click)="displayAddDialog = false"></p-button>
-      <p-button label="Salvar" icon="pi pi-check" (click)="addTask()"></p-button>
-    </p-footer>
-  </p-dialog>
+    <div class="p-field">
+      <label for="description">Descrição</label>
+      <input id="description" [(ngModel)]="newTask.description" pInputText />
+    </div>
+    <div class="p-field">
+      <label for="estimatedHours">Horas estimadas</label>
+      <input id="estimatedHours" type="number" [(ngModel)]="newTask.estimatedHours" pInputText />
+    </div>
+    <div class="p-field">
+      <label for="status">Status</label>
+      <p-dropdown
+        id="status"
+        [(ngModel)]="newTask.status"
+        [options]="statusOptions"
+        optionLabel="name"
+        optionValue="value"
+        placeholder="Selecione o status"
+        [showClear]="true"
+        appendTo="body">
+      </p-dropdown>
+    </div>
+    <div class="p-field">
+      <label for="project">Projeto</label>
+      <p-dropdown
+        id="project"
+        [(ngModel)]="newTask.projectId"
+        [options]="projects"
+        optionLabel="name"
+        optionValue="id"
+        placeholder="Selecione o projeto"
+        [showClear]="true"
+        appendTo="body">
+      </p-dropdown>
+    </div>
+  </div>
+  <p-footer>
+    <p-button label="Cancelar" icon="pi pi-times" (click)="displayAddDialog = false"></p-button>
+    <p-button label="Salvar" icon="pi pi-check" (click)="addTask()"></p-button>
+  </p-footer>
+</p-dialog>
 
   <!-- Editar Tarefa Dialog -->
   <p-dialog header="Editar Tarefa" [(visible)]="displayEditDialog" [modal]="true" [responsive]="true">
