@@ -1,38 +1,70 @@
+/* Estilos base para o navbar */
 .navbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  height: 100%;
-  padding: 0 20px;
-  background-color: var(--background-color);
-  border-bottom: 1px solid #ddd;
+  justify-content: space-between;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(99, 99, 99, 0.1);
 }
 
+/* Estilos para o logo */
 .logo img {
-  height: 30px;
+  height: 40px; /* Ajuste conforme necessário */
+  width: auto;
 }
 
+/* Estilos para as ações do navbar */
 .navbar-actions {
   display: flex;
   align-items: center;
+  gap: 15px; /* Espaçamento entre os ícones */
 }
 
+/* Estilos para o botão de alternar tema */
 .theme-toggle-btn {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.5rem;
-  margin-right: 15px;
-  color: var(--text-color);
+  font-size: 1.5em;
 }
 
+/* Estilos para o ícone de perfil */
 .profile-icon {
   cursor: pointer;
-  font-size: 1.5rem;
-  color: var(--text-color);
 }
+
+/* Estilos para o ícone de logout */
 .logout-icon {
   cursor: pointer;
-  font-size: 1.5rem;
-  color: var(--text-color);
+  font-size: 1.5em;
 }
+
+/* Media queries para responsividade */
+// @media (max-width: 768px) {
+//   .navbar {
+//     flex-direction: column;
+//     align-items: flex-start;
+//   }
+
+//   .navbar-actions {
+//     width: 100%;
+//     justify-content: space-between;
+//     margin-top: 10px;
+//   }
+
+//   .logo {
+//     margin-bottom: 10px;
+//   }
+// }
+
+// @media (max-width: 480px) {
+//   .navbar-actions {
+//     flex-direction: column;
+//     align-items: flex-start;
+//     gap: 10px;
+//   }
+
+//   .theme-toggle-btn, .logout-icon {
+//     font-size: 1.2em;
+//   }
+// }
