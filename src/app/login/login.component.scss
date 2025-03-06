@@ -4,6 +4,7 @@
   align-items: center;
   height: 100vh;
 }
+
 .login-card {
   width: 400px;
 }
@@ -11,22 +12,31 @@
 .p-fluid {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
 }
 
+/* Estilo do botão de alternar tema */
 .theme-toggle-btn {
   position: fixed;
   top: 10px;
   right: 10px;
   z-index: 1000;
-  border: none;
+  border: none; /* Remove a borda */
   padding: 10px;
   border-radius: 50%;
   cursor: pointer;
-}
+  background-color: transparent !important; /* Remove o fundo */
+  box-shadow: none !important; /* Remove sombras */
+  color: var(--text-color); /* Cor do ícone */
 
-.theme-toggle-btn:hover {
-  transform: scale(1.1);
+  &:hover {
+    background-color: transparent !important; /* Remove o fundo ao passar o mouse */
+    color: var(--primary-color); /* Muda a cor do ícone ao passar o mouse */
+  }
+
+  .pi {
+    font-size: 1.5rem; /* Tamanho do ícone */
+  }
 }
 
 .remember-me {
@@ -51,4 +61,3 @@
 .forgot-password a:hover {
   text-decoration: underline;
 }
-
