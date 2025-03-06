@@ -19,13 +19,17 @@
             </li>
           </ul>
         </div>
+
+
         <div class="sidebar-footer">
           <hr />
-          <a pRipple class="profile-section">
-            <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle" />
+          <a class="profile-section" (click)="navigateToProfile($event)">
+            <p-avatar label="P" styleClass="mr-2" size="large" shape="circle"></p-avatar>
             <span class="profile-name">Admin</span>
           </a>
         </div>
+
+
       </div>
     </ng-template>
   </p-sidebar>

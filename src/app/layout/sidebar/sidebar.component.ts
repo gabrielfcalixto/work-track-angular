@@ -40,4 +40,12 @@ export class SidebarComponent {
     this.router.navigate([link]);
     this.sidebarVisible = false;
   }
+
+  navigateToProfile(event: Event): void {
+    event.stopPropagation(); // Impede que o clique afete outros elementos
+    this.router.navigate(['/profile']);
+    this.sidebarVisible = false; // Fecha a sidebar após a navegação
+  }
+
+
 }

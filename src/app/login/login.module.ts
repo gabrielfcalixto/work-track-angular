@@ -6,6 +6,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { CheckboxModule } from 'primeng/checkbox'; // Importe o CheckboxModule
+import { ToastModule } from 'primeng/toast';
+
 
 @NgModule({
   declarations: [
@@ -17,7 +20,9 @@ import { FloatLabelModule } from 'primeng/floatlabel';
        InputTextModule,
        ButtonModule,
        FormsModule,
-       FloatLabelModule
+       FloatLabelModule,
+       CheckboxModule,
+       ToastModule
 
   ]
 })
