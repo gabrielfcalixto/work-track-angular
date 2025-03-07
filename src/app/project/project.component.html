@@ -15,8 +15,9 @@
   <p-table [value]="project" [paginator]="true" [rows]="10" [globalFilterFields]="['name', 'description', 'hours', 'status']">
     <ng-template pTemplate="header">
       <tr>
-        <th pSortableColumn="name">Nome <p-sortIcon field="name"></p-sortIcon></th>
+        <th pSortableColumn="name">Projeto<p-sortIcon field="name"></p-sortIcon></th>
         <th pSortableColumn="description">Descrição <p-sortIcon field="description"></p-sortIcon></th>
+        <th pSortableColumn="manager">Gestor<p-sortIcon field="manager"></p-sortIcon></th>
         <th pSortableColumn="hours">Horas <p-sortIcon field="hours"></p-sortIcon></th>
         <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
         <th>Ações</th>
@@ -26,6 +27,8 @@
       <tr>
         <td>{{ project.name }}</td>
         <td>{{ project.description }}</td>
+        <td>{{ project.manager }}</td>
+
         <td>{{ project.hours }}</td>
         <td>{{ project.status }}</td>
         <td>
@@ -78,6 +81,7 @@
         <label for="description">Descrição</label>
         <input id="description" [(ngModel)]="selectedProject.description" pInputText *ngIf="selectedProject" />
       </div>
+
       <div class="p-field">
         <label for="hours">Horas</label>
         <input id="hours" type="number" [(ngModel)]="selectedProject.hours" pInputText *ngIf="selectedProject"  />
