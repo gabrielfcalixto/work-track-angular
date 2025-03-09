@@ -15,7 +15,7 @@ interface User {
   providedIn: 'root'
 })
 export class ProfileService {
-  private apiUrl = 'http://localhost:8080/user';
+  private apiUrl = 'http://localhost:8080/profile';
 
   constructor(private http: HttpClient) {}
 

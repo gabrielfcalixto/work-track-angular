@@ -49,7 +49,7 @@ export class ProfileComponent implements OnInit {
 
     this.profileService.getUserById(loggedUser.id).subscribe({
       next: (data) => {
-        console.log('Dados do perfil carregados:', data); // 👀 Verificar no console
+        console.log('Dados do perfil carregados!'); // 👀 Verificar no console
         this.user = data;
       },
       error: (error) => {
