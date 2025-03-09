@@ -32,32 +32,37 @@
         [disabled]="!username || !password"
       ></p-button>
     </div>
-
-      <!-- Link para Recuperação de Senha -->
+    <!-- Link para Recuperação de Senha -->
     <div class="forgot-password">
       <a class="p-button-link" (click)="showForgotPasswordDialog = true">Esqueceu a senha?</a>
     </div>
 
-    <!-- Dialog para digitar o e-mail -->
-    <p-dialog [(visible)]="showForgotPasswordDialog" header="Recuperar Senha" [modal]="true" [closable]="true">
+    <!-- Dialog para Solicitar Código e Redefinir a Senha -->
+    <p-dialog [(visible)]="showForgotPasswordDialog" header="Recuperação de Senha" [modal]="true" [closable]="true" [style]="{width: '50vw'}">
       <div class="p-fluid">
-        <label for="email">E-mail</label>
-        <input id="email" type="email" pInputText [(ngModel)]="forgotPasswordEmail" placeholder="Digite seu e-mail" />
+        <!-- Etapa 1: Solicitar Código -->
+        <div *ngIf="resetPasswordStep === 'request'">
+          <h2>Solicitar Código de Reset de Senha</h2>
+          <input [(ngModel)]="email" placeholder="Digite seu e-mail" pInputText />
+          <button (click)="requestResetCode()" pButton label="Solicitar Código" icon="pi pi-envelope"></button>
+        </div>
 
-        <div class="mt-3 text-right">
-          <button
-            pButton
-            type="button"
-            label="Enviar nova senha"
-            icon="pi pi-envelope"
-            [loading]="loading"
-            (click)="sendResetPasswordEmail()"
-          ></button>
+        <!-- Etapa 2: Redefinir Senha -->
+        <div *ngIf="resetPasswordStep === 'reset'">
+          <h2>Redefinir Senha</h2>
+          <input [(ngModel)]="email" placeholder="Digite seu e-mail" pInputText disabled />
+          <input [(ngModel)]="code" placeholder="Digite o código recebido" pInputText />
+          <input [(ngModel)]="newPassword" type="password" pInputText placeholder="Nova senha" />
+          <button (click)="resetPassword()" pButton label="Redefinir Senha" icon="pi pi-check"></button>
         </div>
       </div>
     </p-dialog>
 
-  </p-card>
+
+
+</p-card>
+
+
 
 
 

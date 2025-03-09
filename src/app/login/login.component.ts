@@ -19,8 +19,13 @@ export class LoginComponent implements OnInit {
   errorMessage: string = '';
   loading: boolean = false;
   rememberMe: boolean = false;
-  showForgotPasswordDialog: boolean = false;
-  forgotPasswordEmail: string = '';
+  email: string = '';
+  code: string = '';
+  newPassword: string = '';
+  resetPasswordStep: 'request' | 'reset' = 'request'; // Etapa de recuperação de senha
+  showForgotPasswordDialog: boolean = false; // Controle do diálogo
+
+
 
   constructor(
     private router: Router,
@@ -78,44 +83,75 @@ export class LoginComponent implements OnInit {
     );
   }
 
-  sendResetPasswordEmail() {
-    if (!this.forgotPasswordEmail) {
+  // Método para solicitar o código de reset de senha
+  requestResetCode(): void {
+    if (!this.email) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Atenção',
-        detail: 'Digite um e-mail válido.'
+        detail: 'Por favor, insira seu e-mail.'
       });
       return;
     }
 
     this.loading = true; // Mostra loading ao clicar
 
-    this.loginService.resetPassword(this.forgotPasswordEmail).subscribe({
-      next: () => {
+    this.authService.generatePasswordResetCode(this.email).subscribe(
+      (response) => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Senha redefinida com sucesso',
-          detail: 'Uma nova senha foi gerada e enviada para o seu e-mail.'
+          summary: 'Sucesso',
+          detail: 'Código enviado para o seu e-mail!'
         });
-
-        this.showForgotPasswordDialog = false;
-        this.forgotPasswordEmail = '';
-        this.loading = false; // Oculta loading após sucesso
+        this.resetPasswordStep = 'reset'; // Avança para a etapa de redefinir senha
+        this.loading = false;
       },
-      error: (err) => {
-        const errorMessage =
-          typeof err.error === 'string'
-            ? err.error
-            : err.error?.message || 'Falha ao enviar nova senha.';
-
+      (error) => {
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: errorMessage
+          detail: 'Erro ao solicitar o código. Verifique o e-mail e tente novamente.'
         });
-
-        this.loading = false; // Oculta loading após erro também
+        this.loading = false;
       }
-    });
+    );
+  }
+
+  // Método para redefinir a senha
+  resetPassword(): void {
+    if (!this.email || !this.code || !this.newPassword) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Atenção',
+        detail: 'Por favor, preencha todos os campos.'
+      });
+      return;
+    }
+
+    this.loading = true; // Mostra loading ao clicar
+
+    this.authService.resetPassword(this.email, this.code, this.newPassword).subscribe(
+      (response) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Senha redefinida com sucesso!'
+        });
+        this.resetPasswordStep = 'request'; // Volta para a etapa inicial
+        this.showForgotPasswordDialog = false; // Fecha o diálogo
+        this.email = '';
+        this.code = '';
+        this.newPassword = '';
+        this.loading = false;
+      },
+      (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao redefinir a senha. Verifique os dados e tente novamente.'
+        });
+        this.loading = false;
+      }
+    );
   }
 }

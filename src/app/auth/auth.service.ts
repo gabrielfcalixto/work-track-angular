@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -8,6 +8,8 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
   private loggedUser: { id: number | null; name: string; email: string } = { id: null, name: '', email: '' };
+  private apiUrl = 'http://localhost:8080/auth'; // URL do seu backend
+
 
   constructor(private router: Router, private http: HttpClient) {}
 
@@ -65,6 +67,24 @@ export class AuthService {
     }
   }
 
+    // Método para solicitar o código de reset de senha
+    generatePasswordResetCode(email: string): Observable<any> {
+      return this.http.post(`${this.apiUrl}/generate-reset-code`, { email });
+    }
+
+
+    // Método para redefinir a senha
+    resetPassword(email: string, code: string, newPassword: string): Observable<any> {
+      const body = {
+        email: email,
+        code: code,
+        newPassword: newPassword
+      };
+
+      return this.http.post(`${this.apiUrl}/reset-password`, body);
+    }
 
 
 }
+
+
