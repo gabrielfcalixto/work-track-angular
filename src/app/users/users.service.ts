@@ -42,6 +42,13 @@ export class UsersService {
     return this.http.put(`${this.apiUrl}/${userId}/change-password`, payload, { headers });
   }
 
+  resetPassword(email: string): Observable<any> {
+    return this.http.post('/reset-password', null, {
+      params: { email }
+    });
+  }
+
+
 
 
   private handleError(error: any) {

@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { CheckboxModule } from 'primeng/checkbox'; // Importe o CheckboxModule
 import { ToastModule } from 'primeng/toast';
+import { DialogModule } from 'primeng/dialog';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { ToastModule } from 'primeng/toast';
        FormsModule,
        FloatLabelModule,
        CheckboxModule,
-       ToastModule
+       ToastModule,
+       DialogModule
 
   ]
 })
