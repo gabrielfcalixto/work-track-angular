@@ -128,7 +128,7 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.loading = true; // Mostra loading ao clicar
+    this.loading = true;
 
     this.authService.resetPassword(this.email, this.code, this.newPassword).subscribe(
       (response) => {
@@ -137,21 +137,24 @@ export class LoginComponent implements OnInit {
           summary: 'Sucesso',
           detail: 'Senha redefinida com sucesso!'
         });
-        this.resetPasswordStep = 'request'; // Volta para a etapa inicial
-        this.showForgotPasswordDialog = false; // Fecha o diálogo
+        this.resetPasswordStep = 'request';
+        this.showForgotPasswordDialog = false;
         this.email = '';
         this.code = '';
         this.newPassword = '';
         this.loading = false;
       },
       (error) => {
+        console.error('Erro ao redefinir senha:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: 'Erro ao redefinir a senha. Verifique os dados e tente novamente.'
+          detail: error.error || 'Erro ao redefinir a senha. Verifique os dados e tente novamente.'
         });
         this.loading = false;
       }
     );
+
   }
+
 }

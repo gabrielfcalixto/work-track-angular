@@ -9,6 +9,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { CheckboxModule } from 'primeng/checkbox'; // Importe o CheckboxModule
 import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
+import { PasswordModule } from 'primeng/password';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { DialogModule } from 'primeng/dialog';
        FloatLabelModule,
        CheckboxModule,
        ToastModule,
-       DialogModule
+       DialogModule,
+       PasswordModule
 
   ]
 })

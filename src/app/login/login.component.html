@@ -1,22 +1,32 @@
-<button (click)="toggleTheme()" class="theme-toggle-btn p-button-rounded p-button-text">
+<button
+  (click)="toggleTheme()"
+  class="theme-toggle-btn p-button-rounded p-button-text"
+>
   <i class="pi" [ngClass]="isDarkMode ? 'pi-sun' : 'pi-moon'"></i>
 </button>
 
 <div class="login-container">
-  <p-card header="Login" class="login-card">
-    <div class="p-fluid">
-      <!-- Campo de Usuário com Ícone -->
-      <p-floatLabel>
-        <i class="pi pi-user" style="margin-right: 10px;"></i>
-        <input pInputText id="username" [(ngModel)]="username" required />
-        <label for="username">Username</label>
-      </p-floatLabel>
-      <p-floatLabel>
-        <i class="pi pi-lock"></i>
-        <input type="password" pInputText id="password" [(ngModel)]="password" required />
-        <label for="password">Password</label>
-      </p-floatLabel>
+  <p-card header="" class="login-card">
+    <div class="card-logo">
+      <h1>*logo*</h1>
 
+      <img src="" alt="" />
+    </div>
+    <div class="p-fluid">
+      <p-floatLabel>
+        <input id="username" type="text" pInputText [(ngModel)]="username" />
+        <label for="username">Usuário</label>
+      </p-floatLabel>
+      <p-floatLabel>
+        <p-password
+          id="password"
+          [(ngModel)]="password"
+          [feedback]="true"
+          [toggleMask]="true"
+          [inputStyle]="{'width':'100%'}">
+        </p-password>
+        <label for="password">Senha</label>
+      </p-floatLabel>
       <!-- Botão de Lembrar-me -->
       <div class="remember-me">
         <p-checkbox [(ngModel)]="rememberMe" [binary]="true"></p-checkbox>
@@ -34,39 +44,69 @@
     </div>
     <!-- Link para Recuperação de Senha -->
     <div class="forgot-password">
-      <a class="p-button-link" (click)="showForgotPasswordDialog = true">Esqueceu a senha?</a>
+      <a class="p-button-link" (click)="showForgotPasswordDialog = true"
+        >Esqueceu a senha?</a
+      >
     </div>
 
-    <!-- Dialog para Solicitar Código e Redefinir a Senha -->
-    <p-dialog [(visible)]="showForgotPasswordDialog" header="Recuperação de Senha" [modal]="true" [closable]="true" [style]="{width: '50vw'}">
-      <div class="p-fluid">
-        <!-- Etapa 1: Solicitar Código -->
-        <div *ngIf="resetPasswordStep === 'request'">
-          <h2>Solicitar Código de Reset de Senha</h2>
-          <input [(ngModel)]="email" placeholder="Digite seu e-mail" pInputText />
-          <button (click)="requestResetCode()" pButton label="Solicitar Código" icon="pi pi-envelope"></button>
-        </div>
+   <div class="reset-password">
+    <p-dialog
+    [(visible)]="showForgotPasswordDialog"
+    header="Recuperação de Senha"
+    [modal]="true"
+    [closable]="true"
 
-        <!-- Etapa 2: Redefinir Senha -->
-        <div *ngIf="resetPasswordStep === 'reset'">
-          <h2>Redefinir Senha</h2>
-          <input [(ngModel)]="email" placeholder="Digite seu e-mail" pInputText disabled />
-          <input [(ngModel)]="code" placeholder="Digite o código recebido" pInputText />
-          <input [(ngModel)]="newPassword" type="password" pInputText placeholder="Nova senha" />
-          <button (click)="resetPassword()" pButton label="Redefinir Senha" icon="pi pi-check"></button>
-        </div>
+    [style]="{ width: '20vw' }"
+  >
+    <div class="p-fluid">
+      <!-- Etapa 1: Solicitar Código -->
+      <div *ngIf="resetPasswordStep === 'request'">
+        <input
+          [(ngModel)]="email"
+          placeholder="Digite seu e-mail"
+          pInputText
+        />
+        <button
+          (click)="requestResetCode()"
+          pButton
+          [loading]="loading"
+          label="Solicitar Código"
+          icon="pi pi-envelope"
+        ></button>
       </div>
-    </p-dialog>
 
+      <!-- Etapa 2: Redefinir Senha -->
+      <div *ngIf="resetPasswordStep === 'reset'">
+        <h2>Redefinir Senha</h2>
+        <input
+          [(ngModel)]="email"
+          placeholder="Digite seu e-mail"
+          pInputText
+          disabled
+        />
+        <input
+          [(ngModel)]="code"
+          placeholder="Digite o código recebido"
+          pInputText
+        />
+        <input
+          [(ngModel)]="newPassword"
+          type="password"
+          pInputText
+          placeholder="Nova senha"
+        />
+        <button
+          (click)="resetPassword()"
+          pButton
+          label="Redefinir Senha"
+          icon="pi pi-check"
+        ></button>
+      </div>
+    </div>
+  </p-dialog>
+   </div>
+  </p-card>
 
-
-</p-card>
-
-
-
-
-
-<!-- Toast para feedback -->
-<p-toast></p-toast>
-
+  <!-- Toast para feedback -->
+  <p-toast></p-toast>
 </div>

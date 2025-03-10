@@ -12,7 +12,86 @@
 .p-fluid {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
+}
+
+
+
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.remember-me label {
+  margin-left: 5px;
+}
+
+.forgot-password {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.forgot-password a {
+  text-decoration: none;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}
+
+
+/* Lembrar-me alinhado */
+.remember-me {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.remember-me label {
+  margin-left: 5px;
+  font-size: 0.9rem;
+}
+
+/* Link de esqueci a senha */
+.forgot-password {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.forgot-password a {
+  text-decoration: none;
+  font-size: 0.9rem;
+  color: var(--primary-color);
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}
+
+/* Botão de alternar tema */
+.theme-toggle-btn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  border: none;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  color: var(--text-color);
+}
+
+.theme-toggle-btn:hover {
+  background-color: transparent !important;
+  color: var(--primary-color);
+}
+
+.theme-toggle-btn .pi {
+  font-size: 1.5rem;
 }
 
 /* Estilo do botão de alternar tema */
@@ -25,39 +104,18 @@
   padding: 10px;
   border-radius: 50%;
   cursor: pointer;
-  background-color: transparent !important; /* Remove o fundo */
+  background-color: transparent !important;
   box-shadow: none !important; /* Remove sombras */
   color: var(--text-color); /* Cor do ícone */
 
   &:hover {
-    background-color: transparent !important; /* Remove o fundo ao passar o mouse */
-    color: var(--primary-color); /* Muda a cor do ícone ao passar o mouse */
+    background-color: transparent !important;
+    color: var(--primary-color);
   }
 
   .pi {
-    font-size: 1.5rem; /* Tamanho do ícone */
+    font-size: 1.5rem;
   }
 }
 
-.remember-me {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-}
 
-.remember-me label {
-  margin-left: 10px;
-}
-
-.forgot-password {
-  text-align: center;
-  margin-top: 10px;
-}
-
-.forgot-password a {
-  text-decoration: none;
-}
-
-.forgot-password a:hover {
-  text-decoration: underline;
-}
