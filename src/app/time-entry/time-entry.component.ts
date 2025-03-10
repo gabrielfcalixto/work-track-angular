@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TimeEntryService } from './time-entry.service';
-import { TimeEntry } from './time-entry.model';
 import { MessageService } from 'primeng/api';
 
 @Component({
@@ -12,9 +11,11 @@ import { MessageService } from 'primeng/api';
 })
 export class TimeEntryComponent implements OnInit {
   userId = 1; // Simulando usuário logado
-  timeEntries: TimeEntry[] = [];
+  timeEntries: any[] = [];
   displayDialog = false;
   timeEntryForm: FormGroup;
+  tasks: any[] = []; // Lista de tarefas
+  selectedTask: any; // Tarefa selecionada
 
   constructor(
     private fb: FormBuilder,
@@ -23,7 +24,7 @@ export class TimeEntryComponent implements OnInit {
   ) {
     this.timeEntryForm = this.fb.group({
       taskId: [null, Validators.required],
-      description: [null, Validators.required], // Adicione o campo description
+      description: [null, Validators.required],
       entryDate: [null, Validators.required],
       startTime: [null, Validators.required],
       endTime: [null, Validators.required]
@@ -32,12 +33,21 @@ export class TimeEntryComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTimeEntries();
+    this.loadTasks(); // Carrega as tarefas disponíveis
   }
 
   loadTimeEntries(): void {
     this.timeEntryService.getUserTimeEntries(this.userId).subscribe(entries => {
       this.timeEntries = entries;
     });
+  }
+
+  loadTasks(): void {
+    // Carrega as tarefas do backend ou de um serviço
+    this.tasks = [
+      { id: 1, name: 'Tarefa 1' },
+      { id: 2, name: 'Tarefa 2' }
+    ];
   }
 
   openDialog(): void {
@@ -51,10 +61,12 @@ export class TimeEntryComponent implements OnInit {
 
   saveTimeEntry(): void {
     if (this.timeEntryForm.valid) {
-      const entry: TimeEntry = {
+      const entry = {
         ...this.timeEntryForm.value,
         userId: this.userId,
-        totalHours: this.calculateTotalHours(this.timeEntryForm.value.startTime, this.timeEntryForm.value.endTime) // Calcule o total de horas
+        startTime: this.formatTime(this.timeEntryForm.value.startTime), // Formata a hora
+        endTime: this.formatTime(this.timeEntryForm.value.endTime), // Formata a hora
+        totalHours: this.calculateTotalHours(this.timeEntryForm.value.startTime, this.timeEntryForm.value.endTime)
       };
       this.timeEntryService.saveTimeEntry(entry).subscribe({
         next: () => {
@@ -69,8 +81,22 @@ export class TimeEntryComponent implements OnInit {
     }
   }
 
+  // Método para formatar a hora no formato HH:mm:ss
+  formatTime(date: Date): string {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}:00`; // Adiciona segundos como 00
+  }
+
+  // Método para calcular o total de horas
   calculateTotalHours(startTime: Date, endTime: Date): number {
     const diff = endTime.getTime() - startTime.getTime();
     return diff / (1000 * 60 * 60); // Converte milissegundos para horas
+  }
+
+  // Método para tratar a seleção de tarefa
+  onTaskSelect(event: any): void {
+    this.selectedTask = event.value;
+    this.timeEntryForm.get('taskId')?.setValue(this.selectedTask.id);
   }
 }

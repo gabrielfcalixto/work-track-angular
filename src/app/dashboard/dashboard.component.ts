@@ -7,7 +7,7 @@ import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
   userRole: 'comum' | 'gestor' | 'admin' = 'comum';  // Exemplo: ajustar conforme o login
@@ -18,19 +18,7 @@ export class DashboardComponent implements OnInit {
   tasks: any[] = []; // Lista de tarefas
   selectedTask: any = null; // Tarefa selecionada
 
-  constructor(
-    private timeEntryService: TimeEntryService,
-    private messageService: MessageService,
-    private fb: FormBuilder
-  ) {
-    this.timeEntryForm = this.fb.group({
-      taskId: [null, Validators.required],
-      description: [null, Validators.required],
-      entryDate: [null, Validators.required],
-      startTime: [null, Validators.required],
-      endTime: [null, Validators.required]
-    });
-  }
+  // Dados para gráficos
   chartOptions: any = {
     responsive: true,
     plugins: {
@@ -64,12 +52,12 @@ export class DashboardComponent implements OnInit {
       }
     ]
   };
+
   ultimosLancamentos = [
     { atividade: 'Implementação de API', horas: 4, data: '10/03/2025' },
     { atividade: 'Reunião com Cliente', horas: 2, data: '09/03/2025' },
     { atividade: 'Correção de Bugs', horas: 3, data: '08/03/2025' }
   ];
-
 
   projectProgressData = {
     labels: ['Projeto A', 'Projeto B', 'Projeto C'],
@@ -112,6 +100,21 @@ export class DashboardComponent implements OnInit {
       }
     ]
   };
+
+  constructor(
+    private timeEntryService: TimeEntryService,
+    private messageService: MessageService,
+    private fb: FormBuilder
+  ) {
+    this.timeEntryForm = this.fb.group({
+      taskId: [null, Validators.required],
+      description: [null, Validators.required],
+      entryDate: [null, Validators.required],
+      startTime: [null, Validators.required],
+      endTime: [null, Validators.required]
+    });
+  }
+
   ngOnInit() {
     this.userRole = 'comum';  // Pode ser 'comum', 'gestor' ou 'admin'
     this.loadTimeEntries();
@@ -130,18 +133,18 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
+
   loadTimeEntries(): void {
     this.timeEntryService.getUserTimeEntries(this.userId).subscribe(entries => {
       this.timeEntries = entries;
-
     });
   }
+
   onTaskSelect(event: any): void {
     if (this.selectedTask) {
       this.timeEntryForm.get('taskId')?.setValue(this.selectedTask.id); // Atualiza o taskId no formulário
     }
   }
-
 
   openDialog(): void {
     this.displayDialog = true;
@@ -158,21 +161,33 @@ export class DashboardComponent implements OnInit {
       const entry = {
         ...this.timeEntryForm.value,
         userId: this.userId,
-        taskId: this.selectedTask ? this.selectedTask.id : null // Garante que o taskId seja passado corretamente
+        startTime: this.formatTime(this.timeEntryForm.value.startTime), // Formata a hora
+        endTime: this.formatTime(this.timeEntryForm.value.endTime), // Formata a hora
+        totalHours: this.calculateTotalHours(this.timeEntryForm.value.startTime, this.timeEntryForm.value.endTime)
       };
       this.timeEntryService.saveTimeEntry(entry).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Horas adicionadas!' });
+          this.loadTimeEntries();
           this.closeDialog();
-          this.loadTimeEntries(); // Recarrega as entradas após salvar
         },
-        error: () => {
-          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao salvar horas!' });
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao salvar horas.' });
         }
       });
-    } else {
-      this.messageService.add({ severity: 'warn', summary: 'Campos Obrigatórios', detail: 'Preencha todos os campos corretamente.' });
     }
   }
 
+  // Método para formatar a hora no formato HH:mm:ss
+  formatTime(date: Date): string {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}:00`; // Adiciona segundos como 00
+  }
+
+  // Método para calcular o total de horas
+  calculateTotalHours(startTime: Date, endTime: Date): number {
+    const diff = endTime.getTime() - startTime.getTime();
+    return diff / (1000 * 60 * 60); // Converte milissegundos para horas
+  }
 }

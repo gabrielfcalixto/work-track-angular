@@ -11,14 +11,14 @@ export class TimeEntryService {
 
   // Método para buscar as tarefas do usuário
   getTasksByUserId(userId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/task/${userId}`);
+    return this.http.get<any[]>(`${this.apiUrl}/task/usertask/${userId}`);
   }
 
   getUserTimeEntries(userId: number): Observable<TimeEntry[]> {
-    return this.http.get<TimeEntry[]>(`${this.apiUrl}/user/${userId}`);
+    return this.http.get<TimeEntry[]>(`${this.apiUrl}/time-entries/user/${userId}`);
   }
 
   saveTimeEntry(entry: TimeEntry): Observable<TimeEntry> {
-    return this.http.post<TimeEntry>(this.apiUrl, entry);
+    return this.http.post<TimeEntry>(`${this.apiUrl}/time-entries/add`, entry);
   }
 }
