@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard',
@@ -6,28 +6,115 @@ import { Component } from '@angular/core';
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
+  userRole: 'comum' | 'gestor' | 'admin' = 'comum';  // Exemplo: ajustar conforme o login
 
-  filter: string = '';
+  chartOptions: any = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+        labels: {
+          color: '#495057'
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: '#495057'
+        },
+        grid: {
+          color: '#ebedef'
+        }
+      },
+      y: {
+        ticks: {
+          color: '#495057'
+        },
+        grid: {
+          color: '#ebedef'
+        }
+      }
+    }
+  };
 
-  projects = [
-    { name: 'Projeto A', status: 'Em andamento', progress: 50 },
-    { name: 'Projeto B', status: 'Concluído', progress: 100 },
-    { name: 'Projeto C', status: 'Atrasado', progress: 30 }
+
+
+  taskData = {
+    labels: ['Tarefa 1', 'Tarefa 2', 'Tarefa 3'],
+    datasets: [
+      {
+        label: 'Tarefas Concluídas',
+        data: [12, 19, 3],
+        backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726']
+      }
+    ]
+  };
+
+  taskStatusData = {
+    labels: ['Concluídas', 'Em Progresso', 'Pendentes'],
+    datasets: [
+      {
+        data: [10, 5, 2],
+        backgroundColor: ['#66BB6A', '#FFA726', '#FF6384']
+      }
+    ]
+  };
+
+  ultimosLancamentos = [
+    { atividade: 'Implementação de API', horas: 4, data: '10/03/2025' },
+    { atividade: 'Reunião com Cliente', horas: 2, data: '09/03/2025' },
+    { atividade: 'Correção de Bugs', horas: 3, data: '08/03/2025' }
   ];
 
-  activities = [
-    { name: 'Tarefa 1', project: 'Projeto A', status: 'Concluído', dueDate: new Date() },
-    { name: 'Tarefa 2', project: 'Projeto B', status: 'Em andamento', dueDate: new Date() },
-    { name: 'Tarefa 3', project: 'Projeto C', status: 'Atrasado', dueDate: new Date() }
-  ];
 
-  chartData = {
+  projectProgressData = {
     labels: ['Projeto A', 'Projeto B', 'Projeto C'],
     datasets: [
       {
-        data: [50, 100, 30],
+        label: 'Progresso',
+        data: [60, 80, 40],
+        borderColor: '#42A5F5'
+      }
+    ]
+  };
+
+  taskAllocationData = {
+    labels: ['Backend', 'Frontend', 'DevOps', 'Testes'],
+    datasets: [
+      {
+        data: [25, 35, 20, 20],
+        backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726', '#EF5350']
+      }
+    ]
+  };
+
+  userActivityData = {
+    labels: ['Criar', 'Editar', 'Excluir', 'Visualizar'],
+    datasets: [
+      {
+        label: 'Atividades',
+        data: [10, 5, 2, 20],
+        backgroundColor: '#42A5F5'
+      }
+    ]
+  };
+
+  systemUsageData = {
+    labels: ['Módulo 1', 'Módulo 2', 'Módulo 3'],
+    datasets: [
+      {
+        data: [30, 50, 20],
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
       }
     ]
   };
+
+
+
+  ngOnInit() {
+    // Simulando tipo de usuário
+    this.userRole = 'comum';  // Pode ser 'comum', 'gestor' ou 'admin'
+  }
 }

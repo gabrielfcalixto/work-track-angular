@@ -25,6 +25,8 @@ import { LoginComponent } from './login/login.component';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { LoadingComponent } from './loading/loading.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ChartComponent } from './components/chart/chart.component';
+import { ChartModule } from 'primeng/chart';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     TaskComponent,
     ProjectComponent,
     TimeEntryComponent,
-    LoadingComponent
+    LoadingComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,7 +53,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     TimeEntryModule,
     ReactiveFormsModule,
     ProfileModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    ChartModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

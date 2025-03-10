@@ -1,23 +1,74 @@
 .dashboard-container {
+  padding: 20px;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 20px;
-  justify-content: space-between;
-}
 
-.projects-summary, .recent-activities {
-  flex: 1 1 30%;
-}
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
 
-.chart-section {
-  flex: 1 1 40%;
-}
+    button {
+      background-color: #42a5f5;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
 
-.filters {
-  width: 100%;
-  margin-top: 20px;
-}
+      &:hover {
+        background-color: #1e88e5;
+      }
+    }
+  }
 
-.chart {
-  height: 300px;
+  .charts-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+
+    .chart-card {
+      flex: 1;
+      max-width: 45%;
+      padding: 5px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+      p-chart {
+        width: 100% !important;
+        height: 250px !important;  // ⬅️ Menor altura para evitar sobreposição
+      }
+    }
+  }
+
+  .recent-entries {
+    margin-top: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+
+    h3 {
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th, td {
+        padding: 6px;
+        text-align: left;
+        border-bottom: 1px solid #ebedef;
+      }
+
+      th {
+        background-color: #f4f4f4;
+      }
+    }
+  }
 }

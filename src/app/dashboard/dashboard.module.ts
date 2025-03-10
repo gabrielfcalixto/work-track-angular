@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardComponent } from './dashboard.component';
 import { CardModule } from 'primeng/card';
-import { ChartModule } from 'primeng/chart';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { FormsModule } from '@angular/forms';
+import { GraficoModule } from '../components/chart/grafico.module';
 
 @NgModule({
   declarations: [
@@ -15,11 +15,11 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     CardModule,
-    ChartModule,
     InputTextModule,
     ButtonModule,
     TableModule,
-    FormsModule
+    FormsModule,
+    GraficoModule  // ✅ Importando módulo com o `app-chart`
   ],
   exports: [
     DashboardComponent

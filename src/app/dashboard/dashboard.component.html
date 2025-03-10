@@ -1,44 +1,84 @@
 <div class="dashboard-container">
-  <!-- Resumo de Projetos -->
-  <div class="projects-summary">
-    <p-card *ngFor="let project of projects" [header]="project.name">
-      <div class="card-content">
-        <p>Progresso: {{ project.progress }}%</p>
-        <p>Status: <strong>{{ project.status }}</strong></p>
-        <p-button label="Ver Detalhes" icon="pi pi-eye" class="p-button-outlined"></p-button>
+  <!-- Botão para lançar horas -->
+  <div class="actions">
+    <button>Lançar Horas</button>
+  </div>
+
+  <!-- Gráficos lado a lado com base no tipo de usuário -->
+  <div class="charts-wrapper">
+    <ng-container *ngIf="userRole === 'comum'">
+      <div class="chart-card">
+        <app-chart
+          [chartData]="taskData"
+          [chartOptions]="chartOptions"
+          chartType="bar">
+        </app-chart>
       </div>
-    </p-card>
+
+      <div class="chart-card">
+        <app-chart
+          [chartData]="taskStatusData"
+          [chartOptions]="chartOptions"
+          chartType="pie">
+        </app-chart>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="userRole === 'gestor'">
+      <div class="chart-card">
+        <app-chart
+          [chartData]="projectProgressData"
+          [chartOptions]="chartOptions"
+          chartType="line">
+        </app-chart>
+      </div>
+
+      <div class="chart-card">
+        <app-chart
+          [chartData]="taskAllocationData"
+          [chartOptions]="chartOptions"
+          chartType="doughnut">
+        </app-chart>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="userRole === 'admin'">
+      <div class="chart-card">
+        <app-chart
+          [chartData]="userActivityData"
+          [chartOptions]="chartOptions"
+          chartType="radar">
+        </app-chart>
+      </div>
+
+      <div class="chart-card">
+        <app-chart
+          [chartData]="systemUsageData"
+          [chartOptions]="chartOptions"
+          chartType="polarArea">
+        </app-chart>
+      </div>
+    </ng-container>
   </div>
 
-  <!-- Gráfico de Progresso -->
-  <div class="chart-section">
-    <p-chart type="pie" [data]="chartData" styleClass="chart"></p-chart>
-  </div>
-
-  <!-- Tabela de Atividades Recentes -->
-  <div class="recent-activities">
-    <p-table [value]="activities">
-      <ng-template pTemplate="header">
+  <!-- Últimos lançamentos -->
+  <div class="recent-entries">
+    <h3>Últimos Lançamentos</h3>
+    <table>
+      <thead>
         <tr>
           <th>Atividade</th>
-          <th>Projeto</th>
-          <th>Status</th>
-          <th>Data de Conclusão</th>
+          <th>Horas</th>
+          <th>Data</th>
         </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-activity>
-        <tr>
-          <td>{{ activity.name }}</td>
-          <td>{{ activity.project }}</td>
-          <td>{{ activity.status }}</td>
-          <td>{{ activity.dueDate | date }}</td>
+      </thead>
+      <tbody>
+        <tr *ngFor="let lancamento of ultimosLancamentos">
+          <td>{{ lancamento.atividade }}</td>
+          <td>{{ lancamento.horas }}</td>
+          <td>{{ lancamento.data }}</td>
         </tr>
-      </ng-template>
-    </p-table>
-  </div>
-
-  <!-- Filtros -->
-  <div class="filters">
-    <input pInputText type="text" placeholder="Filtrar projetos..." [(ngModel)]="filter" />
+      </tbody>
+    </table>
   </div>
 </div>
