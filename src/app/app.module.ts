@@ -35,7 +35,6 @@ import { ChartModule } from 'primeng/chart';
     UsersComponent,
     TaskComponent,
     ProjectComponent,
-    TimeEntryComponent,
     LoadingComponent,
   ],
   imports: [

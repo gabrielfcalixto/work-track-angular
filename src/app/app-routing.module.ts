@@ -16,18 +16,19 @@ const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
+    canActivate: [AuthGuard], // Protege todo o layout
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] }, // Protegido
-      { path: 'tasks', component: TaskComponent, canActivate: [AuthGuard] }, // Protegido
-      { path: 'projects', component: ProjectComponent, canActivate: [AuthGuard] }, // Protegido
-      { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] }, // Protegido
-      { path: 'users', component: UsersComponent, canActivate: [AuthGuard] }, // Protegido
-      { path: 'time-entry', component: TimeEntryComponent, canActivate: [AuthGuard] }, // Protegido
-      { path: '**', component: NotFoundComponent } // 404 dentro do Layout
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'tasks', component: TaskComponent },
+      { path: 'projects', component: ProjectComponent },
+      { path: 'profile', component: ProfileComponent },
+      { path: 'users', component: UsersComponent },
+      { path: 'time-entry', component: TimeEntryComponent },
+      { path: '**', component: NotFoundComponent } // Protegido também
     ],
   },
-  { path: '**', component: NotFoundComponent } // 404 global
+  { path: '**', redirectTo: '/login' } // Redireciona para login se não autenticado
 ];
 
 @NgModule({

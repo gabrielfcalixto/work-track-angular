@@ -1,19 +1,31 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { PrimeNGModule } from '../prime-ng/prime-ng.module';
-import { ReactiveFormsModule } from '@angular/forms';
-
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CalendarModule } from 'primeng/calendar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TimeEntryComponent } from './time-entry.component'; // Importe o componente
+import { TableModule } from 'primeng/table'; // Importe o TableModule
+import { DialogModule } from 'primeng/dialog'; // Importe o DialogModule
+import { InputTextModule } from 'primeng/inputtext'; // Importe o InputTextModule
+import { ButtonModule } from 'primeng/button'; // Importe o ButtonModule
+import { ToastModule } from 'primeng/toast'; // Importe o ToastModule
 
 @NgModule({
-  declarations: [],
+  declarations: [TimeEntryComponent], // Declare o componente
   imports: [
     CommonModule,
     HttpClientModule,
-    PrimeNGModule,
-    ReactiveFormsModule
-
-  ]
+    FormsModule,
+    ReactiveFormsModule,
+    CalendarModule,
+    BrowserAnimationsModule,
+    TableModule, // Adicione o TableModule
+    DialogModule, // Adicione o DialogModule
+    InputTextModule, // Adicione o InputTextModule
+    ButtonModule, // Adicione o ButtonModule
+    ToastModule // Adicione o ToastModule
+  ],
+  exports: [TimeEntryComponent] // Exporte o componente
 })
 export class TimeEntryModule { }

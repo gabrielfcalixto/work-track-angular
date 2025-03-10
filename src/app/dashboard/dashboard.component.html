@@ -1,84 +1,199 @@
-<div class="dashboard-container">
+<div class="dashboard-container p-4">
+  <p-toast></p-toast>
+
   <!-- Botão para lançar horas -->
-  <div class="actions">
-    <button>Lançar Horas</button>
+  <div class="button-container flex justify-end mb-4">
+    <button
+      pButton
+      type="button"
+      label="Lançar Horas"
+      icon="pi pi-clock"
+      (click)="openDialog()"
+      class="p-button-primary"
+    ></button>
   </div>
 
-  <!-- Gráficos lado a lado com base no tipo de usuário -->
-  <div class="charts-wrapper">
+  <!-- Modal para lançar horas -->
+  <p-dialog
+    [(visible)]="displayDialog"
+    header="Adicionar Horas"
+    [modal]="true"
+    [closable]="false"
+    [style]="{ width: '450px' }"
+  >
+    <form [formGroup]="timeEntryForm" class="p-fluid">
+      <div class="p-field">
+        <label for="task">Tarefa</label>
+        <p-dropdown
+          id="task"
+          [options]="tasks"
+          [(ngModel)]="selectedTask"
+          placeholder="Selecione a Tarefa"
+          [editable]="true"
+          optionLabel="name"
+          appendTo="body"
+          formControlName="taskId"
+          (onChange)="onTaskSelect($event)"> <!-- Adicione o evento onChange -->
+        </p-dropdown>
+        <small *ngIf="timeEntryForm.get('taskId')?.invalid && timeEntryForm.get('taskId')?.touched" class="p-error">
+          Tarefa é obrigatória.
+        </small>
+      </div>
+
+      <div class="p-field">
+        <label for="description">Descrição</label>
+        <textarea
+          id="description"
+          rows="5"
+          pInputTextarea
+          formControlName="description"
+          placeholder="Descreva a tarefa"
+          [autoResize]="true">
+        </textarea>
+        <small *ngIf="timeEntryForm.get('description')?.invalid && timeEntryForm.get('description')?.touched" class="p-error">
+          Descrição é obrigatória.
+        </small>
+      </div>
+
+      <div class="p-field">
+        <label for="entryDate">Data</label>
+        <p-calendar
+          id="entryDate"
+          formControlName="entryDate"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          placeholder="Selecione a data"
+          appendTo="body">
+        </p-calendar>
+        <small *ngIf="timeEntryForm.get('entryDate')?.invalid && timeEntryForm.get('entryDate')?.touched" class="p-error">
+          Data é obrigatória.
+        </small>
+      </div>
+
+      <div class="p-field">
+        <label for="startTime">Hora Início</label>
+        <p-calendar
+          id="startTime"
+          formControlName="startTime"
+          [timeOnly]="true"
+          [showTime]="true"
+          hourFormat="24"
+          placeholder="HH:mm"
+          appendTo="body">
+        </p-calendar>
+        <small *ngIf="timeEntryForm.get('startTime')?.invalid && timeEntryForm.get('startTime')?.touched" class="p-error">
+          Hora de início é obrigatória.
+        </small>
+      </div>
+
+      <div class="p-field">
+        <label for="endTime">Hora Fim</label>
+        <p-calendar
+          id="endTime"
+          formControlName="endTime"
+          [timeOnly]="true"
+          [showTime]="true"
+          hourFormat="24"
+          placeholder="HH:mm"
+          appendTo="body">
+        </p-calendar>
+        <small *ngIf="timeEntryForm.get('endTime')?.invalid && timeEntryForm.get('endTime')?.touched" class="p-error">
+          Hora de fim é obrigatória.
+        </small>
+      </div>
+    </form>
+
+    <p-footer>
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="closeDialog()">
+      </button>
+      <button
+        pButton
+        type="button"
+        label="Salvar"
+        icon="pi pi-check"
+        (click)="saveTimeEntry()"
+        [disabled]="timeEntryForm.invalid">
+      </button>
+    </p-footer>
+  </p-dialog>
+
+  <!-- Gráficos lado a lado -->
+  <div class="charts-wrapper grid">
     <ng-container *ngIf="userRole === 'comum'">
-      <div class="chart-card">
+      <p-card class="col-12 md:col-6">
         <app-chart
           [chartData]="taskData"
           [chartOptions]="chartOptions"
           chartType="bar">
         </app-chart>
-      </div>
-
-      <div class="chart-card">
+      </p-card>
+      <p-card class="col-12 md:col-6">
         <app-chart
           [chartData]="taskStatusData"
           [chartOptions]="chartOptions"
           chartType="pie">
         </app-chart>
-      </div>
+      </p-card>
     </ng-container>
 
     <ng-container *ngIf="userRole === 'gestor'">
-      <div class="chart-card">
+      <p-card class="col-12 md:col-6">
         <app-chart
           [chartData]="projectProgressData"
           [chartOptions]="chartOptions"
           chartType="line">
         </app-chart>
-      </div>
-
-      <div class="chart-card">
+      </p-card>
+      <p-card class="col-12 md:col-6">
         <app-chart
           [chartData]="taskAllocationData"
           [chartOptions]="chartOptions"
           chartType="doughnut">
         </app-chart>
-      </div>
+      </p-card>
     </ng-container>
 
     <ng-container *ngIf="userRole === 'admin'">
-      <div class="chart-card">
+      <p-card class="col-12 md:col-6">
         <app-chart
           [chartData]="userActivityData"
           [chartOptions]="chartOptions"
           chartType="radar">
         </app-chart>
-      </div>
-
-      <div class="chart-card">
+      </p-card>
+      <p-card class="col-12 md:col-6">
         <app-chart
           [chartData]="systemUsageData"
           [chartOptions]="chartOptions"
           chartType="polarArea">
         </app-chart>
-      </div>
+      </p-card>
     </ng-container>
   </div>
 
-  <!-- Últimos lançamentos -->
-  <div class="recent-entries">
-    <h3>Últimos Lançamentos</h3>
-    <table>
-      <thead>
+  <!-- Tabela de últimos lançamentos -->
+  <p-panel header="Últimos Lançamentos" class="mt-4">
+    <p-table [value]="ultimosLancamentos" [responsive]="true">
+      <ng-template pTemplate="header">
         <tr>
           <th>Atividade</th>
           <th>Horas</th>
           <th>Data</th>
         </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let lancamento of ultimosLancamentos">
+      </ng-template>
+      <ng-template pTemplate="body" let-lancamento>
+        <tr>
           <td>{{ lancamento.atividade }}</td>
           <td>{{ lancamento.horas }}</td>
           <td>{{ lancamento.data }}</td>
         </tr>
-      </tbody>
-    </table>
-  </div>
+      </ng-template>
+    </p-table>
+  </p-panel>
 </div>

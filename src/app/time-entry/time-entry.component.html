@@ -1,5 +1,5 @@
 <div>
-  <button pButton label="Adicionar Horas" icon="pi pi-plus" (click)="openDialog()"></button>
+  <button pButton label="Adicionar Horas" icon="pi pi-plus" (click)="openDialog()" class="p-button-success"></button>
 
   <p-table [value]="timeEntries" responsiveLayout="scroll">
     <ng-template pTemplate="header">
@@ -15,43 +15,87 @@
     <ng-template pTemplate="body" let-entry>
       <tr>
         <td>{{ entry.taskId }}</td>
-        <td>{{entry.description}}</td>
-        <td>{{ entry.entryDate }}</td>
-        <td>{{ entry.startTime }}</td>
-        <td>{{ entry.endTime }}</td>
+        <td>{{ entry.description }}</td>
+        <td>{{ entry.entryDate | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ entry.startTime | date: 'HH:mm' }}</td>
+        <td>{{ entry.endTime | date: 'HH:mm' }}</td>
         <td>{{ entry.totalHours?.toFixed(2) }}</td>
       </tr>
     </ng-template>
   </p-table>
 
-  <p-dialog [(visible)]="displayDialog" header="Adicionar Horas" [modal]="true" [closable]="false">
-    <form [formGroup]="timeEntryForm">
-      <div class="p-fluid">
-        <div class="p-field">
-          <label for="task">Tarefa</label>
-          <input id="task" type="text" pInputText formControlName="taskId">
-        </div>
-        <div class="p-field">
-          <label for="text">Descrição</label>
-          <input id="text" type="text" pInputText formControlName="description">
-        </div>
-        <div class="p-field">
-          <label for="date">Data</label>
-          <input id="date" type="date" pInputText formControlName="entryDate">
-        </div>
-        <div class="p-field">
-          <label for="start">Hora Início</label>
-          <input id="start" type="time" pInputText formControlName="startTime">
-        </div>
-        <div class="p-field">
-          <label for="end">Hora Fim</label>
-          <input id="end" type="time" pInputText formControlName="endTime">
-        </div>
+  <p-dialog [(visible)]="displayDialog" header="Adicionar Horas" [modal]="true" [closable]="false" [style]="{ width: '450px' }">
+    <form [formGroup]="timeEntryForm" class="p-fluid">
+      <div class="p-field">
+        <label for="task">Tarefa</label>
+        <input id="task" type="text" pInputText formControlName="taskId" placeholder="Informe a tarefa">
+        <small *ngIf="timeEntryForm.get('taskId')?.invalid && timeEntryForm.get('taskId')?.touched" class="p-error">Tarefa é obrigatória.</small>
+      </div>
+
+      <div class="p-field">
+        <label for="description">Descrição</label>
+        <textarea id="description" pInputTextarea formControlName="description" rows="3" placeholder="Descreva a tarefa"></textarea>
+        <small *ngIf="timeEntryForm.get('description')?.invalid && timeEntryForm.get('description')?.touched" class="p-error">Descrição é obrigatória.</small>
+      </div>
+
+      <div class="p-field">
+        <label for="entryDate">Data</label>
+        <p-calendar
+          id="entryDate"
+          formControlName="entryDate"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          placeholder="Selecione a data">
+        </p-calendar>
+        <small *ngIf="timeEntryForm.get('entryDate')?.invalid && timeEntryForm.get('entryDate')?.touched" class="p-error">Data é obrigatória.</small>
+      </div>
+
+      <div class="p-field">
+        <label for="startTime">Hora Início</label>
+        <p-calendar
+          id="startTime"
+          formControlName="startTime"
+          [timeOnly]="true"
+          [showTime]="true"
+          hourFormat="24"
+          placeholder="HH:mm">
+        </p-calendar>
+        <small *ngIf="timeEntryForm.get('startTime')?.invalid && timeEntryForm.get('startTime')?.touched" class="p-error">Hora de início é obrigatória.</small>
+      </div>
+
+      <div class="p-field">
+        <label for="endTime">Hora Fim</label>
+        <p-calendar
+          id="endTime"
+          formControlName="endTime"
+          [timeOnly]="true"
+          [showTime]="true"
+          hourFormat="24"
+          placeholder="HH:mm">
+        </p-calendar>
+        <small *ngIf="timeEntryForm.get('endTime')?.invalid && timeEntryForm.get('endTime')?.touched" class="p-error">Hora de fim é obrigatória.</small>
       </div>
     </form>
+
     <p-footer>
-      <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="closeDialog()"></button>
-      <button pButton label="Salvar" icon="pi pi-check" (click)="saveTimeEntry()" [disabled]="timeEntryForm.invalid"></button>
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="closeDialog()">
+      </button>
+      <button
+        pButton
+        type="button"
+        label="Salvar"
+        icon="pi pi-check"
+        (click)="saveTimeEntry()"
+        [disabled]="timeEntryForm.invalid">
+      </button>
     </p-footer>
   </p-dialog>
+
+  <p-toast></p-toast>
 </div>

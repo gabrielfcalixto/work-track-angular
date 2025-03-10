@@ -5,9 +5,14 @@ import { TimeEntry } from './time-entry.model';
 
 @Injectable({ providedIn: 'root' })
 export class TimeEntryService {
-  private apiUrl = 'http://localhost:8080/time-entries';
+  private apiUrl = 'http://localhost:8080';
 
   constructor(private http: HttpClient) {}
+
+  // Método para buscar as tarefas do usuário
+  getTasksByUserId(userId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/task/${userId}`);
+  }
 
   getUserTimeEntries(userId: number): Observable<TimeEntry[]> {
     return this.http.get<TimeEntry[]>(`${this.apiUrl}/user/${userId}`);

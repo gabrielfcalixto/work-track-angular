@@ -3,72 +3,77 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  background-color: var(--surface-ground); // Usando variáveis do PrimeNG
+  color: var(--text-color);
+}
 
-  .actions {
+.charts-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+
+  .p-card {
+    background-color: var(--surface-card);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    p-chart {
+      width: 100% !important;
+      height: 250px !important;
+    }
+  }
+}
+
+.p-panel {
+  background-color: var(--surface-card);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  .p-panel-header {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .p-panel-content {
+    padding: 1rem;
+  }
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.p-dialog {
+  .p-dialog-content {
+    background-color: var(--surface-card);
+    color: var(--text-color);
+
+    .p-field {
+      margin-bottom: 1rem;
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+
+      input, p-calendar, p-inputMask {
+        width: 100%;
+        background-color: var(--surface-ground);
+        color: var(--text-color);
+        border: 1px solid var(--surface-border);
+        padding: 0.5rem;
+        border-radius: 4px;
+
+      }
+    }
+  }
+
+  .p-footer {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 10px;
-
-    button {
-      background-color: #42a5f5;
-      color: #fff;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-
-      &:hover {
-        background-color: #1e88e5;
-      }
-    }
-  }
-
-  .charts-wrapper {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-
-    .chart-card {
-      flex: 1;
-      max-width: 45%;
-      padding: 5px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-
-      p-chart {
-        width: 100% !important;
-        height: 250px !important;  // ⬅️ Menor altura para evitar sobreposição
-      }
-    }
-  }
-
-  .recent-entries {
-    margin-top: 15px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-
-    h3 {
-      margin-bottom: 10px;
-      font-size: 18px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-
-      th, td {
-        padding: 6px;
-        text-align: left;
-        border-bottom: 1px solid #ebedef;
-      }
-
-      th {
-        background-color: #f4f4f4;
-      }
-    }
+    gap: 0.5rem;
   }
 }
