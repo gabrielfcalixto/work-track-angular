@@ -1,3 +1,4 @@
+/* Container principal */
 .dashboard-container {
   padding: 20px;
   display: flex;
@@ -6,40 +7,45 @@
   color: var(--text-color);
 }
 
+/* Layout dos gráficos */
 .charts-wrapper {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); // Sempre duas colunas
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsividade */
   gap: 20px;
-
-  .p-card {
-    background-color: var(--surface-card);
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
 }
 
+/* Estilo dos cartões */
+.p-card {
+  background-color: var(--surface-card);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+}
 
+/* Estilo do painel */
 .p-panel {
   background-color: var(--surface-card);
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
-  .p-panel-header {
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-
-  .p-panel-content {
-    padding: 1rem;
-  }
 }
 
+.p-panel-header {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.p-panel-content {
+  padding: 1rem;
+}
+
+/* Container do botão */
 .button-container {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 20px;
 }
 
+/* Estilos do diálogo */
 .p-dialog {
   .p-dialog-content {
     background-color: var(--surface-card);
@@ -52,16 +58,24 @@
         display: block;
         margin-bottom: 0.5rem;
         font-weight: 500;
+        color: var(--label-color);
       }
 
-      input, p-calendar, p-inputMask {
+      input,
+      p-calendar,
+      p-dropdown,
+      p-textarea {
         width: 100%;
         background-color: var(--surface-ground);
         color: var(--text-color);
         border: 1px solid var(--surface-border);
         padding: 0.5rem;
         border-radius: 4px;
+        font-size: 1rem;
+      }
 
+      textarea {
+        resize: vertical;
       }
     }
   }
@@ -70,5 +84,32 @@
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
+  }
+}
+.p-dialog .p-field textarea {
+  width: 100%;
+  background-color: var(--surface-ground);
+  color: var(--text-color);
+  border: 1px solid var(--surface-border);
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  resize: vertical; /* Permite redimensionamento */
+  min-height: 100px; /* Altura mínima para o campo de descrição */
+}
+
+
+/* Variáveis de cor para personalização */
+:root {
+  --text-color: #333333; /* Cor do texto */
+  --surface-card: #ffffff; /* Cor de fundo dos cartões */
+  --surface-ground: #f7f7f7; /* Cor de fundo do campo de input */
+  --surface-border: #e0e0e0; /* Cor de borda */
+  --label-color: #5f6368; /* Cor das labels */
+}
+
+@media (max-width: 768px) {
+  .charts-wrapper {
+    grid-template-columns: 1fr; /* Coluna única para telas menores */
   }
 }

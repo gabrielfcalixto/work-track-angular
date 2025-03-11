@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PrimeNGModule } from '../prime-ng/prime-ng.module';
 import { HttpClientModule } from '@angular/common/http';
 import { TableModule } from 'primeng/table';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 
 @NgModule({
@@ -12,7 +13,9 @@ import { TableModule } from 'primeng/table';
   imports: [
     CommonModule,
     PrimeNGModule,
-    HttpClientModule
+    HttpClientModule,
+    MultiSelectModule
+
   ],
 })
 export class TaskModule { }

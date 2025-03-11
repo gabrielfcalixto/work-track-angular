@@ -73,6 +73,19 @@
       </p-dropdown>
     </div>
     <div class="p-field">
+      <label for="priority">Prioridade</label>
+      <p-dropdown
+        id="priority"
+        [(ngModel)]="newTask.priority"
+        [options]="priorityOptions"
+        optionLabel="name"
+        optionValue="value"
+        placeholder="Selecione a prioridade"
+        [showClear]="true"
+        appendTo="body">
+      </p-dropdown>
+    </div>
+    <div class="p-field">
       <label for="project">Projeto</label>
       <p-dropdown
         id="project"
@@ -84,6 +97,38 @@
         [showClear]="true"
         appendTo="body">
       </p-dropdown>
+    </div>
+    <div class="p-field">
+      <label for="assignedUsers">Usuários Atribuídos</label>
+      <p-multiSelect
+        id="assignedUsers"
+        [(ngModel)]="newTask.assignedUserIds"
+        [options]="users"
+        optionLabel="name"
+        optionValue="id"
+        placeholder="Selecione os usuários"
+        [showClear]="true"
+        appendTo="body">
+      </p-multiSelect> <!-- Feche a tag corretamente -->
+    </div>
+
+    <div class="p-field">
+      <label for="startDate">Data de Início</label>
+      <p-calendar
+        id="startDate"
+        [(ngModel)]="newTask.startDate"
+        dateFormat="yy-mm-dd"
+        [showIcon]="true">
+      </p-calendar>
+    </div>
+    <div class="p-field">
+      <label for="deadline">Prazo</label>
+      <p-calendar
+        id="deadline"
+        [(ngModel)]="newTask.deadline"
+        dateFormat="yy-mm-dd"
+        [showIcon]="true">
+      </p-calendar>
     </div>
   </div>
   <p-footer>

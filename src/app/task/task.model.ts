@@ -4,7 +4,11 @@ export interface Task {
   name: string;
   description: string;
   estimatedHours: number;
-  totalHours: number;
   status: string;
+  priority: string;
+  totalHours: number;
   projectId?: number;
+  assignedUserIds: number[];
+  startDate: string;
+  deadline: string;
 }

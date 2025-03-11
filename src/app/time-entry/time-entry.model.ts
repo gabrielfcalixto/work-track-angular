@@ -6,5 +6,7 @@ export interface TimeEntry{
   entryDate: string;
   startTime: string;
   endTime: string;
-  totalHours?: number;
+  hoursLogged?: number;
+  taskName?: string;  // Campo adicional para o nome da tarefa
+
 }

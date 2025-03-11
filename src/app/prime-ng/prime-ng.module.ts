@@ -11,6 +11,8 @@ import { TableModule } from 'primeng/table';
 import { ToolbarModule } from 'primeng/toolbar';
 import { DropdownModule } from 'primeng/dropdown';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { CalendarModule } from 'primeng/calendar';
 
 
 @NgModule({
@@ -40,7 +42,10 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     ToolbarModule,
     DropdownModule,
     ProgressSpinnerModule,
-    TableModule
+    TableModule,
+    MultiSelectModule,
+    CalendarModule
+
   ]
 })
 export class PrimeNGModule { }

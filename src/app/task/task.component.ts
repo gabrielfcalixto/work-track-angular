@@ -6,6 +6,8 @@ import { Task } from './task.model';
 import { TaskService } from './task.service';
 import { ProjectService } from '../project/project.service';
 import { Project } from '../project/project.model';
+import { UsersService } from '../users/users.service';
+import { Users } from '../users/users.model';
 
 
 @Component({
@@ -17,6 +19,7 @@ import { Project } from '../project/project.model';
 export class TaskComponent implements OnInit {
   tasks: Task[] = [];
   projects: Project[] = []; // Lista de projetos
+  users: Users[] = []; // Lista de usuários
   selectedTask: Task | null = null;
   displayAddDialog = false;
   displayEditDialog = false;
@@ -25,12 +28,32 @@ export class TaskComponent implements OnInit {
   filteredTasks: Task[] = [];
   searchText: string = '';
   statusOptions = [
-    { name: 'Pendente', value: 'PENDENTE' },
-    { name: 'Em andamento', value: 'EM_ANDAMENTO' },
-    { name: 'Concluída', value: 'CONCLUIDA' },
+    { name: 'Pendente', value: 'NOT_STARTED' },   // Mapeando para o enum
+    { name: 'Em andamento', value: 'IN_PROGRESS' },
+    { name: 'Concluída', value: 'COMPLETED' },
+    { name: 'Em espera', value: 'ON_HOLD' },
+    { name: 'Cancelada', value: 'CANCELED' },
   ];
 
-  newTask: Task = { name: '', description: '', estimatedHours: 0, totalHours: 0, status: '', projectId: undefined };
+  priorityOptions = [
+    { name: 'Baixa', value: 'LOW' },
+    { name: 'Média', value: 'MEDIUM' },
+    { name: 'Alta', value: 'HIGH' }
+  ];
+
+
+  newTask: Task = {
+    name: '',
+    description: '',
+    estimatedHours: 0,
+    totalHours: 0,
+    status: '',
+    priority: '', // Novo campo adicionado
+    projectId: undefined, // Referente ao ID do projeto
+    assignedUserIds: [], // Lista de IDs dos usuários atribuídos
+    startDate: '', // Novo campo adicionado
+    deadline: '' // Novo campo adicionado
+  };
 
 
   constructor(
@@ -38,6 +61,7 @@ export class TaskComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private projectService: ProjectService, // Adicione este serviço
+    private userService: UsersService
 
   ) {}
 
@@ -49,9 +73,9 @@ export class TaskComponent implements OnInit {
   loadTask() {
     this.taskService.getTasks().subscribe(
       tasks => {
-        console.log(tasks); // Verifique se as tarefas estão sendo retornadas
+        console.log('Tarefas recebidas:', tasks);
         this.tasks = tasks;
-        this.filteredTasks = tasks; // Atualize filteredTasks com os dados recebidos
+        this.filteredTasks = [...tasks];  // Certifique-se de atualizar filteredTasks após modificações
       },
       error => {
         console.error('Erro ao carregar as tasks:', error);
@@ -59,10 +83,11 @@ export class TaskComponent implements OnInit {
     );
   }
 
+
   loadProjects() {
     this.projectService.getProjects().subscribe(
       (projects) => {
-        console.log(projects); // Verifique se os projetos estão sendo retornados
+        console.log('Projetos recebidos:', projects);
         this.projects = projects;
       },
       (error) => {
@@ -70,6 +95,17 @@ export class TaskComponent implements OnInit {
       }
     );
   }
+  loadUsers() {
+    this.userService.getUsers().subscribe(
+      (users) => {
+        this.users = users;
+      },
+      (error) => {
+        console.error('Erro ao carregar os usuários', error);
+      }
+    );
+  }
+
 
   filterTasks() {
     if (!this.searchText) {
@@ -87,9 +123,21 @@ export class TaskComponent implements OnInit {
     );
   }
   openAddDialog() {
-    this.newTask = { name: '', description: '', estimatedHours: 0, totalHours: 0, status: '' };
+    this.newTask = {
+      name: '',
+      description: '',
+      estimatedHours: 0,
+      totalHours: 0,
+      status: '',
+      priority: '', // Novo campo adicionado
+      projectId: undefined, // ID do projeto
+      assignedUserIds: [], // Lista de IDs de usuários atribuídos
+      startDate: '', // Novo campo adicionado
+      deadline: '' // Novo campo adicionado
+    };
     this.displayAddDialog = true;
   }
+
 
   addTask() {
     this.taskService.addTask(this.newTask).subscribe(() => {
@@ -98,51 +146,13 @@ export class TaskComponent implements OnInit {
       this.loadTask();
     });
   }
-    gerarPDF() {
-      const doc = new jsPDF();
-      doc.setFontSize(16);
-      doc.text('Relatório de Tarefas', 10, 10);
 
-      let y = 20; // Posição inicial
 
-      this.tasks.forEach((task, index) => {
-        doc.setFontSize(12);
-        doc.text(`Nome: ${task.name}`, 10, y);
-        doc.text(`Description: ${task.description}`, 10, y + 6);
-        doc.text(`Horas Estimadas: ${task.estimatedHours}`, 10, y + 12);
-        doc.text(`Horas Lançadas: ${task.totalHours}`, 10, y + 18);
-
-        doc.text(`Status: ${task.status}`, 10, y + 24);
-
-        y += 30; // Ajusta o espaçamento entre os usuários
-      });
-
-      doc.save('relatorio_usuarios.pdf');
+    openEditDialog(task: Task) {
+      this.selectedTask = { ...task };  // Fazendo uma cópia profunda para evitar modificações diretas no objeto original
+      this.displayEditDialog = true;
     }
 
-
-    gerarExcel() {
-      const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
-        this.tasks.map(task => ({
-          Nome: task.name,
-          Descrição: task.description,
-          Horas_Estimadas: task.estimatedHours,
-          Horas_Totais: task.totalHours,
-
-          Status: task.status
-        }))
-      );
-
-      const wb: XLSX.WorkBook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Tarefas');
-      XLSX.writeFile(wb, 'relatorio_tarefas.xlsx');
-    }
-
-
-  openEditDialog(task: Task) {
-    this.selectedTask = { ...task };
-    this.displayEditDialog = true;
-  }
 
   saveEdit() {
     if (this.selectedTask) {
@@ -169,8 +179,7 @@ export class TaskComponent implements OnInit {
   }
 
   confirmDelete(task: Task) {
-
-    this.selectedTask ={...task};
+    this.selectedTask = { ...task };
     this.displayDeleteDialog = true;
   }
 
@@ -182,4 +191,46 @@ export class TaskComponent implements OnInit {
       this.loadTask();
     });
   }
+
+
+  gerarPDF() {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('Relatório de Tarefas', 10, 10);
+
+    let y = 20; // Posição inicial
+
+    this.tasks.forEach((task, index) => {
+      doc.setFontSize(12);
+      doc.text(`Nome: ${task.name}`, 10, y);
+      doc.text(`Description: ${task.description}`, 10, y + 6);
+      doc.text(`Horas Estimadas: ${task.estimatedHours}`, 10, y + 12);
+      doc.text(`Horas Lançadas: ${task.totalHours}`, 10, y + 18);
+
+      doc.text(`Status: ${task.status}`, 10, y + 24);
+
+      y += 30; // Ajusta o espaçamento entre os usuários
+    });
+
+    doc.save('relatorio_usuarios.pdf');
+  }
+
+
+  gerarExcel() {
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
+      this.tasks.map(task => ({
+        Nome: task.name,
+        Descrição: task.description,
+        Horas_Estimadas: task.estimatedHours,
+        Horas_Totais: task.totalHours,
+
+        Status: task.status
+      }))
+    );
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Tarefas');
+    XLSX.writeFile(wb, 'relatorio_tarefas.xlsx');
+  }
+
 }
