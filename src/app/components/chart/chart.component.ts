@@ -29,20 +29,32 @@ export class ChartComponent implements OnInit {
         },
         tooltip: {
           callbacks: {
-            label: (context: any) => ` ${context.label}: ${context.raw}%`,  // Ajuste para mostrar porcentagem
+            label: (context: any) => ` ${context.label}: ${context.raw}%`,
           }
         },
         datalabels: {
           display: true,
           color: textColor,
-          formatter: (value: any) => `${value}%`  // Exibir percentual nas fatias
+          formatter: (value: any) => `${value}%`
         }
       },
       animation: {
         duration: 800,
         easing: 'easeInOutQuad'
+      },
+      scales: {
+        x: {
+          ticks: { color: textColor },
+          grid: { color: gridColor }
+        },
+        y: {
+          ticks: { color: textColor },
+          grid: { color: gridColor }
+        }
       }
     };
 
+    // Mesclar as opções padrão com as opções passadas via @Input()
+    this.chartOptions = { ...this.defaultOptions, ...this.chartOptions };
   }
 }

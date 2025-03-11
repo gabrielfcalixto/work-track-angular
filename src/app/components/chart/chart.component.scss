@@ -1,6 +1,8 @@
-.w-full {
+.chart-container {
   width: 100%;
-}
-.h-96 {
-  height: 24rem;
+  height: 100%;
+  min-height: 300px; /* Define uma altura mínima */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

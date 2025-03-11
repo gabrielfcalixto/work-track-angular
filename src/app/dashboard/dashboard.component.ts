@@ -1,3 +1,4 @@
+import { DashboardService } from './dashboard.service';
 import { Component, OnInit } from '@angular/core';
 import { TimeEntry } from '../time-entry/time-entry.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -17,94 +18,29 @@ export class DashboardComponent implements OnInit {
   displayDialog = false;
   tasks: any[] = []; // Lista de tarefas
   selectedTask: any = null; // Tarefa selecionada
+  // Dados dos gráficos
+  userHoursData: any;
+  taskStatusData: any;
+  projectProgressData: any;
+  userActivityData: any;
+  ultimosLancamentos: any[] = [];
 
-  // Dados para gráficos
-  chartOptions: any = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-        labels: {
-          color: '#495057'
-        }
-      }
-    },
-  };
 
-  taskData = {
-    labels: ['Tarefa 1', 'Tarefa 2', 'Tarefa 3'],
-    datasets: [
-      {
-        label: 'Tarefas Concluídas',
-        data: [12, 19, 3],
-        backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726']
-      }
-    ]
-  };
+ chartOptions: any = {
+  responsive: true,
+  plugins: {
+    legend: {
+      labels: { color: '#495057' }
+    }
+  }
+};
 
-  taskStatusData = {
-    labels: ['Concluídas', 'Em Progresso', 'Pendentes'],
-    datasets: [
-      {
-        data: [10, 5, 2],
-        backgroundColor: ['#66BB6A', '#FFA726', '#FF6384']
-      }
-    ]
-  };
-
-  ultimosLancamentos = [
-    { atividade: 'Implementação de API', horas: 4, data: '10/03/2025' },
-    { atividade: 'Reunião com Cliente', horas: 2, data: '09/03/2025' },
-    { atividade: 'Correção de Bugs', horas: 3, data: '08/03/2025' }
-  ];
-
-  projectProgressData = {
-    labels: ['Projeto A', 'Projeto B', 'Projeto C'],
-    datasets: [
-      {
-        label: 'Progresso',
-        data: [60, 80, 40],
-        borderColor: '#42A5F5'
-      }
-    ]
-  };
-
-  taskAllocationData = {
-    labels: ['Backend', 'Frontend', 'DevOps', 'Testes'],
-    datasets: [
-      {
-        data: [25, 35, 20, 20],
-        backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726', '#EF5350']
-      }
-    ]
-  };
-
-  userActivityData = {
-    labels: ['Criar', 'Editar', 'Excluir', 'Visualizar'],
-    datasets: [
-      {
-        label: 'Atividades',
-        data: [10, 5, 2, 20],
-        backgroundColor: '#42A5F5'
-      }
-    ]
-  };
-
-  systemUsageData = {
-    labels: ['Módulo 1', 'Módulo 2', 'Módulo 3'],
-    datasets: [
-      {
-        data: [30, 50, 20],
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
-      }
-    ]
-  };
 
   constructor(
     private timeEntryService: TimeEntryService,
     private messageService: MessageService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dashboardService: DashboardService
   ) {
     this.timeEntryForm = this.fb.group({
       taskId: [null, Validators.required],
@@ -119,7 +55,43 @@ export class DashboardComponent implements OnInit {
     this.userRole = 'comum';  // Pode ser 'comum', 'gestor' ou 'admin'
     this.loadTimeEntries();
     this.loadTasks(); // Carrega as tarefas do backend
+    this.loadDashboardData();
+    this.carregarUltimosLancamentos();
+
+
   }
+
+  loadDashboardData() {
+    if (this.userRole === 'comum') {
+      this.dashboardService.getUserHours(this.userId).subscribe(data => {
+        this.userHoursData = {
+          labels: data.labels,
+          datasets: [
+            {
+              label: 'Horas Trabalhadas',
+              data: data.values,
+              backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726']
+            }
+          ]
+        };
+      });
+    } else if (this.userRole === 'gestor') {
+      this.dashboardService.getManagerStats(this.userId).subscribe(data => {
+        this.projectProgressData = {
+          labels: data.projects,
+          datasets: [{ label: 'Progresso', data: data.progress, borderColor: '#42A5F5' }]
+        };
+      });
+    } else if (this.userRole === 'admin') {
+      this.dashboardService.getAdminStats().subscribe(data => {
+        this.userActivityData = {
+          labels: ['Usuários', 'Projetos', 'Tarefas'],
+          datasets: [{ data: [data.totalUsers, data.totalProjects, data.totalTasks], backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726'] }]
+        };
+      });
+    }
+  }
+
 
   loadTasks(): void {
     this.timeEntryService.getTasksByUserId(this.userId).subscribe({
@@ -158,13 +130,31 @@ export class DashboardComponent implements OnInit {
 
   saveTimeEntry(): void {
     if (this.timeEntryForm.valid) {
+      const startTimeStr = this.formatTime(this.timeEntryForm.value.startTime);
+      const endTimeStr = this.formatTime(this.timeEntryForm.value.endTime);
+
+      // Converte as strings para Date para poder comparar
+      const startDateTime = new Date(`1970-01-01T${startTimeStr}`);
+      const endDateTime = new Date(`1970-01-01T${endTimeStr}`);
+
+      // Valida se a hora final é menor que a hora inicial
+      if (endDateTime < startDateTime) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'A hora final não pode ser menor que a hora inicial.'
+        });
+        return; // Interrompe a execução
+      }
+
       const entry = {
         ...this.timeEntryForm.value,
         userId: this.userId,
-        startTime: this.formatTime(this.timeEntryForm.value.startTime), // Formata a hora
-        endTime: this.formatTime(this.timeEntryForm.value.endTime), // Formata a hora
-        totalHours: this.calculateTotalHours(this.timeEntryForm.value.startTime, this.timeEntryForm.value.endTime)
+        startTime: startTimeStr,
+        endTime: endTimeStr,
+        totalHours: this.calculateTotalHours(startDateTime, endDateTime)
       };
+
       this.timeEntryService.saveTimeEntry(entry).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Horas adicionadas!' });
@@ -178,16 +168,54 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  // Método para formatar a hora no formato HH:mm:ss
-  formatTime(date: Date): string {
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}:00`; // Adiciona segundos como 00
+
+  formatTime(value: any): string {
+    if (!value) return ''; // Evita erros com valores nulos
+    if (typeof value === 'string') return value; // Se já for string, retorna como está
+
+    const hours = value.getHours().toString().padStart(2, '0');
+    const minutes = value.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}:00`;
   }
+
 
   // Método para calcular o total de horas
   calculateTotalHours(startTime: Date, endTime: Date): number {
     const diff = endTime.getTime() - startTime.getTime();
     return diff / (1000 * 60 * 60); // Converte milissegundos para horas
   }
+
+
+  isFieldInvalid(field: string): boolean {
+    const control = this.timeEntryForm.get(field);
+    return !!(control?.invalid && control?.touched);
+  }
+
+
+  autoFormatTime(field: string): void {
+    let value = this.timeEntryForm.get(field)?.value || '';
+
+    // Remove caracteres não numéricos
+    value = value.replace(/\D/g, '');
+
+    // Formata automaticamente HH:mm
+    if (value.length >= 2) {
+      value = value.substring(0, 2) + ':' + value.substring(2, 4);
+    }
+
+    this.timeEntryForm.get(field)?.setValue(value.substring(0, 5)); // Limita a 5 caracteres
+  }
+
+  carregarUltimosLancamentos(): void {
+    this.timeEntryService.getUserTimeEntries(this.userId).subscribe(entries => {
+      // Mapeia os dados para o formato da tabela
+      this.ultimosLancamentos = entries.map(entry => ({
+        atividade: entry.description,
+        horas: entry.totalHours,
+        data: entry.entryDate
+      }));
+    });
+  }
+
+
 }

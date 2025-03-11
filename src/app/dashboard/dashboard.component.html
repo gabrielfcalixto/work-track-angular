@@ -21,98 +21,81 @@
   [closable]="false"
   [style]="{ width: '450px' }"
 >
-  <form [formGroup]="timeEntryForm" class="p-fluid">
-      <!-- Campo Tarefa -->
-      <div class="p-field">
-          <label for="task">Tarefa</label>
-          <p-dropdown
-              id="task"
-              [options]="tasks"
-              [(ngModel)]="selectedTask"
-              placeholder="Selecione a Tarefa"
-              [editable]="true"
-              optionLabel="name"
-              appendTo="body"
-              formControlName="taskId"
-              (onChange)="onTaskSelect($event)"
-          >
-          </p-dropdown>
-          <small *ngIf="timeEntryForm.get('taskId')?.invalid && timeEntryForm.get('taskId')?.touched" class="p-error">
-              Tarefa é obrigatória.
-          </small>
-      </div>
+<form [formGroup]="timeEntryForm" class="p-fluid">
+  <!-- Campo Tarefa -->
+  <div class="p-field">
+    <label for="task">Tarefa</label>
+    <p-dropdown
+      id="task"
+      [options]="tasks"
+      [(ngModel)]="selectedTask"
+      placeholder="Selecione a Tarefa"
+      [editable]="true"
+      optionLabel="name"
+      appendTo="body"
+      formControlName="taskId"
+      (onChange)="onTaskSelect($event)"
+      [ngClass]="{'p-invalid': isFieldInvalid('taskId')}"
+    >
+    </p-dropdown>
+  </div>
 
-      <!-- Campo Descrição -->
-      <div class="p-field">
-          <label for="description">Descrição</label>
-          <textarea
-              id="description"
-              rows="5"
-              pInputTextarea
-              formControlName="description"
-              placeholder="Descreva a tarefa"
-              [autoResize]="true"
-          >
-          </textarea>
-          <small *ngIf="timeEntryForm.get('description')?.invalid && timeEntryForm.get('description')?.touched" class="p-error">
-              Descrição é obrigatória.
-          </small>
-      </div>
+  <!-- Campo Descrição -->
+  <div class="p-field">
+    <label for="description">Descrição</label>
+    <textarea
+      id="description"
+      rows="5"
+      pInputTextarea
+      formControlName="description"
+      placeholder="Descreva a tarefa"
+      [autoResize]="true"
+      [ngClass]="{'p-invalid': isFieldInvalid('description')}"
+    ></textarea>
+  </div>
 
-      <!-- Campo Data -->
-      <div class="p-field">
-          <label for="entryDate">Data</label>
-          <p-calendar
-              id="entryDate"
-              formControlName="entryDate"
-              dateFormat="dd/mm/yy"
-              [showIcon]="true"
-              placeholder="Selecione a data"
-              appendTo="body"
-          >
-          </p-calendar>
-          <small *ngIf="timeEntryForm.get('entryDate')?.invalid && timeEntryForm.get('entryDate')?.touched" class="p-error">
-              Data é obrigatória.
-          </small>
-      </div>
+  <!-- Campo Data -->
+  <div class="p-field">
+    <label for="entryDate">Data</label>
+    <p-calendar
+      id="entryDate"
+      formControlName="entryDate"
+      dateFormat="dd/mm/yy"
+      [showIcon]="true"
+      placeholder="Selecione a data"
+      appendTo="body"
+      [ngClass]="{'p-invalid': isFieldInvalid('entryDate')}"
+    >
+    </p-calendar>
+  </div>
 
-      <!-- Campo Hora de Início -->
-      <div class="p-field">
-          <label for="startTime">Hora Início</label>
-          <p-calendar
-              id="startTime"
-              formControlName="startTime"
-              [timeOnly]="true"
-              [showTime]="true"
-              hourFormat="24"
-              placeholder="HH:mm"
-              appendTo="body"
-              (onSelect)="formatTime('startTime')"
-          >
-          </p-calendar>
-          <small *ngIf="timeEntryForm.get('startTime')?.invalid && timeEntryForm.get('startTime')?.touched" class="p-error">
-              Hora de início é obrigatória.
-          </small>
-      </div>
+  <!-- Campo Hora de Início -->
+  <div class="p-field">
+    <label for="startTime">Hora Início</label>
+    <input
+      type="text"
+      id="startTime"
+      formControlName="startTime"
+      placeholder="HH:mm"
+      pInputText
+      (input)="autoFormatTime('startTime')"
+      [ngClass]="{'p-invalid': isFieldInvalid('startTime')}"
+    />
+  </div>
 
-      <!-- Campo Hora de Fim -->
-      <div class="p-field">
-          <label for="endTime">Hora Fim</label>
-          <p-calendar
-              id="endTime"
-              formControlName="endTime"
-              [timeOnly]="true"
-              [showTime]="true"
-              hourFormat="24"
-              placeholder="HH:mm"
-              appendTo="body"
-              (onSelect)="formatTime('endTime')"
-          >
-          </p-calendar>
-          <small *ngIf="timeEntryForm.get('endTime')?.invalid && timeEntryForm.get('endTime')?.touched" class="p-error">
-              Hora de fim é obrigatória.
-          </small>
-      </div>
+  <!-- Campo Hora de Fim -->
+  <div class="p-field">
+    <label for="endTime">Hora Fim</label>
+    <input
+      type="text"
+      id="endTime"
+      formControlName="endTime"
+      placeholder="HH:mm"
+      pInputText
+      (input)="autoFormatTime('endTime')"
+      [ngClass]="{'p-invalid': isFieldInvalid('endTime')}"
+    />
+  </div>
   </form>
 
   <!-- Botões de Ação -->
@@ -140,54 +123,22 @@
   <div class="charts-wrapper grid">
     <ng-container *ngIf="userRole === 'comum'">
       <p-card class="col-12 md:col-6">
-        <app-chart
-          [chartData]="taskData"
-          [chartOptions]="chartOptions"
-          chartType="bar">
-        </app-chart>
-      </p-card>
-      <p-card class="col-12 md:col-6">
-        <app-chart
-          [chartData]="taskStatusData"
-          [chartOptions]="chartOptions"
-          chartType="pie">
-        </app-chart>
+        <app-chart [chartData]="userHoursData" [chartOptions]="chartOptions" chartType="bar"></app-chart>
       </p-card>
     </ng-container>
 
     <ng-container *ngIf="userRole === 'gestor'">
       <p-card class="col-12 md:col-6">
-        <app-chart
-          [chartData]="projectProgressData"
-          [chartOptions]="chartOptions"
-          chartType="line">
-        </app-chart>
-      </p-card>
-      <p-card class="col-12 md:col-6">
-        <app-chart
-          [chartData]="taskAllocationData"
-          [chartOptions]="chartOptions"
-          chartType="doughnut">
-        </app-chart>
+        <app-chart [chartData]="projectProgressData" [chartOptions]="chartOptions" chartType="line"></app-chart>
       </p-card>
     </ng-container>
 
     <ng-container *ngIf="userRole === 'admin'">
       <p-card class="col-12 md:col-6">
-        <app-chart
-          [chartData]="userActivityData"
-          [chartOptions]="chartOptions"
-          chartType="radar">
-        </app-chart>
-      </p-card>
-      <p-card class="col-12 md:col-6">
-        <app-chart
-          [chartData]="systemUsageData"
-          [chartOptions]="chartOptions"
-          chartType="polarArea">
-        </app-chart>
+        <app-chart [chartData]="userActivityData" [chartOptions]="chartOptions" chartType="polarArea"></app-chart>
       </p-card>
     </ng-container>
+
   </div>
 
   <!-- Tabela de últimos lançamentos -->
