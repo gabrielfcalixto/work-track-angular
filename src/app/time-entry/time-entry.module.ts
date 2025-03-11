@@ -10,6 +10,9 @@ import { DialogModule } from 'primeng/dialog'; // Importe o DialogModule
 import { InputTextModule } from 'primeng/inputtext'; // Importe o InputTextModule
 import { ButtonModule } from 'primeng/button'; // Importe o ButtonModule
 import { ToastModule } from 'primeng/toast'; // Importe o ToastModule
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+
 
 @NgModule({
   declarations: [TimeEntryComponent], // Declare o componente
@@ -24,7 +27,10 @@ import { ToastModule } from 'primeng/toast'; // Importe o ToastModule
     DialogModule, // Adicione o DialogModule
     InputTextModule, // Adicione o InputTextModule
     ButtonModule, // Adicione o ButtonModule
-    ToastModule // Adicione o ToastModule
+    ToastModule,
+    DropdownModule,
+    InputTextareaModule
+
   ],
   exports: [TimeEntryComponent] // Exporte o componente
 })

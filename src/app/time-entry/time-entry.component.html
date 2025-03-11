@@ -1,6 +1,16 @@
 <div>
-  <button pButton label="Adicionar Horas" icon="pi pi-plus" (click)="openDialog()" class="p-button-success"></button>
+  <!-- Botão para abrir o diálogo de lançamento de horas -->
+  <div class="button-container flex justify-end mb-4">
+    <button
+      pButton
+      label="Adicionar Horas"
+      icon="pi pi-plus"
+      (click)="openDialog()"
+      class="p-button-success"
+    ></button>
+  </div>
 
+  <!-- Tabela com os lançamentos -->
   <p-table [value]="timeEntries" responsiveLayout="scroll">
     <ng-template pTemplate="header">
       <tr>
@@ -24,20 +34,48 @@
     </ng-template>
   </p-table>
 
-  <p-dialog [(visible)]="displayDialog" header="Adicionar Horas" [modal]="true" [closable]="false" [style]="{ width: '450px' }">
+  <!-- Modal para lançar horas -->
+  <p-dialog
+    [(visible)]="displayDialog"
+    header="Adicionar Horas"
+    [modal]="true"
+    [closable]="false"
+    [style]="{ width: '450px' }"
+  >
     <form [formGroup]="timeEntryForm" class="p-fluid">
+      <!-- Campo Tarefa -->
       <div class="p-field">
-        <label for="task">Tarefa</label>
-        <input id="task" type="text" pInputText formControlName="taskId" placeholder="Informe a tarefa">
-        <small *ngIf="timeEntryForm.get('taskId')?.invalid && timeEntryForm.get('taskId')?.touched" class="p-error">Tarefa é obrigatória.</small>
+        <label for="taskDropdown">Tarefa</label>
+        <p-dropdown
+          id="taskDropdown"
+          [options]="tasks"
+          placeholder="Selecione a Tarefa"
+          [editable]="true"
+          optionLabel="name"
+          appendTo="body"
+          formControlName="taskId"
+          (onChange)="onTaskSelect($event)"
+          [ngClass]="{ 'p-invalid': isFieldInvalid('taskId') }"
+        ></p-dropdown>
+        <small *ngIf="isFieldInvalid('taskId')" class="p-error">Tarefa é obrigatória.</small>
       </div>
 
+      <!-- Campo Descrição -->
       <div class="p-field">
         <label for="description">Descrição</label>
-        <textarea id="description" pInputTextarea formControlName="description" rows="3" placeholder="Descreva a tarefa"></textarea>
-        <small *ngIf="timeEntryForm.get('description')?.invalid && timeEntryForm.get('description')?.touched" class="p-error">Descrição é obrigatória.</small>
+        <textarea
+          id="description"
+          rows="3"
+          pInputTextarea
+          formControlName="description"
+          placeholder="Descreva a tarefa"
+          [autoResize]="true"
+          [ngClass]="{ 'p-invalid': isFieldInvalid('description') }"
+        ></textarea>
+        <small *ngIf="isFieldInvalid('description')" class="p-error">Descrição é obrigatória.</small>
       </div>
 
+      <!-- Campo Data -->
       <div class="p-field">
         <label for="entryDate">Data</label>
         <p-calendar
@@ -45,57 +83,65 @@
           formControlName="entryDate"
           dateFormat="dd/mm/yy"
           [showIcon]="true"
-          placeholder="Selecione a data">
-        </p-calendar>
-        <small *ngIf="timeEntryForm.get('entryDate')?.invalid && timeEntryForm.get('entryDate')?.touched" class="p-error">Data é obrigatória.</small>
+          placeholder="Selecione a data"
+          appendTo="body"
+          [ngClass]="{ 'p-invalid': isFieldInvalid('entryDate') }"
+        ></p-calendar>
+        <small *ngIf="isFieldInvalid('entryDate')" class="p-error">Data é obrigatória.</small>
       </div>
 
+      <!-- Campo Hora de Início -->
       <div class="p-field">
         <label for="startTime">Hora Início</label>
-        <p-calendar
+        <input
+          type="text"
           id="startTime"
           formControlName="startTime"
-          [timeOnly]="true"
-          [showTime]="true"
-          hourFormat="24"
-          placeholder="HH:mm">
-        </p-calendar>
-        <small *ngIf="timeEntryForm.get('startTime')?.invalid && timeEntryForm.get('startTime')?.touched" class="p-error">Hora de início é obrigatória.</small>
+          placeholder="HH:mm"
+          pInputText
+          (input)="autoFormatTime('startTime')"
+          [ngClass]="{ 'p-invalid': isFieldInvalid('startTime') }"
+        />
+        <small *ngIf="isFieldInvalid('startTime')" class="p-error">Hora de início é obrigatória.</small>
       </div>
 
+      <!-- Campo Hora de Fim -->
       <div class="p-field">
         <label for="endTime">Hora Fim</label>
-        <p-calendar
+        <input
+          type="text"
           id="endTime"
           formControlName="endTime"
-          [timeOnly]="true"
-          [showTime]="true"
-          hourFormat="24"
-          placeholder="HH:mm">
-        </p-calendar>
-        <small *ngIf="timeEntryForm.get('endTime')?.invalid && timeEntryForm.get('endTime')?.touched" class="p-error">Hora de fim é obrigatória.</small>
+          placeholder="HH:mm"
+          pInputText
+          (input)="autoFormatTime('endTime')"
+          [ngClass]="{ 'p-invalid': isFieldInvalid('endTime') }"
+        />
+        <small *ngIf="isFieldInvalid('endTime')" class="p-error">Hora de fim é obrigatória.</small>
       </div>
     </form>
 
-    <p-footer>
+    <!-- Botões de Ação -->
+    <ng-template pTemplate="footer">
       <button
         pButton
         type="button"
         label="Cancelar"
         icon="pi pi-times"
         class="p-button-text"
-        (click)="closeDialog()">
-      </button>
+        (click)="closeDialog()"
+      ></button>
       <button
         pButton
         type="button"
         label="Salvar"
         icon="pi pi-check"
         (click)="saveTimeEntry()"
-        [disabled]="timeEntryForm.invalid">
-      </button>
-    </p-footer>
+        [disabled]="timeEntryForm.invalid"
+      ></button>
+    </ng-template>
   </p-dialog>
 
+  <!-- Toast para mensagens -->
   <p-toast></p-toast>
 </div>

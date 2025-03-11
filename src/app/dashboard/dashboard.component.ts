@@ -30,7 +30,6 @@ export class DashboardComponent implements OnInit {
   responsive: true,
   plugins: {
     legend: {
-      labels: { color: '#495057' }
     }
   }
 };

@@ -16,6 +16,8 @@ export class TimeEntryComponent implements OnInit {
   timeEntryForm: FormGroup;
   tasks: any[] = []; // Lista de tarefas
   selectedTask: any; // Tarefa selecionada
+  ultimosLancamentos: any[] = [];
+
 
   constructor(
     private fb: FormBuilder,
@@ -61,13 +63,31 @@ export class TimeEntryComponent implements OnInit {
 
   saveTimeEntry(): void {
     if (this.timeEntryForm.valid) {
+      const startTimeStr = this.formatTime(this.timeEntryForm.value.startTime);
+      const endTimeStr = this.formatTime(this.timeEntryForm.value.endTime);
+
+      // Converte as strings para Date para poder comparar
+      const startDateTime = new Date(`1970-01-01T${startTimeStr}`);
+      const endDateTime = new Date(`1970-01-01T${endTimeStr}`);
+
+      // Valida se a hora final é menor que a hora inicial
+      if (endDateTime < startDateTime) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'A hora final não pode ser menor que a hora inicial.'
+        });
+        return; // Interrompe a execução
+      }
+
       const entry = {
         ...this.timeEntryForm.value,
         userId: this.userId,
-        startTime: this.formatTime(this.timeEntryForm.value.startTime), // Formata a hora
-        endTime: this.formatTime(this.timeEntryForm.value.endTime), // Formata a hora
-        totalHours: this.calculateTotalHours(this.timeEntryForm.value.startTime, this.timeEntryForm.value.endTime)
+        startTime: startTimeStr,
+        endTime: endTimeStr,
+        totalHours: this.calculateTotalHours(startDateTime, endDateTime)
       };
+
       this.timeEntryService.saveTimeEntry(entry).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Horas adicionadas!' });
@@ -81,17 +101,42 @@ export class TimeEntryComponent implements OnInit {
     }
   }
 
-  // Método para formatar a hora no formato HH:mm:ss
-  formatTime(date: Date): string {
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}:00`; // Adiciona segundos como 00
+
+  formatTime(value: any): string {
+    if (!value) return ''; // Evita erros com valores nulos
+    if (typeof value === 'string') return value; // Se já for string, retorna como está
+
+    const hours = value.getHours().toString().padStart(2, '0');
+    const minutes = value.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}:00`;
   }
+
 
   // Método para calcular o total de horas
   calculateTotalHours(startTime: Date, endTime: Date): number {
     const diff = endTime.getTime() - startTime.getTime();
     return diff / (1000 * 60 * 60); // Converte milissegundos para horas
+  }
+
+
+  isFieldInvalid(field: string): boolean {
+    const control = this.timeEntryForm.get(field);
+    return !!(control?.invalid && control?.touched);
+  }
+
+
+  autoFormatTime(field: string): void {
+    let value = this.timeEntryForm.get(field)?.value || '';
+
+    // Remove caracteres não numéricos
+    value = value.replace(/\D/g, '');
+
+    // Formata automaticamente HH:mm
+    if (value.length >= 2) {
+      value = value.substring(0, 2) + ':' + value.substring(2, 4);
+    }
+
+    this.timeEntryForm.get(field)?.setValue(value.substring(0, 5)); // Limita a 5 caracteres
   }
 
   // Método para tratar a seleção de tarefa
