@@ -161,9 +161,11 @@ export class DashboardComponent implements OnInit {
       const startTimeStr = this.formatTime(this.timeEntryForm.value.startTime);
       const endTimeStr = this.formatTime(this.timeEntryForm.value.endTime);
 
-      const startDateTime = new Date(`1970-01-01T${startTimeStr}`);
-      const endDateTime = new Date(`1970-01-01T${endTimeStr}`);
+      // Convertendo as strings para uma data no formato ISO 8601
+      const startDateTime = new Date(`1970-01-01T${startTimeStr}:00`);
+      const endDateTime = new Date(`1970-01-01T${endTimeStr}:00`);
 
+      // Verificar se a hora final é menor que a hora inicial
       if (endDateTime < startDateTime) {
         this.messageService.add({
           severity: 'error',
@@ -176,11 +178,12 @@ export class DashboardComponent implements OnInit {
       const entry = {
         ...this.timeEntryForm.value,
         userId: this.userId,
-        startTime: startTimeStr,
-        endTime: endTimeStr,
+        startTime: startTimeStr,  // Mantém como string no formato HH:mm
+        endTime: endTimeStr,      // Mantém como string no formato HH:mm
         totalHours: this.calculateTotalHours(startDateTime, endDateTime)
       };
 
+      // Enviar os dados para o backend
       this.timeEntryService.saveTimeEntry(entry).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Horas adicionadas!' });

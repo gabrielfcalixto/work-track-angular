@@ -14,11 +14,8 @@
     <div class="profile-header">
       <div class="avatar-container">
           <app-avatar [userName]="user?.name"></app-avatar>
-
-
       </div>
       <h1>{{ user.name }}</h1>
-      <button pButton type="button" label="Redefinir Senha" class="p-button-warning" (click)="showResetPasswordDialog()"></button>
     </div>
 
     <div class="profile-info">
@@ -36,6 +33,8 @@
             <strong>Data de Entrada: </strong>
             <span>{{ user.joinDate | date:'dd/MM/yyyy' }}</span>
           </div>
+          <button pButton type="button" label="Redefinir Senha" class="p-button" (click)="showResetPasswordDialog()"></button>
+
         </div>
       </p-fieldset>
     </div>
@@ -47,11 +46,10 @@
   header="Redefinir Senha"
   [(visible)]="displayResetPasswordDialog"
   [modal]="true"
-  [style]="{ width: '400px' }"
+  [style]="{ width: '300px' }"
   [draggable]="false"
   [resizable]="false">
   <div class="reset-password-form">
-    <p>Insira sua senha antiga e a nova senha:</p>
 
     <!-- Campo de senha antiga com input normal -->
     <div class="p-field">
@@ -78,6 +76,6 @@
 
   <ng-template pTemplate="footer">
     <button pButton type="button" label="Cancelar" class="p-button-text" (click)="hideResetPasswordDialog()"></button>
-    <button pButton type="button" label="Salvar" class="p-button-success" (click)="resetPassword()"></button>
+    <button pButton type="button" label="Salvar" class="p-button" (click)="resetPassword()"></button>
   </ng-template>
 </p-dialog>
