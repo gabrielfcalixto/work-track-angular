@@ -13,23 +13,9 @@
   <p-card class="profile-card">
     <div class="profile-header">
       <div class="avatar-container">
-        <p-avatar
-          [image]="user.profilePicture || defaultAvatar"
-          size="xlarge"
-          shape="circle"
-          class="profile-avatar">
-        </p-avatar>
-        <p-fileUpload
-          mode="basic"
-          accept="image/*"
-          [maxFileSize]="5000000"
-          chooseLabel="Alterar foto"
-          class="upload-button"
-          (onUpload)="onUpload($event)"
-          [auto]="true"
-          [customUpload]="true"
-          (uploadHandler)="uploadProfilePicture($event)">
-        </p-fileUpload>
+          <app-avatar [userName]="user?.name"></app-avatar>
+
+
       </div>
       <h1>{{ user.name }}</h1>
       <button pButton type="button" label="Redefinir Senha" class="p-button-warning" (click)="showResetPasswordDialog()"></button>

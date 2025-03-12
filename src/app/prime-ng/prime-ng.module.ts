@@ -13,6 +13,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CalendarModule } from 'primeng/calendar';
+import { AvatarModule } from 'primeng/avatar';
 
 
 @NgModule({
@@ -28,7 +29,9 @@ import { CalendarModule } from 'primeng/calendar';
     DialogModule,
     DropdownModule,
     ProgressSpinnerModule,
-    TableModule
+    TableModule,
+    AvatarModule
+
   ],
   exports: [
     CommonModule,
@@ -44,7 +47,8 @@ import { CalendarModule } from 'primeng/calendar';
     ProgressSpinnerModule,
     TableModule,
     MultiSelectModule,
-    CalendarModule
+    CalendarModule,
+    AvatarModule
 
   ]
 })

@@ -13,7 +13,6 @@ import { UsersService } from '../users/users.service';
 })
 export class ProfileComponent implements OnInit {
   user: any = null;
-  defaultAvatar = 'https://images.pexels.com/photos/7915359/pexels-photo-7915359.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
 
 
 
@@ -28,7 +27,9 @@ export class ProfileComponent implements OnInit {
     private profileService: ProfileService,
     private messageService: MessageService,
     private loadingService: LoadingService
-  ) {}
+  ) {
+    this.user = this.authService.getLoggedUser();
+  }
 
   ngOnInit(): void {
     this.loadUserProfile();

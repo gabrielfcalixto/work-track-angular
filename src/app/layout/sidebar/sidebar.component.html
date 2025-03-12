@@ -24,8 +24,8 @@
         <div class="sidebar-footer">
           <hr />
           <a class="profile-section" (click)="navigateToProfile($event)">
-            <p-avatar label="P" styleClass="mr-2" size="large" shape="circle"></p-avatar>
-            <span class="profile-name">Admin</span>
+            <app-avatar [userName]="user?.name"></app-avatar>
+            <span class="profile-name">{{user?.name }}</span>
           </a>
         </div>
 

@@ -1,3 +1,4 @@
+import { AuthService } from './../../auth/auth.service';
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { ThemeService } from './../../services/theme.service';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -14,10 +15,13 @@ export class NavbarComponent {
 
   isDarkMode = false;
   logoPath = 'assets/logo-hard-preta.png';
+  user: any;
 
-  constructor(private themeService: ThemeService, private router: Router) {
+
+  constructor(private themeService: ThemeService, private router: Router, private authService: AuthService) {
     this.isDarkMode = document.body.classList.contains('dark-mode');
     this.setLogo();
+    this.user = this.authService.getLoggedUser();
   }
 
   toggleTheme(): void {
@@ -27,7 +31,7 @@ export class NavbarComponent {
   }
 
   setLogo(): void {
-    this.logoPath = this.isDarkMode ? 'assets/logo-hard-branca.png' : 'assets/logo-hard-preta.png';
+    this.logoPath = this.isDarkMode ? 'assets/imagens/logo-branca.png' : 'assets/imagens/logo-preta.png';
   }
 
   toggleSidebar(): void {

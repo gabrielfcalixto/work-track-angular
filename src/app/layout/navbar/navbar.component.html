@@ -10,11 +10,8 @@
     </button>
     <!-- Avatar -->
     <div class="profile-icon" (click)="navigateToProfile()">
-      <p-avatar
-      label="P"
-      styleClass="mr-2"
-      size="large"
-      shape="circle" />
+      <app-avatar [userName]="user?.name"></app-avatar>
+
     </div>
 
     <div class="logout-icon" (click)="logout()">

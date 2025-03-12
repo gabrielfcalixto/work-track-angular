@@ -4,16 +4,12 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { LayoutComponent } from './layout.component';
 import { RouterModule } from '@angular/router';
-import { PrimeIcons } from 'primeng/api';
-import { StyleClassModule } from 'primeng/styleclass';
-import { AvatarModule } from 'primeng/avatar';
-import { RippleModule } from 'primeng/ripple';
-import { ButtonModule } from 'primeng/button';
 import { SidebarModule } from 'primeng/sidebar';
-import { LayoutService } from './layout.service';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Necessário para animações
-import { PrimeNGModule } from '../prime-ng/prime-ng.module';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
+import { StyleClassModule } from 'primeng/styleclass';
+import { PrimeNGModule } from '../prime-ng/prime-ng.module'; // Importando PrimeNGModule
+import { AvatarModule } from '../shared/avatar/avatar/avatar.module';
 
 @NgModule({
   declarations: [
@@ -23,17 +19,14 @@ import { PrimeNGModule } from '../prime-ng/prime-ng.module';
   ],
   imports: [
     CommonModule,
-    BrowserModule,
-    BrowserAnimationsModule,
     RouterModule,
     SidebarModule,
     ButtonModule,
     RippleModule,
-    AvatarModule,
     StyleClassModule,
+    PrimeNGModule, // Importando PrimeNGModule para usar componentes do PrimeNG
+    AvatarModule  // Importando AvatarModule para usar o AvatarComponent
   ],
-  providers:[
-    LayoutService
-  ]
+  providers: []
 })
 export class LayoutModule { }

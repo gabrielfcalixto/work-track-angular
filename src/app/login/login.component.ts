@@ -24,6 +24,8 @@ export class LoginComponent implements OnInit {
   newPassword: string = '';
   resetPasswordStep: 'request' | 'reset' = 'request'; // Etapa de recuperação de senha
   showForgotPasswordDialog: boolean = false; // Controle do diálogo
+  logoPath = 'assets/imagens/logo-preta.png';
+
 
 
 
@@ -81,6 +83,10 @@ export class LoginComponent implements OnInit {
         });
       }
     );
+  }
+
+  setLogo(): void {
+    this.logoPath = this.isDarkMode ? 'assets/imagens/logo-branca.png' : 'assets/imagens/logo-preta.png';
   }
 
   // Método para solicitar o código de reset de senha

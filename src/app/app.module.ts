@@ -27,6 +27,7 @@ import { LoadingComponent } from './loading/loading.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ChartComponent } from './components/chart/chart.component';
 import { ChartModule } from 'primeng/chart';
+import { AvatarComponent } from './shared/avatar/avatar/avatar.component';
 
 @NgModule({
   declarations: [
