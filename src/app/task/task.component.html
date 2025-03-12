@@ -66,7 +66,7 @@
       <p-dropdown
         id="status"
         [(ngModel)]="newTask.status"
-        [options]="statusOptions"
+        [options]="status"
         optionLabel="name"
         optionValue="value"
         placeholder="Selecione o status"
@@ -163,7 +163,7 @@
         <p-dropdown
           id="status"
           [(ngModel)]="selectedTask.status"
-          [options]="statusOptions"
+          [options]="status"
           optionLabel="name"
           placeholder="Selecione o status"
           [showClear]="true"
@@ -198,11 +198,12 @@
           id="status"
           *ngIf="selectedTask"
           [(ngModel)]="selectedTask.status"
-          [options]="statusOptions"
+          [options]="status"
           optionLabel="name"
           placeholder="Selecione o status"
           [showClear]="true"
-          appendTo="body">
+          appendTo="body"
+          optionValue="value">
         </p-dropdown>
       </div>
     </div>

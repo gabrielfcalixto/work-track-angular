@@ -28,7 +28,7 @@ export class TaskComponent implements OnInit {
   displayDeleteDialog = false;
   filteredTasks: Task[] = [];
   searchText: string = '';
-  statusOptions = [
+  status = [
     { name: 'Pendente', value: 'NAO_INICIADA' },   // Mapeando para o enum
     { name: 'Em andamento', value: 'EM_ANDAMENTO' },
     { name: 'Concluída', value: 'CONCLUIDA' },
@@ -214,19 +214,27 @@ export class TaskComponent implements OnInit {
   }
 
   saveStatus() {
-    if (this.selectedTask) {
+    // Verifica se há uma tarefa selecionada, se o status existe e se o ID da tarefa é válido
+    if (this.selectedTask && this.selectedTask.status && this.selectedTask.id !== undefined) {
       this.loadingService.show();
 
-      this.taskService.updateStatus(this.selectedTask).subscribe({
+      // Extrai o valor do status (ex: "EM_ANDAMENTO")
+      const statusValue = this.selectedTask.status;
+
+      // Envia apenas o valor do status
+      this.taskService.updateStatus(this.selectedTask.id, { status: statusValue }).subscribe({
         next: () => {
           this.displayPermissionDialog = false;
           this.loadingService.hide();
-          this.messageService.add({ severity: 'info', summary: 'Status atualizado', detail: 'Status da tarefa foi alterado!' });
-          this.loadTask(); // Caso queira atualizar a lista após troca de status
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Status atualizado',
+            detail: 'Status da tarefa foi alterado!'
+          });
+          this.loadTask(); // Atualiza a lista de tarefas
         },
         error: (err) => {
           this.loadingService.hide();
-
           this.messageService.add({
             severity: 'error',
             summary: 'Erro ao atualizar status',
@@ -234,9 +242,14 @@ export class TaskComponent implements OnInit {
           });
         }
       });
+    } else {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Nenhuma tarefa selecionada',
+        detail: 'Selecione uma tarefa antes de atualizar o status.'
+      });
     }
   }
-
 
   confirmDelete(task: Task) {
     this.selectedTask = { ...task };
