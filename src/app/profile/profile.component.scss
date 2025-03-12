@@ -4,6 +4,7 @@
   align-items: center;
   padding: 20px;
   padding-top: 50px;
+  width: 100%;
 }
 
 .profile-card {
@@ -12,22 +13,22 @@
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px; /* Garante espaçamento entre os cards */
 }
 
 .profile-header {
   text-align: center;
-  margin-bottom: 50px;
-  align-items: center;
+  margin-bottom: 20px; /* Ajuste do espaço entre o título e a avatar */
 }
 
 .profile-header h1 {
   font-size: 2rem;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .avatar-container {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Ajuste do espaço ao redor da imagem */
 }
 
 .profile-info {
@@ -58,6 +59,26 @@
   gap: 5px;
 }
 
+.reset-password-form .p-field {
+  margin-bottom: 5px; /* Aumenta o espaçamento entre o label e o input */
+}
+
+.reset-password-form label {
+  margin-bottom: 5px; /* Ajusta o espaçamento entre o label e o campo de entrada */
+}
+
+.reset-password-form .p-inputtext {
+  margin-top: 5px; /* Adiciona um pequeno espaçamento após o campo de entrada */
+}
+
+
 .full-width {
   width: 100%;
+}
+
+/* Adicionando um estilo ao dialog para que ele não seja muito grande */
+.p-dialog {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
 }

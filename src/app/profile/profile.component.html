@@ -1,6 +1,5 @@
 <p-toast></p-toast>
 
-
 <div *ngIf="!user" class="loading">
   <p-progressSpinner
     styleClass="custom-spinner"
@@ -13,7 +12,7 @@
   <p-card class="profile-card">
     <div class="profile-header">
       <div class="avatar-container">
-          <app-avatar [userName]="user?.name"></app-avatar>
+        <app-avatar [userName]="user?.name"></app-avatar>
       </div>
       <h1>{{ user.name }}</h1>
     </div>
@@ -26,7 +25,7 @@
             <span>{{ user.email }}</span>
           </div>
           <div class="info-item">
-            <strong>Username: </strong>
+            <strong>Usuário: </strong>
             <span>{{ user.login }}</span>
           </div>
           <div class="info-item">
@@ -34,7 +33,6 @@
             <span>{{ user.joinDate | date:'dd/MM/yyyy' }}</span>
           </div>
           <button pButton type="button" label="Redefinir Senha" class="p-button" (click)="showResetPasswordDialog()"></button>
-
         </div>
       </p-fieldset>
     </div>
@@ -50,8 +48,6 @@
   [draggable]="false"
   [resizable]="false">
   <div class="reset-password-form">
-
-    <!-- Campo de senha antiga com input normal -->
     <div class="p-field">
       <label for="oldPassword">Senha Antiga</label>
       <input
@@ -62,7 +58,6 @@
         class="p-inputtext p-component full-width">
     </div>
 
-    <!-- Campo de nova senha com input normal -->
     <div class="p-field">
       <label for="newPassword">Nova Senha</label>
       <input
