@@ -20,7 +20,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="name">Nome <p-sortIcon field="name"></p-sortIcon></th>
-        <th pSortableColumn="description">Descrição <p-sortIcon field="description"></p-sortIcon></th>
+        <!-- <th pSortableColumn="description">Descrição <p-sortIcon field="description"></p-sortIcon></th> -->
         <th pSortableColumn="estimatedHours">Horas <p-sortIcon field="estimatedHours"></p-sortIcon></th>
         <th pSortableColumn="totalHours">Horas lançadas <p-sortIcon field="totalHours"></p-sortIcon></th>
         <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
@@ -31,14 +31,14 @@
     <ng-template pTemplate="body" let-task>
       <tr>
         <td>{{ task.name }}</td>
-        <td>{{ task.description }}</td>
+        <!-- <td>{{ task.description }}</td> -->
         <td>{{ task.estimatedHours }}</td>
         <td>{{ task.totalHours }}</td>
         <td>{{ getStatusName(task.status) }}</td>
         <td>
           <p-button icon="pi pi-pencil" (click)="openEditDialog(task)"></p-button>
           <p-button icon="pi pi-key" (click)="openStatusDialog(task)"></p-button>
-          <p-button icon="pi pi-trash" (click)="confirmDelete(task)" severity="danger"></p-button>
+          <!-- <p-button icon="pi pi-trash" (click)="confirmDelete(task)" severity="danger"></p-button> -->
         </td>
       </tr>
     </ng-template>
@@ -167,7 +167,9 @@
           optionLabel="name"
           placeholder="Selecione o status"
           [showClear]="true"
-          appendTo="body">
+          appendTo="body"
+          optionValue="value">
+
         </p-dropdown>
       </div>
       <div *ngIf="selectedTask" class="p-field">
@@ -179,8 +181,32 @@
           optionLabel="name"
           placeholder="Selecione a prioridade"
           [showClear]="true"
-          appendTo="body">
+          appendTo="body"
+          optionValue="value">
+
         </p-dropdown>
+      </div>
+      <div class="p-field">
+        <label for="assignedUsers">Usuários Atribuídos</label>
+        <p-multiSelect
+          id="assignedUsers"
+          [(ngModel)]="selectedTask.assignedUserIds"
+          [options]="users"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Selecione os usuários"
+          [showClear]="true"
+          appendTo="body">
+        </p-multiSelect>
+      </div>
+      <div class="p-field">
+        <label for="deadline">Prazo</label>
+        <p-calendar
+          id="deadline"
+          [(ngModel)]="selectedTask.deadline"
+          dateFormat="yy-mm-dd"
+          [showIcon]="true">
+        </p-calendar>
       </div>
     </div>
     <p-footer>

@@ -1,3 +1,4 @@
+import { Users } from './../users/users.model';
 import { Component, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import jsPDF from 'jspdf';
@@ -7,7 +8,6 @@ import { TaskService } from './task.service';
 import { ProjectService } from '../project/project.service';
 import { Project } from '../project/project.model';
 import { UsersService } from '../users/users.service';
-import { Users } from '../users/users.model';
 import { LoadingService } from '../loading/loading.service';
 
 
@@ -21,8 +21,9 @@ export class TaskComponent implements OnInit {
   tasks: Task[] = [];
   projects: Project[] = []; // Lista de projetos
   users: Users[] = []; // Lista de usuários
-  selectedTask?: Task;
-  displayAddDialog = false;
+  selectedTask: Task = {} as Task;
+
+    displayAddDialog = false;
   displayEditDialog = false;
   displayPermissionDialog = false;
   displayDeleteDialog = false;
@@ -183,34 +184,31 @@ export class TaskComponent implements OnInit {
   }
 
     openEditDialog(task: Task) {
-      this.selectedTask = { ...task };  // Fazendo uma cópia profunda para evitar modificações diretas no objeto original
+      this.selectedTask = { ...task };
       this.displayEditDialog = true;
     }
 
-
     saveEdit() {
-      if (this.selectedTask) {
-        this.loadingService.show();
-
-        this.taskService.editTask(this.selectedTask).subscribe({
-          next: () => {
-            this.displayEditDialog = false;
-            this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Tarefa atualizada!' });
-            this.loadTask();
-            this.loadingService.hide();
-          },
-          error: (err) => {
-            this.loadingService.hide();
-
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro',
-              detail: err?.error?.message || 'Falha ao atualizar a tarefa. Tente novamente.'
-            });
-          }
-        });
+      if (!this.selectedTask) {
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Nenhuma tarefa selecionada!' });
+        return;
       }
+
+      if (!this.selectedTask.name || !this.selectedTask.description || !this.selectedTask.estimatedHours || !this.selectedTask.status || !this.selectedTask.priority || !this.selectedTask.assignedUserIds || !this.selectedTask.deadline) {
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Todos os campos são obrigatórios!' });
+        return;
+      }
+
+      this.loadingService.show();
+
+      this.taskService.editTask(this.selectedTask).subscribe(() => {
+        this.displayEditDialog = false;
+        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado!' });
+        this.loadTask();
+        this.loadingService.hide();
+      });
     }
+
 
   openStatusDialog(task: Task) {
     this.selectedTask = { ...task };

@@ -15,7 +15,7 @@ import { LoadingService } from '../loading/loading.service';
 })
 export class UsersComponent implements OnInit {
   users: Users[] = [];
-  selectedUser: Users | null = null;
+  selectedUser: Users = {} as Users
   displayAddDialog = false;
   displayEditDialog = false;
   displayPermissionDialog = false;
