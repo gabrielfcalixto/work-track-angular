@@ -34,7 +34,7 @@
         <td>{{ task.description }}</td>
         <td>{{ task.estimatedHours }}</td>
         <td>{{ task.totalHours }}</td>
-        <td>{{ task.status }}</td>
+        <td>{{ getStatusName(task.status) }}</td>
         <td>
           <p-button icon="pi pi-pencil" (click)="openEditDialog(task)"></p-button>
           <p-button icon="pi pi-key" (click)="openStatusDialog(task)"></p-button>

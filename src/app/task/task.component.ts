@@ -92,6 +92,10 @@ export class TaskComponent implements OnInit {
 
     );
   }
+  getStatusName(statusValue: string): string {
+    const status = this.status.find(option => option.value === statusValue);
+    return status ? status.name : 'Desconhecido';
+  }
 
 
   loadProjects() {
@@ -214,14 +218,11 @@ export class TaskComponent implements OnInit {
   }
 
   saveStatus() {
-    // Verifica se há uma tarefa selecionada, se o status existe e se o ID da tarefa é válido
     if (this.selectedTask && this.selectedTask.status && this.selectedTask.id !== undefined) {
       this.loadingService.show();
 
-      // Extrai o valor do status (ex: "EM_ANDAMENTO")
       const statusValue = this.selectedTask.status;
 
-      // Envia apenas o valor do status
       this.taskService.updateStatus(this.selectedTask.id, { status: statusValue }).subscribe({
         next: () => {
           this.displayPermissionDialog = false;
@@ -235,11 +236,29 @@ export class TaskComponent implements OnInit {
         },
         error: (err) => {
           this.loadingService.hide();
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro ao atualizar status',
-            detail: err?.error?.message || 'Falha ao alterar o status. Tente novamente.'
-          });
+          console.error('Erro ao atualizar status:', err);
+
+          // Verifica se a mensagem específica está em outro lugar
+          const errorMessage =
+            err?.error?.message ||
+            err?.error ||
+            err?.message ||
+            'Falha ao alterar o status. Tente novamente.';
+
+          // Tratamento específico para a exceção de reabertura de tarefa concluída
+          if (errorMessage.includes('Não é possível reabrir uma tarefa já concluída')) {
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'Ação não permitida',
+              detail: 'Não é possível reabrir uma tarefa que já foi concluída.'
+            });
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro ao atualizar status',
+              detail: errorMessage
+            });
+          }
         }
       });
     } else {
@@ -250,6 +269,7 @@ export class TaskComponent implements OnInit {
       });
     }
   }
+
 
   confirmDelete(task: Task) {
     this.selectedTask = { ...task };
