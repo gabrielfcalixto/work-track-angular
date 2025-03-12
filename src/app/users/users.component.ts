@@ -4,6 +4,8 @@ import { UsersService } from './users.service';
 import { Users, Role } from './users.model'; // Importando o tipo 'Role' também
 import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
+import { LoadingComponent } from '../loading/loading.component';
+import { LoadingService } from '../loading/loading.service';
 
 @Component({
   selector: 'app-user-management',
@@ -29,7 +31,8 @@ export class UsersComponent implements OnInit {
   constructor(
     private usersService: UsersService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private loadingService: LoadingService
   ) {}
 
   ngOnInit() {
@@ -39,16 +42,16 @@ export class UsersComponent implements OnInit {
   loading: boolean = false;
 
   loadUsers() {
-    this.loading = true;
+    this.loadingService.show();
     this.usersService.getUsers().subscribe(
       users => {
         console.log(users);  // Verifique se os usuários estão sendo retornados
         this.users = users;
-        this.loading = false;
+        this.loadingService.hide(); // Esconde o loading
       },
       error => {
         console.error('Erro ao carregar os usuários:', error);
-        this.loading = false;
+        this.loadingService.hide(); // Esconde o loading em caso de erro
       }
     );
   }
@@ -59,23 +62,58 @@ export class UsersComponent implements OnInit {
   }
 
   addUser() {
+    // Validação dos campos obrigatórios
     if (!this.newUser.name || !this.newUser.email || !this.newUser.login || !this.newUser.role) {
-      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Todos os campos são obrigatórios!' });
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Todos os campos são obrigatórios!'
+      });
       return;
     }
 
-    // Garantir que o role seja uma string
+    // Prepara o objeto para envio ao backend
     const userToSend = {
       ...this.newUser,
-      role: typeof this.newUser.role === 'object' ? this.newUser.role.value : this.newUser.role // Convertendo para string se for um objeto
+      role: typeof this.newUser.role === 'object' ? this.newUser.role.value : this.newUser.role
     };
 
-    console.log('JSON enviado:', userToSend); // Log para verificar antes de enviar
+    // Exibe o loading
+    this.loadingService.show();
 
-    this.usersService.addUser(userToSend).subscribe(() => {
-      this.displayAddDialog = false;
-      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário adicionado!' });
-      this.loadUsers();
+    // Chama o serviço para adicionar o usuário
+    this.usersService.addUser(userToSend).subscribe({
+      next: () => {
+        // Sucesso: fecha o diálogo, exibe mensagem de sucesso e recarrega a lista de usuários
+        this.displayAddDialog = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Usuário adicionado com sucesso!'
+        });
+        this.loadUsers();
+        this.loadingService.hide();
+      },
+      error: (err) => {
+        // Esconde o loading
+        this.loadingService.hide();
+
+        // Verifica se o erro é de e-mail duplicado
+        if (err.status === 400 && err.error.message === 'O e-mail já está em uso.') {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'O e-mail já está em uso. Por favor, insira outro e-mail.'
+          });
+        } else {
+          // Outros erros
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Falha ao adicionar o usuário. Tente novamente.'
+          });
+        }
+      }
     });
   }
 
@@ -96,12 +134,17 @@ export class UsersComponent implements OnInit {
       role: typeof this.selectedUser.role === 'object' ? this.selectedUser.role.value : this.selectedUser.role // Convertendo para string se for um objeto
     };
 
+    this.loadingService.show(); // Mostra o loading
+
+
     console.log('JSON enviado na edição:', userToSend); // Log para depuração
 
     this.usersService.editUser(userToSend).subscribe(() => {
       this.displayEditDialog = false;
       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado!' });
       this.loadUsers();
+      this.loadingService.hide(); // Esconde o loading
+
     });
   }
 
@@ -112,9 +155,13 @@ export class UsersComponent implements OnInit {
 
   savePermissions() {
     if (this.selectedUser) {
+      this.loadingService.show(); // Mostra o loading
+
       this.usersService.updatePermissions(this.selectedUser).subscribe(() => {
         this.displayPermissionDialog = false;
         this.messageService.add({ severity: 'info', summary: 'Permissões atualizadas', detail: 'Permissões do usuário foram alteradas!' });
+        this.loadingService.hide(); // Esconde o loading
+
       });
     }
   }
@@ -126,10 +173,14 @@ export class UsersComponent implements OnInit {
 
   deleteUser(user: Users) {
     if (!user || user.id === undefined) return; // Garante que o ID está presente
+    this.loadingService.show(); // Mostra o loading
+
     this.usersService.deleteUser(user.id).subscribe(() => {
       this.displayDeleteDialog = false;
       this.messageService.add({ severity: 'warn', summary: 'Usuário removido', detail: 'Usuário foi excluído!' });
       this.loadUsers();
+      this.loadingService.hide(); // Esconde o loading
+
     });
   }
 

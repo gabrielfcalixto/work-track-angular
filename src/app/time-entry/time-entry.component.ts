@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TimeEntryService } from './time-entry.service';
 import { MessageService } from 'primeng/api';
+import { LoadingService } from '../loading/loading.service';
 
 @Component({
   selector: 'app-time-entry',
@@ -22,7 +23,8 @@ export class TimeEntryComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private timeEntryService: TimeEntryService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private loadingService: LoadingService
   ) {
     this.timeEntryForm = this.fb.group({
       taskId: [null, Validators.required],
@@ -39,8 +41,16 @@ export class TimeEntryComponent implements OnInit {
   }
 
   loadTimeEntries(): void {
-    this.timeEntryService.getUserTimeEntries(this.userId).subscribe(entries => {
-      this.timeEntries = entries;
+    this.loadingService.show(); // Exibe o loading
+    this.timeEntryService.getUserTimeEntries(this.userId).subscribe({
+      next: (entries) => {
+        this.timeEntries = entries;
+        this.loadingService.hide(); // Esconde o loading
+      },
+      error: () => {
+        this.loadingService.hide(); // Esconde o loading em caso de erro
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar as entradas de tempo.' });
+      }
     });
   }
 
@@ -66,18 +76,16 @@ export class TimeEntryComponent implements OnInit {
       const startTimeStr = this.formatTime(this.timeEntryForm.value.startTime);
       const endTimeStr = this.formatTime(this.timeEntryForm.value.endTime);
 
-      // Converte as strings para Date para poder comparar
       const startDateTime = new Date(`1970-01-01T${startTimeStr}`);
       const endDateTime = new Date(`1970-01-01T${endTimeStr}`);
 
-      // Valida se a hora final é menor que a hora inicial
       if (endDateTime < startDateTime) {
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
           detail: 'A hora final não pode ser menor que a hora inicial.'
         });
-        return; // Interrompe a execução
+        return;
       }
 
       const entry = {
@@ -88,19 +96,21 @@ export class TimeEntryComponent implements OnInit {
         totalHours: this.calculateTotalHours(startDateTime, endDateTime)
       };
 
+      this.loadingService.show(); // Exibe o loading
       this.timeEntryService.saveTimeEntry(entry).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Horas adicionadas!' });
           this.loadTimeEntries();
           this.closeDialog();
+          this.loadingService.hide(); // Esconde o loading
         },
-        error: (err) => {
+        error: () => {
+          this.loadingService.hide(); // Esconde o loading em caso de erro
           this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao salvar horas.' });
         }
       });
     }
   }
-
 
   formatTime(value: any): string {
     if (!value) return ''; // Evita erros com valores nulos

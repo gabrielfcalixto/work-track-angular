@@ -14,6 +14,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CalendarModule } from 'primeng/calendar';
 import { AvatarModule } from 'primeng/avatar';
+import { ToastModule } from 'primeng/toast';
 
 
 @NgModule({
@@ -48,7 +49,8 @@ import { AvatarModule } from 'primeng/avatar';
     TableModule,
     MultiSelectModule,
     CalendarModule,
-    AvatarModule
+    AvatarModule,
+    ToastModule
 
   ]
 })

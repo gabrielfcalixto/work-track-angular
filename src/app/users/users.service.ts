@@ -28,7 +28,7 @@ export class UsersService {
   }
 
   updatePermissions(user: Users): Observable<Users> {
-    return this.http.patch<Users>(`${this.apiUrl}/${user.id}/permissions`, { role: user.role })
+    return this.http.patch<Users>(`${this.apiUrl}/permissions/${user.id}`, { role: user.role })
       .pipe(catchError(this.handleError));
   }
 

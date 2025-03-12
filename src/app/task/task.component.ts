@@ -8,6 +8,7 @@ import { ProjectService } from '../project/project.service';
 import { Project } from '../project/project.model';
 import { UsersService } from '../users/users.service';
 import { Users } from '../users/users.model';
+import { LoadingService } from '../loading/loading.service';
 
 
 @Component({
@@ -20,7 +21,7 @@ export class TaskComponent implements OnInit {
   tasks: Task[] = [];
   projects: Project[] = []; // Lista de projetos
   users: Users[] = []; // Lista de usuários
-  selectedTask: Task | null = null;
+  selectedTask?: Task;
   displayAddDialog = false;
   displayEditDialog = false;
   displayPermissionDialog = false;
@@ -61,37 +62,49 @@ export class TaskComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private projectService: ProjectService, // Adicione este serviço
-    private userService: UsersService
+    private userService: UsersService,
+    private loadingService: LoadingService
 
   ) {}
 
   ngOnInit() {
     this.loadTask();
     this.loadProjects();
+    this.loadUsers();
   }
 
   loadTask() {
+    this.loadingService.show();
+
     this.taskService.getTasks().subscribe(
       tasks => {
         console.log('Tarefas recebidas:', tasks);
         this.tasks = tasks;
         this.filteredTasks = [...tasks];  // Certifique-se de atualizar filteredTasks após modificações
+        this.loadingService.hide();
+
       },
       error => {
         console.error('Erro ao carregar as tasks:', error);
+      this.loadingService.hide();
+
       }
+
     );
   }
 
 
   loadProjects() {
+    this.loadingService.show();
     this.projectService.getProjects().subscribe(
       (projects) => {
         console.log('Projetos recebidos:', projects);
         this.projects = projects;
+
       },
       (error) => {
         console.error('Erro ao carregar os projetos:', error);
+
       }
     );
   }
@@ -138,15 +151,32 @@ export class TaskComponent implements OnInit {
     this.displayAddDialog = true;
   }
 
-
   addTask() {
-    this.taskService.addTask(this.newTask).subscribe(() => {
-      this.displayAddDialog = false;
-      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Tarefa adicionada!' });
-      this.loadTask();
+    this.loadingService.show(); // Exibe o loading
+
+    this.taskService.addTask(this.newTask).subscribe({
+      next: () => {
+        this.displayAddDialog = false; // Fecha o diálogo
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Tarefa adicionada!'
+        });
+        this.loadTask(); // Recarrega a lista de tarefas
+        this.loadingService.hide(); // Esconde o loading
+      },
+      error: (err) => {
+        this.loadingService.hide(); // Esconde o loading em caso de erro
+
+        // Exibe uma mensagem de erro
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: err.error.message || 'Falha ao adicionar a tarefa. Tente novamente.'
+        });
+      }
     });
   }
-
 
     openEditDialog(task: Task) {
       this.selectedTask = { ...task };  // Fazendo uma cópia profunda para evitar modificações diretas no objeto original
@@ -154,15 +184,29 @@ export class TaskComponent implements OnInit {
     }
 
 
-  saveEdit() {
-    if (this.selectedTask) {
-      this.taskService.editTask(this.selectedTask).subscribe(() =>{
-      this.displayEditDialog = false;
-      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Tarefa atualizada!' });
-      this.loadTask();
-    });
+    saveEdit() {
+      if (this.selectedTask) {
+        this.loadingService.show();
+
+        this.taskService.editTask(this.selectedTask).subscribe({
+          next: () => {
+            this.displayEditDialog = false;
+            this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Tarefa atualizada!' });
+            this.loadTask();
+            this.loadingService.hide();
+          },
+          error: (err) => {
+            this.loadingService.hide();
+
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: err?.error?.message || 'Falha ao atualizar a tarefa. Tente novamente.'
+            });
+          }
+        });
+      }
     }
-  }
 
   openStatusDialog(task: Task) {
     this.selectedTask = { ...task };
@@ -171,12 +215,28 @@ export class TaskComponent implements OnInit {
 
   saveStatus() {
     if (this.selectedTask) {
-      this.taskService.updateStatus(this.selectedTask).subscribe(() =>{
-      this.displayPermissionDialog = false;
-      this.messageService.add({ severity: 'info', summary: 'Status atualizado', detail: 'Status da tarefa foi alterado!' });
-    });
+      this.loadingService.show();
+
+      this.taskService.updateStatus(this.selectedTask).subscribe({
+        next: () => {
+          this.displayPermissionDialog = false;
+          this.loadingService.hide();
+          this.messageService.add({ severity: 'info', summary: 'Status atualizado', detail: 'Status da tarefa foi alterado!' });
+          this.loadTask(); // Caso queira atualizar a lista após troca de status
+        },
+        error: (err) => {
+          this.loadingService.hide();
+
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro ao atualizar status',
+            detail: err?.error?.message || 'Falha ao alterar o status. Tente novamente.'
+          });
+        }
+      });
     }
   }
+
 
   confirmDelete(task: Task) {
     this.selectedTask = { ...task };
@@ -184,11 +244,26 @@ export class TaskComponent implements OnInit {
   }
 
   deleteTask(task: Task) {
-    if (!task || task.id === undefined) return; // Garante que o ID está presente
-    this.taskService.deleteTask(task.id).subscribe(() => {
-      this.displayDeleteDialog = false;
-      this.messageService.add({ severity: 'warn', summary: 'Tarefa removida', detail: 'Tarefa foi excluída!' });
-      this.loadTask();
+    if (!task || task.id === undefined) return;
+
+    this.loadingService.show();
+
+    this.taskService.deleteTask(task.id).subscribe({
+      next: () => {
+        this.displayDeleteDialog = false;
+        this.messageService.add({ severity: 'warn', summary: 'Tarefa removida', detail: 'Tarefa foi excluída!' });
+        this.loadTask();
+        this.loadingService.hide();
+      },
+      error: (err) => {
+        this.loadingService.hide();
+
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao excluir',
+          detail: err?.error?.message || 'Falha ao excluir a tarefa. Tente novamente.'
+        });
+      }
     });
   }
 
@@ -232,5 +307,14 @@ export class TaskComponent implements OnInit {
     XLSX.utils.book_append_sheet(wb, ws, 'Tarefas');
     XLSX.writeFile(wb, 'relatorio_tarefas.xlsx');
   }
+
+  private showErrorMessage(defaultMessage: string, err: any) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: err?.error?.message || defaultMessage
+    });
+  }
+
 
 }

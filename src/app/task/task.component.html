@@ -1,3 +1,5 @@
+<p-toast></p-toast>
+
 <p-card>
   <p-toolbar>
     <div class="p-d-flex p-jc-between p-p-2">
@@ -156,14 +158,26 @@
         <label for="totalHours">Horas lançadas</label>
         <input id="totalHours" type="number" [(ngModel)]="selectedTask.totalHours" pInputText *ngIf="selectedTask" />
       </div>
-      <div class="p-field">
+      <div *ngIf="selectedTask" class="p-field">
         <label for="status">Status</label>
         <p-dropdown
           id="status"
-          [(ngModel)]="newTask.status"
+          [(ngModel)]="selectedTask.status"
           [options]="statusOptions"
           optionLabel="name"
           placeholder="Selecione o status"
+          [showClear]="true"
+          appendTo="body">
+        </p-dropdown>
+      </div>
+      <div *ngIf="selectedTask" class="p-field">
+        <label for="priority">Prioridade</label>
+        <p-dropdown
+          id="priority"
+          [(ngModel)]="selectedTask.priority"
+          [options]="priorityOptions"
+          optionLabel="name"
+          placeholder="Selecione a prioridade"
           [showClear]="true"
           appendTo="body">
         </p-dropdown>
