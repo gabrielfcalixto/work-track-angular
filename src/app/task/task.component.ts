@@ -29,17 +29,17 @@ export class TaskComponent implements OnInit {
   filteredTasks: Task[] = [];
   searchText: string = '';
   statusOptions = [
-    { name: 'Pendente', value: 'NOT_STARTED' },   // Mapeando para o enum
-    { name: 'Em andamento', value: 'IN_PROGRESS' },
-    { name: 'Concluída', value: 'COMPLETED' },
-    { name: 'Em espera', value: 'ON_HOLD' },
-    { name: 'Cancelada', value: 'CANCELED' },
+    { name: 'Pendente', value: 'NAO_INICIADA' },   // Mapeando para o enum
+    { name: 'Em andamento', value: 'EM_ANDAMENTO' },
+    { name: 'Concluída', value: 'CONCLUIDA' },
+    { name: 'Em espera', value: 'EM_ESPERA' },
+    { name: 'Cancelada', value: 'CANCELADA' },
   ];
 
   priorityOptions = [
-    { name: 'Baixa', value: 'LOW' },
-    { name: 'Média', value: 'MEDIUM' },
-    { name: 'Alta', value: 'HIGH' }
+    { name: 'Baixa', value: 'BAIXA' },
+    { name: 'Média', value: 'MEDIA' },
+    { name: 'Alta', value: 'ALTA' }
   ];
 
 
