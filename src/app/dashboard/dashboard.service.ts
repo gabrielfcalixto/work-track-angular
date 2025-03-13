@@ -21,4 +21,8 @@ export class DashboardService {
   getAdminStats(): Observable<any> {
     return this.http.get(`${this.apiUrl}/admin-stats`);
   }
+
+    getPendingTasksCount(userId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/pending-tasks/${userId}`);
+  }
 }

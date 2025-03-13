@@ -1,81 +1,123 @@
+/* Variáveis de cor */
+:root {
+  --text-color: #333333;
+  --surface-card: #ffffff;
+  --surface-ground: #f7f7f7;
+  --surface-border: #e0e0e0;
+  --label-color: #5f6368;
+}
+
 /* Container principal */
 .dashboard-container {
   padding: 20px;
+  max-width: 1300px;
+  width: 100%;
+  margin: auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
   color: var(--text-color);
 }
 
-/* Layout dos gráficos */
-.charts-wrapper {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsividade */
-  gap: 20px;
-}
 
-/* Estilo dos cartões */
-.p-card {
-  background-color: var(--surface-card);
+/* Fieldset Container */
+.fieldset-container {
+  background: var(--surface-ground);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Estilo do painel */
-.p-panel {
-  background-color: var(--surface-card);
-  border-radius: 8px;
+/* Botão Container */
+.button-container {
+  display: flex;
+  justify-content: flex-end; // Alinha no canto direito
+  margin: 1rem 0;
+}
+
+/* Botão Lançar Horas */
+.launch-button {
+  padding: 12px 24px;
+  font-size: 1.1rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
 }
 
-.p-panel-header {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.p-panel-content {
-  padding: 1rem;
-}
 
 /* Container do botão */
 .button-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-end; // Centraliza o botão
   margin-bottom: 20px;
+
+  button {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+  }
 }
 
-/* Estilos do diálogo */
+/* Layout dos gráficos */
+.charts-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); // Melhor distribuição responsiva
+  gap: 20px;
+
+  p-card {
+    background-color: var(--surface-card);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+  }
+}
+
+/* Estilos do modal */
 .p-dialog {
   .p-dialog-content {
     background-color: var(--surface-card);
     color: var(--text-color);
 
-    .p-field {
-      margin-bottom: 1rem;
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
 
-      label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-        color: var(--label-color);
-      }
+      .p-field {
+        flex: 1 1 100%; // Faz os campos ocuparem toda a largura por padrão
 
-      input,
-      p-calendar,
-      p-dropdown,
-      p-textarea {
-        width: 100%;
-        background-color: var(--surface-ground);
-        color: var(--text-color);
-        border: 1px solid var(--surface-border);
-        padding: 0.5rem;
-        border-radius: 4px;
-        font-size: 1rem;
-      }
+        @media (min-width: 600px) {
+          flex: 1 1 48%; // Para telas maiores, distribui em duas colunas
+        }
 
-      textarea {
-        resize: vertical;
+        label {
+          display: block;
+          margin-bottom: 0.5rem;
+          font-weight: 500;
+          color: var(--label-color);
+        }
+
+        input,
+        p-calendar,
+        p-dropdown,
+        textarea {
+          width: 100%;
+          background-color: var(--surface-ground);
+          color: var(--text-color);
+          border: 1px solid var(--surface-border);
+          padding: 0.5rem;
+          border-radius: 4px;
+          font-size: 1rem;
+        }
+
+        textarea {
+          resize: vertical;
+          min-height: 100px;
+        }
       }
     }
   }
@@ -86,30 +128,40 @@
     gap: 0.5rem;
   }
 }
-.p-dialog .p-field textarea {
-  width: 100%;
-  background-color: var(--surface-ground);
-  color: var(--text-color);
-  border: 1px solid var(--surface-border);
-  padding: 0.5rem;
-  border-radius: 4px;
-  font-size: 1rem;
-  resize: vertical; /* Permite redimensionamento */
-  min-height: 100px; /* Altura mínima para o campo de descrição */
+
+/* Estilo da tabela de últimos lançamentos */
+.p-panel {
+  background-color: var(--surface-card);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  .p-panel-header {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .p-panel-content {
+    padding: 1rem;
+  }
 }
 
+.p-table {
+  white-space: nowrap;
+  text-align: center;
 
-/* Variáveis de cor para personalização */
-:root {
-  --text-color: #333333; /* Cor do texto */
-  --surface-card: #ffffff; /* Cor de fundo dos cartões */
-  --surface-ground: #f7f7f7; /* Cor de fundo do campo de input */
-  --surface-border: #e0e0e0; /* Cor de borda */
-  --label-color: #5f6368; /* Cor das labels */
+  @media (max-width: 768px) {
+    overflow-x: auto;
+    display: block;
+  }
 }
 
+/* Responsividade */
 @media (max-width: 768px) {
   .charts-wrapper {
-    grid-template-columns: 1fr; /* Coluna única para telas menores */
+    grid-template-columns: 1fr;
+  }
+
+  .button-container {
+    justify-content: center;
   }
 }

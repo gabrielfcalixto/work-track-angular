@@ -1,19 +1,14 @@
 <p-toast></p-toast>
-<p-card>
+<div class="user-container">
   <p-toolbar>
-    <div class="p-toolbar-group-left">
-      <p-inputText [(ngModel)]="searchTerm" placeholder="Buscar usuário..." />
-    </div>
-    <div class="p-toolbar-group-right">
+    <div class="botoes">
       <p-button label="Adicionar" icon="pi pi-plus" (click)="openAddDialog()"></p-button>
-      <div class="report-buttons">
         <p-button label="Gerar PDF" icon="pi pi-file-pdf" (click)="gerarPDF()" class="p-button-success"></p-button>
         <p-button label="Gerar Excel" icon="pi pi-file-excel" (click)="gerarExcel()" class="p-button-info"></p-button>
       </div>
-    </div>
   </p-toolbar>
 
-  <p-table [value]="users" [paginator]="true" [rows]="10" [globalFilterFields]="['name', 'login', 'email']">
+  <p-table [value]="users" [paginator]="true" [rows]="16" [globalFilterFields]="['name', 'login', 'email']">
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="name">Nome <p-sortIcon field="name"></p-sortIcon></th>
@@ -32,49 +27,47 @@
         <td>
           <p-button icon="pi pi-pencil" (click)="openEditDialog(user)"></p-button>
           <p-button icon="pi pi-key" (click)="openPermissionDialog(user)"></p-button>
-          <!-- <p-button icon="pi pi-trash" (click)="confirmDelete(user)" severity="danger"></p-button> -->
-           <!-- botao vincular a tarefa -->
-           <!-- <p-button icon="pi pi-plus"></p-button>
-           <p-button icon="pi pi-search"></p-button> -->
-
         </td>
       </tr>
     </ng-template>
   </p-table>
 
-  <p-dialog header="Adicionar Usuário" [(visible)]="displayAddDialog" [modal]="true" [responsive]="true">
-    <div class="p-fluid">
-      <div class="p-field">
+  <p-dialog header="Adicionar Usuário" [(visible)]="displayAddDialog" [modal]="true" [style]="{width: '500px'}" [closable]="true">
+    <div class="p-fluid p-formgrid p-grid">
+      <div class="p-field p-col-12">
         <label for="name">Nome</label>
-        <input id="name" [(ngModel)]="newUser.name" pInputText />
+        <input id="name" [(ngModel)]="newUser.name" pInputText placeholder="Digite o nome completo" />
       </div>
-      <div class="p-field">
+      <div class="p-field p-col-12">
         <label for="email">E-mail</label>
-        <input id="email" [(ngModel)]="newUser.email" pInputText />
+        <input id="email" [(ngModel)]="newUser.email" pInputText placeholder="email@exemplo.com" />
       </div>
-      <div class="p-field">
+      <div class="p-field p-col-12">
         <label for="login">Login</label>
-        <input id="login" [(ngModel)]="newUser.login" pInputText />
+        <input id="login" [(ngModel)]="newUser.login" pInputText placeholder="Digite o login" />
       </div>
-      <div class="p-field">
+      <div class="p-field p-col-12">
         <label for="role">Função</label>
         <p-dropdown
-        id="role"
-        [(ngModel)]="newUser.role"
-        [options]="roles"
-        optionLabel="name"
-        placeholder="Selecione o papel"
-        [showClear]="true"
-        appendTo="body">
-      </p-dropdown>
-
+          id="role"
+          [(ngModel)]="newUser.role"
+          [options]="roles"
+          optionLabel="name"
+          placeholder="Selecione a função"
+          [showClear]="true"
+          appendTo="body">
+        </p-dropdown>
       </div>
     </div>
-    <p-footer>
-      <p-button label="Cancelar" icon="pi pi-times" (click)="displayAddDialog = false"></p-button>
-      <p-button label="Salvar" icon="pi pi-check" (click)="addUser()"></p-button>
-    </p-footer>
+
+    <ng-template pTemplate="footer">
+      <div class="dialog-footer">
+        <p-button label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="displayAddDialog = false"></p-button>
+        <p-button label="Salvar" icon="pi pi-check" (click)="addUser()" [disabled]="!isFormValid()"></p-button>
+      </div>
+    </ng-template>
   </p-dialog>
+
 
   <!-- Editar Usuário Dialog -->
   <p-dialog header="Editar Usuário" [(visible)]="displayEditDialog" [modal]="true" [responsive]="true">
@@ -146,4 +139,4 @@
 
     </p-footer>
   </p-dialog>
-</p-card>
+</div>

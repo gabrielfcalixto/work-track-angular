@@ -17,6 +17,7 @@ import { DialogModule } from 'primeng/dialog';
 import { CalendarModule } from 'primeng/calendar';
 import { PanelModule } from 'primeng/panel'; // Importe o módulo do Panel
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { FieldsetModule } from 'primeng/fieldset';
 
 
 @NgModule({
@@ -38,7 +39,8 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
     DialogModule,
     CalendarModule,
     PanelModule,
-    InputTextareaModule
+    InputTextareaModule,
+    FieldsetModule
     ],
   exports: [
     DashboardComponent

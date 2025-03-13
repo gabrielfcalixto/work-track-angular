@@ -1,17 +1,22 @@
 <div class="dashboard-container p-4">
   <p-toast></p-toast>
 
-  <!-- Botão para lançar horas -->
-  <div class="button-container flex justify-end mb-4">
-    <button
-      pButton
-      type="button"
-      label="Lançar Horas"
-      icon="pi pi-clock"
-      (click)="openDialog()"
-      class="p-button-primary"
-    ></button>
-  </div>
+
+  <p-fieldset legend="Dashboard" class="fieldset-container">
+    <div class="button-container">
+      <button
+        pButton
+        type="button"
+        label="Lançar Horas"
+        icon="pi pi-clock"
+        (click)="openDialog()"
+        class="p-button-primary launch-button"
+      ></button>
+    </div>
+  </p-fieldset>
+
+
+
 
   <!-- Modal para lançar horas -->
   <p-dialog
@@ -143,6 +148,29 @@
       </p-card>
     </ng-container>
   </div>
+<div class="charts-wrapper grid">
+  <p-card class="col-12 md:col-6 mb-4">
+    <h5>Total de Horas Lançadas no Mês</h5>
+    <p>{{ totalHoursMonth }} horas</p>
+
+  </p-card>
+  <p-card class="col-12 md:col-6 mb-4">
+
+    <h5>Atividades Pendentes</h5>
+    <p>{{ pendingTasksCount }} tarefas pendentes</p>
+  </p-card>
+  <ng-container *ngIf="userRole === 'gestor'">
+    <p-card class="col-12 md:col-6 mb-4">
+      <h5>Tarefas Completadas</h5>
+      <p>{{ completedTasksCount }} tarefas completadas</p>
+    </p-card>
+    <p-card class="col-12 md:col-6 mb-4">
+      <h5>Tarefas em Andamento</h5>
+      <p>{{ ongoingTasksCount }} tarefas em andamento</p>
+    </p-card>
+  </ng-container>
+</div>
+
 
   <!-- Tabela de últimos lançamentos -->
   <p-panel header="Últimos Lançamentos" class="mt-4">
@@ -155,12 +183,24 @@
           <th>Data</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-lancamento>
+      <ng-template pTemplate="header">
         <tr>
-          <td>{{ lancamento.atividade }}</td>
-          <td>{{ lancamento.descricao }}</td>
-          <td>{{ lancamento.horas }}</td>
-          <td>{{ lancamento.data | date: 'dd/MM/yyyy' }}</td>
+          <th>Tarefa</th>
+          <th>Descrição</th>
+          <th>Data</th>
+          <th>Início</th>
+          <th>Fim</th>
+          <th>Total (h)</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-entry>
+        <tr>
+          <td>{{ entry.taskId }}</td>
+          <td>{{ entry.description }}</td>
+          <td>{{ entry.entryDate | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ entry.startTime | date: 'HH:mm' }}</td>
+          <td>{{ entry.endTime | date: 'HH:mm' }}</td>
+          <td>{{ entry.totalHours?.toFixed(2) }}</td>
         </tr>
       </ng-template>
     </p-table>

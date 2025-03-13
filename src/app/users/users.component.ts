@@ -62,9 +62,13 @@ export class UsersComponent implements OnInit {
     this.displayAddDialog = true;
   }
 
+  isFormValid(): boolean {
+    return !!(this.newUser.name && this.newUser.email && this.newUser.login && this.newUser.role);
+  }
+
   addUser() {
     // Validação dos campos obrigatórios
-    if (!this.newUser.name || !this.newUser.email || !this.newUser.login || !this.newUser.role) {
+    if (!this.isFormValid()) {
       this.messageService.add({
         severity: 'error',
         summary: 'Erro',
@@ -82,10 +86,10 @@ export class UsersComponent implements OnInit {
     // Exibe o loading
     this.loadingService.show();
 
-    // Chama o serviço para adicionar o usuário
+    // Envia a requisição para adicionar o usuário
     this.usersService.addUser(userToSend).subscribe({
       next: () => {
-        // Sucesso: fecha o diálogo, exibe mensagem de sucesso e recarrega a lista de usuários
+        // Sucesso
         this.displayAddDialog = false;
         this.messageService.add({
           severity: 'success',
@@ -96,27 +100,23 @@ export class UsersComponent implements OnInit {
         this.loadingService.hide();
       },
       error: (err) => {
-        // Esconde o loading
         this.loadingService.hide();
 
-        // Verifica se o erro é de e-mail duplicado
-        if (err.status === 400 && err.error.message === 'O e-mail já está em uso.') {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'O e-mail já está em uso. Por favor, insira outro e-mail.'
-          });
-        } else {
-          // Outros erros
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Falha ao adicionar o usuário. Tente novamente.'
-          });
-        }
+        // Tratamento de erro específico
+        const errorMessage =
+          err.status === 400 && err.error.message === 'O e-mail já está em uso.'
+            ? 'O e-mail já está em uso. Por favor, insira outro e-mail.'
+            : 'Falha ao adicionar o usuário. Tente novamente.';
+
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: errorMessage
+        });
       }
     });
   }
+
 
   openEditDialog(user: Users) {
     this.selectedUser = { ...user };

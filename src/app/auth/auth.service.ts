@@ -18,21 +18,22 @@ export class AuthService {
    */
   getLoggedUser(): any {
     const token = localStorage.getItem('token');
-    console.log('Token armazenado:', token); // 👀 Verificar se há um token
+    console.log('Token armazenado:', token); // Verifique se há um token
 
     if (!token) return null;
 
     try {
       const payload = JSON.parse(atob(token.split('.')[1])); // Decodifica o token
-      console.log('Payload decodificado:', payload); // 👀 Verificar se o payload tem `id`
+      console.log('Payload decodificado:', payload); // Verifique se o payload tem `id` e `role`
 
-      if (!payload || !payload.id) return null;
+      if (!payload || !payload.id || !payload.role) return null;
 
       return {
         id: payload.id,
         name: payload.name,
         email: payload.email,
-        username: payload.username,
+        role: payload.role,  // Pegando o campo "role"
+        username: payload.sub, // Certifique-se de que "sub" seja o nome de usuário
         joinDate: payload.joinDate
       };
     } catch (error) {
@@ -40,6 +41,20 @@ export class AuthService {
       return null;
     }
   }
+
+
+  getUserRole(): string | null {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.role || null;  // Supondo que o backend inclua "role" no payload do token
+  } catch (error) {
+    console.error('Erro ao decodificar o token:', error);
+    return null;
+  }
+}
 
 
   /**

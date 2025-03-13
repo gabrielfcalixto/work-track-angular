@@ -10,6 +10,7 @@ import { ProjectComponent } from './project/project.component';
 import { TimeEntryComponent } from './time-entry/time-entry.component';
 import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './auth/auth.guard';
+import { RoleGuard } from './auth/role.guard';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -20,11 +21,11 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'tasks', component: TaskComponent },
-      { path: 'projects', component: ProjectComponent },
+      { path: 'tasks', component: TaskComponent, canActivate: [RoleGuard], data: { roles: ['USER', 'MANAGER'] } },
+      { path: 'projects', component: ProjectComponent, canActivate: [RoleGuard], data: { roles: ['MANAGER', 'ADMIN'] } },
       { path: 'profile', component: ProfileComponent },
-      { path: 'users', component: UsersComponent },
-      { path: 'time-entry', component: TimeEntryComponent },
+      { path: 'users', component: UsersComponent, canActivate: [RoleGuard], data: { roles: ['ADMIN'] } },
+      { path: 'time-entry', component: TimeEntryComponent, canActivate: [RoleGuard], data: { roles: ['USER', 'MANAGER'] } },
       { path: '**', component: NotFoundComponent } // Protegido também
     ],
   },
