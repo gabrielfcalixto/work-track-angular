@@ -10,19 +10,38 @@ export class DashboardService {
 
   constructor(private http: HttpClient) {}
 
-  getUserHours(userId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/user-hours/${userId}`);
+  // ✅ Busca os dados gerais do dashboard com base no usuário autenticado
+  getDashboardData(): Observable<any> {
+    return this.http.get(`${this.apiUrl}`);
   }
 
-  getManagerStats(userId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/manager-stats/${userId}`);
+  // ✅ Busca as horas totais de um usuário
+  getUserHours(userId: number): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/user-hours/${userId}`);
   }
 
-  getAdminStats(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/admin-stats`);
+  // ✅ Busca as horas totais lançadas no mês atual por um usuário
+  getTotalHoursMonth(userId: number): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/user-hours-month/${userId}`);
   }
 
-    getPendingTasksCount(userId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/pending-tasks/${userId}`);
+  // ✅ Busca a quantidade de tarefas pendentes de um usuário
+  getPendingTasksCount(userId: number): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/tasks/pending/${userId}`);
   }
+
+  // ✅ Busca a quantidade de tarefas concluídas de um usuário
+  getCompletedTasksCount(userId: number): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/tasks/completed/${userId}`);
+  }
+
+  // ✅ Busca a quantidade de tarefas em andamento de um usuário
+  getOngoingTasksCount(userId: number): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/tasks/ongoing/${userId}`);
+  }
+
+  getTaskDistribution(userId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/tasks/distribution/${userId}`);
+  }
+
 }

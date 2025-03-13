@@ -24,7 +24,7 @@ export class TimeEntryComponent implements OnInit {
     private fb: FormBuilder,
     private timeEntryService: TimeEntryService,
     private messageService: MessageService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
   ) {
     this.timeEntryForm = this.fb.group({
       taskId: [null, Validators.required],
@@ -37,29 +37,38 @@ export class TimeEntryComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTimeEntries();
-    this.loadTasks(); // Carrega as tarefas disponíveis
+    this.loadTasks();
+
   }
 
   loadTimeEntries(): void {
-    this.loadingService.show(); // Exibe o loading
+    // this.loadingService.show();
     this.timeEntryService.getUserTimeEntries(this.userId).subscribe({
       next: (entries) => {
         this.timeEntries = entries;
-        this.loadingService.hide(); // Esconde o loading
+        this.loadingService.hide();
       },
       error: () => {
-        this.loadingService.hide(); // Esconde o loading em caso de erro
+        this.loadingService.hide();
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar as entradas de tempo.' });
       }
     });
   }
 
   loadTasks(): void {
-    // Carrega as tarefas do backend ou de um serviço
-    this.tasks = [
-      { id: 1, name: 'Tarefa 1' },
-      { id: 2, name: 'Tarefa 2' }
-    ];
+    this.loadingService.show();
+    this.timeEntryService.getTasksByUserId(this.userId).subscribe({
+      next: (tasks) => {
+        this.tasks = Array.isArray(tasks) ? tasks : [];
+        this.loadingService.hide();
+
+      },
+      error: () => {
+        this.loadingService.hide();
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar tarefas.' });
+        this.tasks = [];
+      }
+    });
   }
 
   openDialog(): void {

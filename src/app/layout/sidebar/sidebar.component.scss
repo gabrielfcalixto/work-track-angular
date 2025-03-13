@@ -5,6 +5,7 @@
 .sidebar-container {
   display: flex;
   justify-content: center;
+  background-color: var(--background-color); /* Usando variável de fundo */
 
   .sidebar-content {
     display: flex;
@@ -18,6 +19,7 @@
     justify-content: space-between;
     padding: 1rem;
     flex-shrink: 0;
+    border-bottom: 1px solid var(--border-color); /* Usando variável de borda */
   }
 
   .close-button {
@@ -28,9 +30,10 @@
     background-color: transparent;
     cursor: pointer;
     transition: background-color 0.2s;
+    color: var(--text-color); /* Usando variável de texto */
 
     &:hover {
-      background-color: #f0f0f0;
+      background-color: var(--hover-background-color); /* Usando variável de fundo ao passar o mouse */
     }
   }
 
@@ -49,7 +52,7 @@
         cursor: pointer;
         padding: 1rem;
         border-radius: 5px;
-        color: #555; // Cor padrão (modo claro)
+        color: var(--text-color); /* Usando variável de texto */
         text-decoration: none;
         transition: background-color 0.2s, color 0.2s;
 
@@ -58,8 +61,8 @@
         }
 
         &:hover {
-          background-color: #f8f9fa;
-          color: #333;
+          background-color: var(--hover-background-color); /* Usando variável de fundo ao passar o mouse */
+          color: var(--text-color); /* Usando variável de texto */
         }
       }
     }
@@ -68,7 +71,7 @@
   .sidebar-footer {
     margin-top: auto;
     padding: 1rem;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid var(--border-color); /* Usando variável de borda */
 
     .profile-section {
       display: flex;
@@ -76,13 +79,13 @@
       gap: 0.5rem;
       padding: 1rem;
       border-radius: 5px;
-      color: #555;
+      color: var(--text-color); /* Usando variável de texto */
       text-decoration: none;
       transition: background-color 0.2s, color 0.2s;
 
       &:hover {
-        background-color: #bdbdbd;
-        color: #333;
+        background-color: var(--hover-background-color); /* Usando variável de fundo ao passar o mouse */
+        color: var(--text-color); /* Usando variável de texto */
       }
     }
 
@@ -92,58 +95,9 @@
   }
 
   .active-menu-item {
-    background-color: #e0e0e0;
+    background-color: var(--active-background-color); /* Usando variável de fundo do item ativo */
     font-weight: bold;
     border-radius: 5px;
-  }
-}
-
-/* Estilos do modo escuro */
-:host-context(.dark-theme) {
-  .sidebar-container {
-    background-color: #1e1e1e; // Fundo escuro
-
-    .sidebar-header {
-      border-bottom: 1px solid #444;
-    }
-
-    .close-button {
-      color: #fff;
-
-      &:hover {
-        background-color: #333;
-      }
-    }
-
-    .sidebar-menu {
-      ul {
-        .menu-item {
-          color: #ddd; // Texto claro no modo escuro
-
-          &:hover {
-            background-color: #333;
-            color: #fff;
-          }
-        }
-      }
-    }
-
-    .sidebar-footer {
-      border-top: 1px solid #444;
-
-      .profile-section {
-        color: #ddd;
-
-        &:hover {
-          background-color: #333;
-          color: #fff;
-        }
-      }
-    }
-
-    .active-menu-item {
-      background-color: #444;
-      color: #fff;
-    }
+    color: var(--text-color); /* Usando variável de texto */
   }
 }

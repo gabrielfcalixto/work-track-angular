@@ -151,7 +151,7 @@
 <div class="charts-wrapper grid">
   <p-card class="col-12 md:col-6 mb-4">
     <h5>Total de Horas Lançadas no Mês</h5>
-    <p>{{ totalHoursMonth }} horas</p>
+    <p>{{ totalHoursMonth.toFixed(2)  }} horas</p>
 
   </p-card>
   <p-card class="col-12 md:col-6 mb-4">
@@ -172,37 +172,30 @@
 </div>
 
 
-  <!-- Tabela de últimos lançamentos -->
+   <!-- Tabela de últimos lançamentos -->
   <p-panel header="Últimos Lançamentos" class="mt-4">
-    <p-table [value]="ultimosLancamentos" [responsive]="true" class="p-datatable-sm">
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Atividade</th>
-          <th>Descrição</th>
-          <th>Horas</th>
-          <th>Data</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Tarefa</th>
-          <th>Descrição</th>
-          <th>Data</th>
-          <th>Início</th>
-          <th>Fim</th>
-          <th>Total (h)</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-entry>
-        <tr>
-          <td>{{ entry.taskId }}</td>
-          <td>{{ entry.description }}</td>
-          <td>{{ entry.entryDate | date: 'dd/MM/yyyy' }}</td>
-          <td>{{ entry.startTime | date: 'HH:mm' }}</td>
-          <td>{{ entry.endTime | date: 'HH:mm' }}</td>
-          <td>{{ entry.totalHours?.toFixed(2) }}</td>
-        </tr>
-      </ng-template>
-    </p-table>
+  <!-- Tabela com os lançamentos -->
+  <p-table [value]="timeEntries" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Tarefa</th>
+        <th>Descrição</th>
+        <th>Data</th>
+        <th>Início</th>
+        <th>Fim</th>
+        <th>Total (h)</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-entry>
+      <tr>
+        <td>{{ entry.taskId }}</td>
+        <td>{{ entry.description }}</td>
+        <td>{{ entry.entryDate | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ entry.startTime }}</td>
+        <td>{{ entry.endTime }}</td>
+        <td>{{ entry.totalHours?.toFixed(2) }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
   </p-panel>
 </div>

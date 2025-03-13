@@ -16,12 +16,13 @@
   padding-top: 20px;
 }
 
-.logo img {
-  max-width: 150px; /* Ajuste o tamanho conforme necessário */
-  height: auto; /* Garante que a proporção da imagem seja mantida */
-  justify-content: center;
-  align-items: center;
-}
+.logo{
+  font-size:0.9em;
+
+  }
+  .custom-icon {
+    font-size: 0.9em; /* Aumenta o tamanho do ícone */
+  }
 
 
 .remember-me {

@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TimeEntryService } from '../time-entry/time-entry.service';
 import { MessageService } from 'primeng/api';
 import { forkJoin, map } from 'rxjs';
+import { LoadingService } from '../loading/loading.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -47,6 +48,7 @@ export class DashboardComponent implements OnInit {
     private fb: FormBuilder,
     private dashboardService: DashboardService,
     private  taskService: TaskService,
+    private loadingService: LoadingService
   ) {
     this.timeEntryForm = this.fb.group({
       taskId: [null, Validators.required],
@@ -67,53 +69,76 @@ export class DashboardComponent implements OnInit {
 
   loadDashboardData() {
     this.loading = true; // Inicia o carregamento
+
     if (this.userRole === 'comum') {
-      this.dashboardService.getUserHours(this.userId).subscribe(data => {
-        // Supondo que o backend retorne 'labels' e 'values' para gráficos
-        this.userHoursData = {
-          labels: data.labels,  // Labels para os gráficos
-          datasets: [{
-            label: 'Horas Trabalhadas',
-            data: data.values,   // Dados para os gráficos
-            backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726']
-          }]
-        };
+      forkJoin({
+        userHours: this.dashboardService.getUserHours(this.userId),
+        totalHoursMonth: this.dashboardService.getTotalHoursMonth(this.userId),
+        pendingTasksCount: this.dashboardService.getPendingTasksCount(this.userId),
+        taskDistribution: this.dashboardService.getTaskDistribution(this.userId)
+      }).subscribe(
+        ({ userHours, totalHoursMonth, pendingTasksCount, taskDistribution }) => {
+          // Gráfico de distribuição de tarefas
+          this.taskDistributionData = {
+            labels: Object.keys(taskDistribution).map(status => status.replace('_', ' ')),
+            datasets: [{
+              data: Object.values(taskDistribution),
+              backgroundColor: ['#F44336', '#FF9800', '#4CAF50', '#2196F3', '#9E9E9E']
+            }]
+          };
 
-        // Atualiza o total de horas no mês
-        this.totalHoursMonth = data.totalHoursMonth;  // Supondo que o backend retorne esse valor
-        this.loading = false;
-      }, error => {
-        this.loading = false;
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar os dados.' });
-      });
-
-      // Carregar tarefas pendentes
-      this.dashboardService.getPendingTasksCount(this.userId).subscribe(data => {
-        this.pendingTasksCount = data.count;  // Supondo que o backend retorne esse valor
-      });
-    } else if (this.userRole === 'gestor') {
-      this.dashboardService.getManagerStats(this.userId).subscribe(data => {
-        // Supondo que o backend retorne os dados de progresso de projetos
-        this.projectProgressData = {
-          labels: data.projects,  // Projetos
-          datasets: [{
-            label: 'Progresso',
-            data: data.progress,   // Progresso dos projetos
-            borderColor: '#42A5F5'
-          }]
-        };
-
-        // Carregar tarefas completadas e em andamento
-        this.completedTasksCount = data.completedTasksCount;  // Supondo que o backend retorne isso
-        this.ongoingTasksCount = data.ongoingTasksCount;  // Supondo que o backend retorne isso
-
-        this.loading = false;
-      }, error => {
-        this.loading = false;
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar os dados de progresso dos projetos.' });
-      });
+          this.totalHoursMonth = totalHoursMonth;
+          this.pendingTasksCount = pendingTasksCount;
+          this.loading = false;
+        },
+        error => {
+          this.loading = false;
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar o dashboard.' });
+        }
+      );
     }
-}
+     else if (this.userRole === 'gestor') {
+      // Para gestores, carregamos as tarefas concluídas e em andamento
+      forkJoin({
+        completedTasks: this.dashboardService.getCompletedTasksCount(this.userId),
+        ongoingTasks: this.dashboardService.getOngoingTasksCount(this.userId)
+      }).subscribe(
+        ({ completedTasks, ongoingTasks }) => {
+          this.completedTasksCount = completedTasks;
+          this.ongoingTasksCount = ongoingTasks;
+
+          // Monta os dados do gráfico de status das tarefas
+          this.taskStatusData = {
+            labels: ['Concluídas', 'Em andamento'],
+            datasets: [{
+              label: 'Tarefas',
+              data: [completedTasks, ongoingTasks],
+              backgroundColor: ['#66BB6A', '#FFA726']
+            }]
+          };
+
+          this.loading = false;
+        },
+        error => {
+          this.loading = false;
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar os dados do gestor.' });
+        }
+      );
+
+    } else if (this.userRole === 'admin') {
+      // Se for admin, você pode carregar os dados gerais
+      this.dashboardService.getDashboardData().subscribe(
+        data => {
+          // Aqui você pode preencher os gráficos com base nos dados do admin
+          this.loading = false;
+        },
+        error => {
+          this.loading = false;
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar os dados do admin.' });
+        }
+      );
+    }
+  }
 
 
   loadTasks(): void {
