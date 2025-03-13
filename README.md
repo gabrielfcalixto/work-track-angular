@@ -1,27 +1,82 @@
-# ProjectAngular2
+# Project Manager (Frontend)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.11.
+Este projeto foi gerado com [Angular CLI](https://github.com/angular/angular-cli) na versão 17.3.11 e utiliza a biblioteca [PrimeNG](https://primeng.org/) para a construção de componentes elegantes e reutilizáveis.
 
-## Development server
+## Requisitos
+- Node.js (versão 18 ou superior)
+- Angular CLI (instalado globalmente)
+- Backend em Java 21 com Spring Boot
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Configuração do Projeto
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/project-manager.git
+   cd project-manager/frontend
+   ```
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
 
-## Code scaffolding
+## Servidor de Desenvolvimento
+Execute o comando abaixo para iniciar o servidor de desenvolvimento:
+```bash
+ng serve
+```
+Acesse a aplicação em: [http://localhost:4200/](http://localhost:4200/). O aplicativo recarregará automaticamente ao detectar alterações nos arquivos.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Estrutura do Projeto
+- **src/app**: Contém os módulos, componentes, serviços e modelos.
+- **services**: Responsável pela comunicação com o backend.
+- **models**: Define as interfaces das entidades (Projetos, Usuários, Tarefas, Registros de Horas).
+- **components**: Contém os componentes reutilizáveis.
+- **pages**: Contém as páginas principais do sistema.
+
+## Gerar Novos Componentes
+Para criar um novo componente, utilize o comando:
+```bash
+ng generate component nome-do-componente
+```
 
 ## Build
+Para compilar o projeto, execute:
+```bash
+ng build
+```
+Os artefatos de build serão gerados no diretório `dist/`.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Testes Unitários
+Para executar os testes unitários com o [Karma](https://karma-runner.github.io):
+```bash
+ng test
+```
 
-## Running unit tests
+## Testes de Integração
+Para executar testes de ponta a ponta (e2e), instale a ferramenta necessária e rode o comando:
+```bash
+ng e2e
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Integração com o Backend
+- URL do backend: `http://localhost:8080`
+- Os dados dos gráficos e da dashboard são carregados diretamente do backend, exibindo informações conforme o tipo de usuário (USER, MANAGER, ADMIN).
 
-## Running end-to-end tests
+## Implantar em Produção
+Para criar uma versão para produção:
+```bash
+ng build --configuration=production
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Suporte
+Para obter mais ajuda sobre a CLI do Angular, utilize:
+```bash
+ng help
+```
+Ou acesse a [documentação oficial do Angular CLI](https://angular.io/cli).
 
-## Further help
+## Licença
+Este projeto está licenciado sob a Licença MIT.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+---
+Desenvolvido por Gabriel. 🚀
+
