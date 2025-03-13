@@ -16,7 +16,7 @@ import { LoadingService } from '../loading/loading.service';
   providers: [ConfirmationService, MessageService]
 })
 export class ProjectComponent implements OnInit {
-  project: Project[] = [];
+  projects: Project[] = [];
   users: Users[] = []; // Lista de usuários
   selectedProject: Project = {} as Project;
   displayAddDialog = false;
@@ -25,11 +25,11 @@ export class ProjectComponent implements OnInit {
   displayDeleteDialog = false;
   searchTerm: string = '';
   status = [
-    { name: 'Pendente', value: 'NAO_INICIADA' },   // Mapeando para o enum
+    { name: 'Pendente', value: 'NAO_INICIADO' },   // Mapeando para o enum
     { name: 'Em andamento', value: 'EM_ANDAMENTO' },
     { name: 'Concluído', value: 'CONCLUIDO' },
     { name: 'Em espera', value: 'EM_ESPERA' },
-    { name: 'Cancelada', value: 'CANCELADA' },
+    { name: 'Cancelada', value: 'CANCELADO' },
   ];
 
   newProject: Project = {
@@ -60,7 +60,7 @@ export class ProjectComponent implements OnInit {
     this.projectService.getProjects().subscribe(
       project => {
         console.log(project);  // Verifique se os usuários estão sendo retornados
-        this.project = project;
+        this.projects = project;
         this.loadingService.hide();
       },
       error => {
@@ -246,7 +246,7 @@ export class ProjectComponent implements OnInit {
 
     let y = 20; // Posição inicial
 
-    this.project.forEach((project, index) => {
+    this.projects.forEach((project, index) => {
       doc.setFontSize(12);
       doc.text(`Nome: ${project.name}`, 10, y);
       doc.text(`Description: ${project.description}`, 10, y + 6);
@@ -262,7 +262,7 @@ export class ProjectComponent implements OnInit {
 
   gerarExcel() {
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
-      this.project.map(project => ({
+      this.projects.map(project => ({
         Nome: project.name,
         Descrição: project.description,
         Horas: project.hours,
