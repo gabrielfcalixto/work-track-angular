@@ -1,0 +1,15 @@
+.user-container {
+  padding: 20px;
+  max-width: 1500px;
+  width: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  color: var(--text-color);
+}
+
+.botoes {
+  margin-left: auto;
+  display: flex; /* Adicionado */
+  gap: 10px; /* Espaçamento entre os botões */
+}

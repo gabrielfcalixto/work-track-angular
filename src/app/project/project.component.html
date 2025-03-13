@@ -1,18 +1,15 @@
-<p-card>
+<p-toast></p-toast>
+
+<div class="project-container">
   <p-toolbar>
-    <div class="p-toolbar-group-left">
-      <p-inputText [(ngModel)]="searchTerm" placeholder="Buscar tarefa..." />
-    </div>
-    <div class="p-toolbar-group-right">
+    <div class="botoes">
       <p-button label="Adicionar" icon="pi pi-plus" (click)="openAddDialog()"></p-button>
-    </div>
-    <div class="report-buttons">
       <p-button label="Gerar PDF" icon="pi pi-file-pdf" (click)="gerarPDF()" class="p-button-success"></p-button>
       <p-button label="Gerar Excel" icon="pi pi-file-excel" (click)="gerarExcel()" class="p-button-info"></p-button>
     </div>
   </p-toolbar>
 
-  <p-table [value]="projects" [paginator]="true" [rows]="10" [globalFilterFields]="['name', 'description', 'hours', 'status']">
+  <p-table [value]="projects" [paginator]="true" [rows]="16" [globalFilterFields]="['name', 'description', 'hours', 'status']">
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="name">Projeto<p-sortIcon field="name"></p-sortIcon></th>
@@ -218,4 +215,5 @@
 
       </p-footer>
     </p-dialog>
-</p-card>
+
+</div>
