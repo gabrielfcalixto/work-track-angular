@@ -183,6 +183,31 @@
     </p-footer>
   </p-dialog>
 
+
+  <!-- Status Dialog com Dropdown -->
+  <p-dialog header="Status" [(visible)]="displayPermissionDialog" [modal]="true" [responsive]="true">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="status">Status</label>
+        <p-dropdown
+          id="status"
+          *ngIf="selectedProject"
+          [(ngModel)]="selectedProject.status"
+          [options]="status"
+          optionLabel="name"
+          placeholder="Selecione o status"
+          [showClear]="true"
+          appendTo="body"
+          optionValue="value">
+        </p-dropdown>
+      </div>
+    </div>
+    <p-footer>
+      <p-button label="Cancelar" icon="pi pi-times" (click)="displayPermissionDialog = false"></p-button>
+      <p-button label="Salvar" icon="pi pi-check" (click)="saveStatus()"></p-button>
+    </p-footer>
+  </p-dialog>
+
     <!-- Excluir Usuário Dialog -->
     <p-dialog header="Excluir Tarefa" [(visible)]="displayDeleteDialog" [modal]="true" [responsive]="true">
       <p>Tem certeza que deseja excluir essa tarefa?</p>

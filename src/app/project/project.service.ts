@@ -26,7 +26,7 @@ export class ProjectService {
 
 
     updateStatus(projectId: number, statusUpdate: { status: string }): Observable<Project> {
-      return this.http.patch<Project>(`${this.apiUrl}/${projectId}/status`, statusUpdate);
+      return this.http.patch<Project>(`${this.apiUrl}/update-status/${projectId}`, statusUpdate);
     }
 
 

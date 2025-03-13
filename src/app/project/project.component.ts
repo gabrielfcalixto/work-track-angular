@@ -27,7 +27,7 @@ export class ProjectComponent implements OnInit {
   status = [
     { name: 'Pendente', value: 'NAO_INICIADA' },   // Mapeando para o enum
     { name: 'Em andamento', value: 'EM_ANDAMENTO' },
-    { name: 'Concluída', value: 'CONCLUIDA' },
+    { name: 'Concluído', value: 'CONCLUIDO' },
     { name: 'Em espera', value: 'EM_ESPERA' },
     { name: 'Cancelada', value: 'CANCELADA' },
   ];
