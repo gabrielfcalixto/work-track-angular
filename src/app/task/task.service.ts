@@ -36,4 +36,9 @@ export class TaskService {
   deleteTask(taskId: number) {
     return this.http.delete<void>(`${this.apiUrl}/${taskId}`);
   }
+
+  assignUserToTask(taskId: number, userId: number): Observable<any> {
+    return this.http.post(`/api/tasks/${taskId}/assign-user`, { userId });
+  }
+
 }

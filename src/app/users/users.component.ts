@@ -6,6 +6,7 @@ import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import { LoadingComponent } from '../loading/loading.component';
 import { LoadingService } from '../loading/loading.service';
+import { catchError, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-user-management',
@@ -160,6 +161,7 @@ export class UsersComponent implements OnInit {
       this.usersService.updatePermissions(this.selectedUser).subscribe(() => {
         this.displayPermissionDialog = false;
         this.messageService.add({ severity: 'info', summary: 'Permissões atualizadas', detail: 'Permissões do usuário foram alteradas!' });
+        this.loadUsers();
         this.loadingService.hide(); // Esconde o loading
 
       });
@@ -172,17 +174,41 @@ export class UsersComponent implements OnInit {
   }
 
   deleteUser(user: Users) {
-    if (!user || user.id === undefined) return; // Garante que o ID está presente
-    this.loadingService.show(); // Mostra o loading
+    if (!user || user.id === undefined) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Usuário inválido ou sem ID!'
+      });
+      return; // Retorna se o usuário não for válido ou não tiver ID
+    }
 
-    this.usersService.deleteUser(user.id).subscribe(() => {
+    this.loadingService.show(); // Exibe o loading
+
+    this.usersService.deleteUser(user.id).pipe(
+      catchError((error) => {
+        // Se houver erro, exibe uma mensagem de erro
+        this.loadingService.hide(); // Esconde o loading
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao excluir',
+          detail: error?.error?.message || 'Falha ao excluir o usuário. Tente novamente.'
+        });
+        return throwError(() => error); // Lança o erro novamente para que ele não continue no fluxo
+      })
+    ).subscribe(() => {
       this.displayDeleteDialog = false;
-      this.messageService.add({ severity: 'warn', summary: 'Usuário removido', detail: 'Usuário foi excluído!' });
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Usuário removido',
+        detail: 'Usuário foi excluído!'
+      });
       this.loadUsers();
       this.loadingService.hide(); // Esconde o loading
-
     });
   }
+
+
 
   gerarPDF() {
     const doc = new jsPDF();

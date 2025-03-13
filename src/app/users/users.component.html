@@ -32,7 +32,11 @@
         <td>
           <p-button icon="pi pi-pencil" (click)="openEditDialog(user)"></p-button>
           <p-button icon="pi pi-key" (click)="openPermissionDialog(user)"></p-button>
-          <p-button icon="pi pi-trash" (click)="confirmDelete(user)" severity="danger"></p-button>
+          <!-- <p-button icon="pi pi-trash" (click)="confirmDelete(user)" severity="danger"></p-button> -->
+           <!-- botao vincular a tarefa -->
+           <!-- <p-button icon="pi pi-plus"></p-button>
+           <p-button icon="pi pi-search"></p-button> -->
+
         </td>
       </tr>
     </ng-template>
@@ -113,12 +117,14 @@
         <div class="p-field">
           <p-dropdown
           id="role"
-          [(ngModel)]="newUser.role"
+          [(ngModel)]="selectedUser.role"
           [options]="roles"
           optionLabel="name"
           placeholder="Selecione o papel"
           [showClear]="true"
-          appendTo="body">
+          appendTo="body"
+          optionValue="value">
+
         </p-dropdown>        </div>
       </div>
       </div>
