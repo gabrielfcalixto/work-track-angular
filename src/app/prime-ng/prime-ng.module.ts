@@ -50,7 +50,8 @@ import { ToastModule } from 'primeng/toast';
     MultiSelectModule,
     CalendarModule,
     AvatarModule,
-    ToastModule
+    ToastModule,
+    MultiSelectModule
 
   ]
 })

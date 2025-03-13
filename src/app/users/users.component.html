@@ -81,15 +81,15 @@
     <div class="p-fluid">
       <div class="p-field">
         <label for="name">Nome</label>
-        <input id="name" [ngModel]="selectedUser?.name || ''" (ngModelChange)="selectedUser!.name = $event" pInputText />
+        <input id="name" [ngModel]="selectedUser.name || ''" (ngModelChange)="selectedUser!.name = $event" pInputText />
       </div>
       <div class="p-field">
         <label for="email">E-mail</label>
-        <input id="email" [ngModel]="selectedUser?.email || ''" (ngModelChange)="selectedUser!.email = $event" pInputText />
+        <input id="email" [ngModel]="selectedUser.email || ''" (ngModelChange)="selectedUser!.email = $event" pInputText />
       </div>
       <div class="p-field">
         <label for="login">Login</label>
-        <input id="login" [ngModel]="selectedUser?.login || ''" (ngModelChange)="selectedUser!.login = $event" pInputText />
+        <input id="login" [ngModel]="selectedUser.login || ''" (ngModelChange)="selectedUser!.login = $event" pInputText />
       </div>
 
       <div class="p-field">

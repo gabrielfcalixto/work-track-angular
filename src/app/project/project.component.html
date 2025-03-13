@@ -16,7 +16,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="name">Projeto<p-sortIcon field="name"></p-sortIcon></th>
-        <th pSortableColumn="description">Descrição <p-sortIcon field="description"></p-sortIcon></th>
+        <!-- <th pSortableColumn="description">Descrição <p-sortIcon field="description"></p-sortIcon></th> -->
         <th pSortableColumn="manager">Gestor<p-sortIcon field="manager"></p-sortIcon></th>
         <th pSortableColumn="hours">Horas <p-sortIcon field="hours"></p-sortIcon></th>
         <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
@@ -26,69 +26,155 @@
     <ng-template pTemplate="body" let-project>
       <tr>
         <td>{{ project.name }}</td>
-        <td>{{ project.description }}</td>
+        <!-- <td>{{ project.description }}</td> -->
         <td>{{ project.manager }}</td>
 
         <td>{{ project.hours }}</td>
-        <td>{{ project.status }}</td>
+        <td>{{ getStatusName(project.status) }}</td>
         <td>
           <p-button icon="pi pi-pencil" (click)="openEditDialog(project)"></p-button>
           <p-button icon="pi pi-key" (click)="openStatusDialog(project)"></p-button>
-          <p-button icon="pi pi-trash" (click)="confirmDelete(project)" severity="danger"></p-button>
+          <!-- <p-button icon="pi pi-trash" (click)="confirmDelete(project)" severity="danger"></p-button> -->
         </td>
       </tr>
     </ng-template>
   </p-table>
 
-  <!-- Adicionar Tarefa Dialog -->
-  <p-dialog header="Adicionar Tarefa" [(visible)]="displayAddDialog" [modal]="true" [responsive]="true">
-    <div class="p-fluid">
-      <div class="p-field">
-        <label for="name">Nome</label>
-        <input id="name" [(ngModel)]="newProject
-        .name" pInputText />
-      </div>
-      <div class="p-field">
-        <label for="description">Descrição</label>
-        <input id="description" [(ngModel)]="newProject
-        .description" pInputText />
-      </div>
-      <div class="p-field">
-        <label for="hours">Horas</label>
-        <input id="hours" type="number" [(ngModel)]="newProject
-        .hours" pInputText />
-      </div>
-      <div class="p-field">
-        <label for="status">Status</label>
-        <input id="status" [(ngModel)]="newProject
-        .status" pInputText />
-      </div>
+ <p-dialog header="Novo Projeto" [(visible)]="displayAddDialog" [modal]="true" [responsive]="true">
+  <div class="p-fluid">
+    <div class="p-field">
+      <label for="name">Nome</label>
+      <input id="name" [(ngModel)]="newProject.name" pInputText />
     </div>
-    <p-footer>
-      <p-button label="Cancelar" icon="pi pi-times" (click)="displayAddDialog = false"></p-button>
-      <p-button label="Salvar" icon="pi pi-check" (click)="addProject()"></p-button>
-    </p-footer>
-  </p-dialog>
+    <div class="p-field">
+      <label for="description">Descrição</label>
+      <input id="description" [(ngModel)]="newProject.description" pInputText />
+    </div>
+    <div class="p-field">
+      <label for="hours">Horas</label>
+      <input id="hours" type="number" [(ngModel)]="newProject.hours" pInputText />
+    </div>
+    <div class="p-field">
+      <label for="status">Status</label>
+      <p-dropdown
+        id="status"
+        [(ngModel)]="newProject.status"
+        [options]="status"
+        optionLabel="name"
+        optionValue="value"
+        placeholder="Selecione o status"
+        [showClear]="true"
+        appendTo="body">
+      </p-dropdown>
+    </div>
+    <div class="p-field">
+      <label for="managerId">Gerente</label>
+      <p-dropdown
+        id="managerId"
+        [(ngModel)]="newProject.managerId"
+        [options]="users"
+        optionLabel="name"
+        optionValue="id"
+        placeholder="Selecione o gerente"
+        [showClear]="true"
+        appendTo="body">
+      </p-dropdown>
+    </div>
+    <div class="p-field">
+      <label for="clientId">ID do Cliente</label>
+      <input id="clientId" type="number" [(ngModel)]="newProject.clientId" pInputText />
+    </div>
+    <div class="p-field">
+      <label for="teamMemberIds">Membros da Equipe</label>
+      <p-multiSelect
+        id="teamMemberIds"
+        [(ngModel)]="newProject.teamMemberIds"
+        [options]="users"
+        optionLabel="name"
+        optionValue="id"
+        placeholder="Selecione os membros"
+        [showClear]="true"
+        appendTo="body">
+      </p-multiSelect>
+    </div>
+    <div class="p-field">
+      <label for="startDate">Data de Início</label>
+      <p-calendar
+        id="startDate"
+        [(ngModel)]="newProject.startDate"
+        dateFormat="yy-mm-dd"
+        [showIcon]="true">
+      </p-calendar>
+    </div>
+    <div class="p-field">
+      <label for="deadline">Prazo</label>
+      <p-calendar
+        id="deadline"
+        [(ngModel)]="newProject.deadline"
+        dateFormat="yy-mm-dd"
+        [showIcon]="true">
+      </p-calendar>
+    </div>
+  </div>
+  <p-footer>
+    <p-button label="Cancelar" icon="pi pi-times" (click)="displayAddDialog = false"></p-button>
+    <p-button label="Salvar" icon="pi pi-check" (click)="addProject()"></p-button>
+  </p-footer>
+</p-dialog>
 
-  <!-- Editar Tarefa Dialog -->
-  <p-dialog header="Editar Projeto" [(visible)]="displayEditDialog" [modal]="true" [responsive]="true">
+
+
+  <p-dialog header="Editar Tarefa" [(visible)]="displayEditDialog" [modal]="true" [responsive]="true">
     <div class="p-fluid">
       <div class="p-field">
         <label for="name">Nome</label>
-        <input id="name" [(ngModel)]="selectedProject.name" pInputText *ngIf="selectedProject"  />
+        <input id="name" [(ngModel)]="selectedProject.name" pInputText *ngIf="selectedProject" />
       </div>
       <div class="p-field">
         <label for="description">Descrição</label>
         <input id="description" [(ngModel)]="selectedProject.description" pInputText *ngIf="selectedProject" />
       </div>
-
       <div class="p-field">
         <label for="hours">Horas</label>
-        <input id="hours" type="number" [(ngModel)]="selectedProject.hours" pInputText *ngIf="selectedProject"  />
+        <input id="hours" type="number" [(ngModel)]="selectedProject.hours" pInputText *ngIf="selectedProject" />
+      </div>
+
+      <div *ngIf="selectedProject" class="p-field">
+        <label for="status">Status</label>
+        <p-dropdown
+          id="status"
+          [(ngModel)]="selectedProject.status"
+          [options]="status"
+          optionLabel="name"
+          placeholder="Selecione o status"
+          [showClear]="true"
+          appendTo="body"
+          optionValue="value">
+
+        </p-dropdown>
+      </div>
+
+      <div class="p-field">
+        <label for="teamMemberIds">Membros do projeto</label>
+        <p-multiSelect
+          id="teamMemberIds"
+          [(ngModel)]="selectedProject.teamMemberIds"
+          [options]="users"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Selecione os usuários"
+          [showClear]="true"
+          appendTo="body">
+        </p-multiSelect>
       </div>
       <div class="p-field">
-        <label for="status">Status</label>
-        <input id="status" [(ngModel)]="selectedProject.status" pInputText  *ngIf="selectedProject" />
+        <label for="deadline">Prazo</label>
+        <p-calendar
+          id="deadline"
+          [(ngModel)]="selectedProject.deadline"
+          dateFormat="yy-mm-dd"
+          [showIcon]="true">
+        </p-calendar>
       </div>
     </div>
     <p-footer>
@@ -96,29 +182,14 @@
       <p-button label="Salvar" icon="pi pi-check" (click)="saveEdit()"></p-button>
     </p-footer>
   </p-dialog>
-   <!-- Status Dialog -->
-   <p-dialog header="Status" [(visible)]="displayPermissionDialog" [modal]="true" [responsive]="true">
-    <div class="p-fluid">
-      <div class="p-field">
-        <label for="status">Status</label>
-        <div class="p-field">
-          <label for="status">Status</label>
-          <input id="status" [ngModel]="selectedProject?.status || ''" (ngModelChange)="selectedProject!.status = $event" pInputText />
-        </div>
-      </div>
-      </div>
-    <p-footer>
-      <p-button label="Cancelar" icon="pi pi-times" (click)="displayPermissionDialog = false"></p-button>
-      <p-button label="Salvar" icon="pi pi-check" (click)="saveStatus()"></p-button>
-    </p-footer>
-  </p-dialog>
+
     <!-- Excluir Usuário Dialog -->
     <p-dialog header="Excluir Tarefa" [(visible)]="displayDeleteDialog" [modal]="true" [responsive]="true">
       <p>Tem certeza que deseja excluir essa tarefa?</p>
       <p-footer>
         <p-button label="Cancelar" icon="pi pi-times" (click)="displayDeleteDialog = false"></p-button>
         <p-button label="Excluir" icon="pi pi-check" severity="danger"
-    (click)="selectedProject ? deleteUser(selectedProject) : null">
+    (click)="selectedProject ? deleteProject(selectedProject) : null">
   </p-button>
 
       </p-footer>

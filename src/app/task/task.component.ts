@@ -22,15 +22,14 @@ export class TaskComponent implements OnInit {
   projects: Project[] = []; // Lista de projetos
   users: Users[] = []; // Lista de usuários
   selectedTask: Task = {} as Task;
-
-    displayAddDialog = false;
+  displayAddDialog = false;
   displayEditDialog = false;
   displayPermissionDialog = false;
   displayDeleteDialog = false;
   filteredTasks: Task[] = [];
   searchText: string = '';
   status = [
-    { name: 'Pendente', value: 'NAO_INICIADA' },   // Mapeando para o enum
+    { name: 'Pendente', value: 'NAO_INICIADA' },
     { name: 'Em andamento', value: 'EM_ANDAMENTO' },
     { name: 'Concluída', value: 'CONCLUIDA' },
     { name: 'Em espera', value: 'EM_ESPERA' },
@@ -62,7 +61,7 @@ export class TaskComponent implements OnInit {
     private taskService: TaskService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private projectService: ProjectService, // Adicione este serviço
+    private projectService: ProjectService, 
     private userService: UsersService,
     private loadingService: LoadingService
 
@@ -79,9 +78,8 @@ export class TaskComponent implements OnInit {
 
     this.taskService.getTasks().subscribe(
       tasks => {
-        console.log('Tarefas recebidas:', tasks);
         this.tasks = tasks;
-        this.filteredTasks = [...tasks];  // Certifique-se de atualizar filteredTasks após modificações
+        this.filteredTasks = [...tasks];
         this.loadingService.hide();
 
       },

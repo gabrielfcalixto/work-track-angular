@@ -15,7 +15,7 @@ export class ProjectService {
   }
 
   addProject(project: Project): Observable<Project> {
-    return this.http.post<Project>(this.apiUrl, project);
+    return this.http.post<Project>(`${this.apiUrl}/add`, project);
 
   }
 
@@ -24,10 +24,11 @@ export class ProjectService {
 
   }
 
-  updateStatus(project: Project) {
-    return this.http.patch<Project>(`${this.apiUrl}/${project.id}/status`, { role: project.status });
 
-  }
+    updateStatus(projectId: number, statusUpdate: { status: string }): Observable<Project> {
+      return this.http.patch<Project>(`${this.apiUrl}/${projectId}/status`, statusUpdate);
+    }
+
 
   deleteProject(projectId: number) {
     return this.http.delete<void>(`${this.apiUrl}/${projectId}`);
