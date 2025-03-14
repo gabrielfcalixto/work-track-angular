@@ -41,7 +41,10 @@ export class AuthService {
       return null;
     }
   }
-
+  getUserId(): number | null {
+    const loggedUser = this.getLoggedUser();
+    return loggedUser ? loggedUser.id : null;
+  }
 
   getUserRole(): string | null {
   const token = localStorage.getItem('token');

@@ -20,10 +20,10 @@ const routes: Routes = [
     canActivate: [AuthGuard], // Protege todo o layout
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'tasks', component: TaskComponent, canActivate: [RoleGuard], data: { roles: ['USER', 'ADMIN', 'MANAGER'] } },
-      { path: 'projects', component: ProjectComponent, canActivate: [RoleGuard], data: { roles: ['USER', 'MANAGER', 'ADMIN'] } },
-      { path: 'profile', component: ProfileComponent },
+      { path: 'dashboard', component: DashboardComponent, canActivate: [RoleGuard], data: { roles: ['USER', 'MANAGER', 'ADMIN'] } },
+      { path: 'profile', component: ProfileComponent, canActivate: [RoleGuard], data: { roles: ['USER', 'MANAGER', 'ADMIN'] } },
+      { path: 'tasks', component: TaskComponent, canActivate: [RoleGuard], data: { roles: ['MANAGER', 'ADMIN'] } },
+      { path: 'projects', component: ProjectComponent, canActivate: [RoleGuard], data: { roles: ['MANAGER', 'ADMIN'] } },
       { path: 'users', component: UsersComponent, canActivate: [RoleGuard], data: { roles: ['ADMIN'] } },
       { path: 'time-entry', component: TimeEntryComponent, canActivate: [RoleGuard], data: { roles: ['USER', 'MANAGER', 'ADMIN'] } },
       { path: '**', component: NotFoundComponent } // Protegido também
@@ -31,6 +31,7 @@ const routes: Routes = [
   },
   { path: '**', redirectTo: '/login' } // Redireciona para login se não autenticado
 ];
+
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

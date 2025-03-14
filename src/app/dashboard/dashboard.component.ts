@@ -15,7 +15,7 @@ import { LoadingService } from '../loading/loading.service';
 })
 export class DashboardComponent implements OnInit {
   userRole: 'comum' | 'gestor' | 'admin' = 'comum';  // Exemplo: ajustar conforme o login
-  userId = 1; // ID do usuário logado
+  userId: number = 0;  // Inicializa com valor padrão
   totalHoursMonth: number = 0;  // Total de horas lançadas no mês
   pendingTasksCount: number = 0;  // Contagem de tarefas pendentes
   completedTasksCount: number = 0;  // Tarefas completadas (gestor)
