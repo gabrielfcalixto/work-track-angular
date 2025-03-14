@@ -4,6 +4,7 @@
 <div class="time-entry-container">
 
   <p-toolbar>
+    <h2>Lançamentos</h2>
     <div class="botoes">
       <p-button label="Adicionar" icon="pi pi-plus" (click)="openDialog()"></p-button>
       <p-button label="Gerar PDF" icon="pi pi-file-pdf" (click)="gerarPDF()" class="p-button-success"></p-button>
@@ -19,7 +20,7 @@
         <th>Data</th>
         <th>Início</th>
         <th>Fim</th>
-        <th>Total (h)</th>
+        <!-- <th>Total (h)</th> -->
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-entry>
@@ -29,7 +30,7 @@
         <td>{{ entry.entryDate | date: 'dd/MM/yyyy' }}</td>
         <td>{{ entry.startTime }}</td>
         <td>{{ entry.endTime }}</td>
-        <td>{{ entry.totalHours?.toFixed(2) }}</td>
+        <!-- <td>{{ entry.totalHours?.toFixed(2) }}</td> -->
       </tr>
     </ng-template>
   </p-table>

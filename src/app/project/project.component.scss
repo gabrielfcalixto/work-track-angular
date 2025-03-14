@@ -1,6 +1,6 @@
 .project-container {
   padding: 20px;
-  max-width: 1500px;
+  max-width: 1450px;
   width: 100%;
   margin: auto;
   display: flex;
@@ -12,4 +12,11 @@
   margin-left: auto;
   display: flex; /* Adicionado */
   gap: 10px; /* Espaçamento entre os botões */
+}
+
+.botoes-acao {
+  margin-left: auto;
+  display: flex; /* Adicionado */
+  gap: 10px; /* Espaçamento entre os botões */
+
 }

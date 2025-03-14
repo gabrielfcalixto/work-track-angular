@@ -2,6 +2,7 @@
 
 <div class="project-container">
   <p-toolbar>
+    <h2>Projetos</h2>
     <div class="botoes">
       <p-button label="Adicionar" icon="pi pi-plus" (click)="openAddDialog()"></p-button>
       <p-button label="Gerar PDF" icon="pi pi-file-pdf" (click)="gerarPDF()" class="p-button-success"></p-button>
@@ -28,9 +29,11 @@
         <td>{{ project.hours }}</td>
         <td>{{ getStatusName(project.status) }}</td>
         <td>
+          <div class="botoes-acao">
           <p-button icon="pi pi-pencil" (click)="openEditDialog(project)"></p-button>
           <p-button icon="pi pi-key" (click)="openStatusDialog(project)"></p-button>
           <!-- <p-button icon="pi pi-trash" (click)="confirmDelete(project)" severity="danger"></p-button> -->
+        </div>
         </td>
       </tr>
     </ng-template>

@@ -1,6 +1,7 @@
 <p-toast></p-toast>
 <div class="task-container">
   <p-toolbar>
+    <h2>Tarefas</h2>
     <div class="botoes">
       <p-button label="Adicionar" icon="pi pi-plus" (click)="openAddDialog()"></p-button>
       <p-button label="Gerar PDF" icon="pi pi-file-pdf" (click)="gerarPDF()" class="p-button-success"></p-button>
@@ -8,7 +9,7 @@
     </div>
   </p-toolbar>
 
-  <p-table [value]="filteredTasks" [paginator]="true" [rows]="10">
+  <p-table [value]="filteredTasks" [paginator]="true" [rows]="15">
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="name">Nome <p-sortIcon field="name"></p-sortIcon></th>
