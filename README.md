@@ -78,7 +78,7 @@ ng e2e
 ## Integração com o Backend
 
 - **URL do Backend**: `http://localhost:8080`
-- O frontend se comunica com o backend para carregar dados de gráficos e dashboard. As informações exibidas variam conforme o tipo de usuário (USER, MANAGER, ADMIN).
+- O frontend se comunica com o backend para carregar dados e liberação de acesso. As informações exibidas variam conforme o tipo de usuário (USER, MANAGER, ADMIN).
 
 ## Implantar em Produção
 
