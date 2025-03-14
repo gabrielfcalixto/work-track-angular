@@ -22,6 +22,9 @@ export class TimeEntryService {
     return this.http.post<TimeEntry>(`${this.apiUrl}/time-entries/add`, entry);
   }
 
+  getTaskById(taskId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/task/${taskId}`);
+  }
 
 
 }

@@ -60,12 +60,22 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userRole = 'comum';  // Pode ser 'comum', 'gestor' ou 'admin'
+    this.userRole = this.getUserRole();  // Pode ser 'comum', 'gestor' ou 'admin'
+    this.userId = this.getUserId(); // Obtém do serviço de autenticação
+
     this.loadTimeEntries();
     this.loadTasks(); // Carrega as tarefas do backend
     this.loadDashboardData();
     this.carregarUltimosLancamentos();
   }
+
+
+    getUserRole(): 'comum' | 'gestor' | 'admin' {
+      return localStorage.getItem('userRole') as 'comum' | 'gestor' | 'admin' || 'comum';
+    }
+    getUserId(): number {
+      return Number(localStorage.getItem('userId')) || 1;
+    }
 
   loadDashboardData() {
     this.loading = true; // Inicia o carregamento
@@ -83,7 +93,7 @@ export class DashboardComponent implements OnInit {
             labels: Object.keys(taskDistribution).map(status => status.replace('_', ' ')),
             datasets: [{
               data: Object.values(taskDistribution),
-              backgroundColor: ['#F44336', '#FF9800', '#4CAF50', '#2196F3', '#9E9E9E']
+              backgroundColor: ['#6366F1', '#FF9800', '#15B8A6', '#3B82F6', '#9E9E9E']
             }]
           };
 
@@ -140,21 +150,21 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-
   loadTasks(): void {
-    this.loading = true;
+    this.loadingService.show();
     this.timeEntryService.getTasksByUserId(this.userId).subscribe({
       next: (tasks) => {
         this.tasks = Array.isArray(tasks) ? tasks : [];
-        this.loading = false;
+        this.loadingService.hide();
       },
       error: () => {
-        this.loading = false;
+        this.loadingService.hide();
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar tarefas.' });
         this.tasks = [];
       }
     });
   }
+
 
   loadTimeEntries(): void {
     this.timeEntryService.getUserTimeEntries(this.userId).subscribe(entries => {
@@ -164,9 +174,11 @@ export class DashboardComponent implements OnInit {
 
   onTaskSelect(event: any): void {
     if (this.selectedTask) {
-      this.timeEntryForm.get('taskId')?.setValue(this.selectedTask.id); // Atualiza o taskId no formulário
+      // Atualiza o taskId no formulário com o ID da tarefa selecionada
+      this.timeEntryForm.get('taskId')?.setValue(this.selectedTask.id);
     }
   }
+
 
   openDialog(): void {
     this.displayDialog = true;
@@ -254,19 +266,20 @@ export class DashboardComponent implements OnInit {
       const taskRequests = entries.map(entry =>
         this.taskService.getTaskById(entry.taskId).pipe(
           map(task => ({
-            ...entry,  // Mantém as informações da entrada de tempo
+            ...entry,
             descricao: entry.description,
             horas: entry.hoursLogged,
             data: entry.entryDate,
-            taskName: task.name  // Adiciona o nome da tarefa
+            taskName: task.name
           }))
         )
       );
 
-      // Quando todas as chamadas de tarefa forem concluídas
       forkJoin(taskRequests).subscribe(results => {
         this.ultimosLancamentos = results;
+        console.log('Últimos Lançamentos:', this.ultimosLancamentos); // Verificando no console
       });
     });
   }
+
 }

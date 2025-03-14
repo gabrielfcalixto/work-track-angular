@@ -61,7 +61,7 @@ export class TaskComponent implements OnInit {
     private taskService: TaskService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private projectService: ProjectService, 
+    private projectService: ProjectService,
     private userService: UsersService,
     private loadingService: LoadingService
 
@@ -95,6 +95,7 @@ export class TaskComponent implements OnInit {
     const status = this.status.find(option => option.value === statusValue);
     return status ? status.name : 'Desconhecido';
   }
+
 
 
   loadProjects() {

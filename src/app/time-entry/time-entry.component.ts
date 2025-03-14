@@ -3,6 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TimeEntryService } from './time-entry.service';
 import { MessageService } from 'primeng/api';
 import { LoadingService } from '../loading/loading.service';
+import jsPDF from 'jspdf';
+import * as XLSX from 'xlsx';
+
 
 @Component({
   selector: 'app-time-entry',
@@ -163,4 +166,59 @@ export class TimeEntryComponent implements OnInit {
     this.selectedTask = event.value;
     this.timeEntryForm.get('taskId')?.setValue(this.selectedTask.id);
   }
+gerarPDF() {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('Relatório de Tarefas', 10, 10);
+
+    let y = 20; // Posição inicial
+
+    this.timeEntries.forEach((timeEntry, index) => {
+      doc.setFontSize(12);
+      doc.text(`Tarefas: ${timeEntry.taskName}`, 10, y);
+      doc.text(`Description: ${timeEntry.description}`, 10, y + 6);
+      doc.text(`Horas Estimadas: ${timeEntry.entryDate}`, 10, y + 12);
+      doc.text(`Horas Lançadas: ${timeEntry.startTime}`, 10, y + 18);
+      doc.text(`Horas Lançadas: ${timeEntry.endTime}`, 10, y + 18);
+      doc.text(`Horas Lançadas: ${timeEntry.endTime}`, 10, y + 18);
+
+
+
+      doc.text(`Status: ${timeEntry.status}`, 10, y + 24);
+
+      y += 30; // Ajusta o espaçamento entre os usuários
+    });
+
+    doc.save('relatorio_usuarios.pdf');
+  }
+
+
+
+
+  gerarExcel() {
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
+      this.timeEntries.map(timeEntry => ({
+        Nome: timeEntry.taskName,
+        Descrição: timeEntry.description,
+        Horas_Estimadas: timeEntry.entryDate,
+        Horas_Totais: timeEntry.startTime,
+        Hora_Final: timeEntry.endTime,
+      }))
+    );
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Tarefas');
+    XLSX.writeFile(wb, 'relatorio_tarefas.xlsx');
+  }
+
+  private showErrorMessage(defaultMessage: string, err: any) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: err?.error?.message || defaultMessage
+    });
+  }
+
+
 }
+

@@ -99,7 +99,9 @@
         id="startDate"
         [(ngModel)]="newProject.startDate"
         dateFormat="yy-mm-dd"
-        [showIcon]="true">
+        [showIcon]="true"
+        appendTo="body"
+        >
       </p-calendar>
     </div>
     <div class="p-field">
@@ -108,7 +110,9 @@
         id="deadline"
         [(ngModel)]="newProject.deadline"
         dateFormat="yy-mm-dd"
-        [showIcon]="true">
+        [showIcon]="true"
+        appendTo="body"
+        >
       </p-calendar>
     </div>
   </div>

@@ -29,3 +29,26 @@
   justify-content: center;
   gap: 20px;
 }
+
+p-card p {
+  font-size: 3.5rem; /* Aumenta o tamanho do texto */
+  font-weight: bold; /* Deixa o texto mais destacado (opcional) */
+}
+
+p-card h5 {
+  font-size: 1.1rem; /* Aumenta o tamanho do texto */
+  font-weight: bold; /* Deixa o texto mais destacado (opcional) */
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%; /* Para ocupar toda a altura do card */
+  text-align: center;
+}
+.card-value {
+  color:#15b8a6 ;
+  font-size: large;
+}

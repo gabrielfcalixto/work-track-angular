@@ -1,15 +1,15 @@
-<div class="time-entry-container">
-  <!-- Botão para abrir o diálogo de lançamento de horas -->
-  <div class="button-container flex justify-end mb-4">
-    <button
-      pButton
-      label="Adicionar Horas"
-      icon="pi pi-plus"
-      (click)="openDialog()"
-      class="p-button-success"
-    ></button>
-  </div>
 
+<p-toast></p-toast>
+
+<div class="time-entry-container">
+
+  <p-toolbar>
+    <div class="botoes">
+      <p-button label="Adicionar" icon="pi pi-plus" (click)="openDialog()"></p-button>
+      <p-button label="Gerar PDF" icon="pi pi-file-pdf" (click)="gerarPDF()" class="p-button-success"></p-button>
+    <p-button label="Gerar Excel" icon="pi pi-file-excel" (click)="gerarExcel()" class="p-button-info"></p-button>
+    </div>
+  </p-toolbar>
   <!-- Tabela com os lançamentos -->
   <p-table [value]="timeEntries" responsiveLayout="scroll">
     <ng-template pTemplate="header">
@@ -57,7 +57,6 @@
           (onChange)="onTaskSelect($event)"
           [ngClass]="{ 'p-invalid': isFieldInvalid('taskId') }"
         ></p-dropdown>
-        <small *ngIf="isFieldInvalid('taskId')" class="p-error">Tarefa é obrigatória.</small>
       </div>
 
       <!-- Campo Descrição -->
@@ -69,12 +68,11 @@
           pInputTextarea
           formControlName="description"
           placeholder="Descreva a tarefa"
-          [autoResize]="true"
+          [autoResize]="false"
           [ngClass]="{ 'p-invalid': isFieldInvalid('description') }"
         ></textarea>
-        <small *ngIf="isFieldInvalid('description')" class="p-error">Descrição é obrigatória.</small>
-      </div>
 
+      </div>
       <!-- Campo Data -->
       <div class="p-field">
         <label for="entryDate">Data</label>
@@ -87,7 +85,6 @@
           appendTo="body"
           [ngClass]="{ 'p-invalid': isFieldInvalid('entryDate') }"
         ></p-calendar>
-        <small *ngIf="isFieldInvalid('entryDate')" class="p-error">Data é obrigatória.</small>
       </div>
 
       <!-- Campo Hora de Início -->
@@ -102,7 +99,7 @@
           (input)="autoFormatTime('startTime')"
           [ngClass]="{ 'p-invalid': isFieldInvalid('startTime') }"
         />
-        <small *ngIf="isFieldInvalid('startTime')" class="p-error">Hora de início é obrigatória.</small>
+
       </div>
 
       <!-- Campo Hora de Fim -->
@@ -117,7 +114,6 @@
           (input)="autoFormatTime('endTime')"
           [ngClass]="{ 'p-invalid': isFieldInvalid('endTime') }"
         />
-        <small *ngIf="isFieldInvalid('endTime')" class="p-error">Hora de fim é obrigatória.</small>
       </div>
     </form>
 
@@ -142,6 +138,4 @@
     </ng-template>
   </p-dialog>
 
-  <!-- Toast para mensagens -->
-  <p-toast></p-toast>
 </div>
