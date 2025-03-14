@@ -7,6 +7,7 @@ import { TimeEntryService } from '../time-entry/time-entry.service';
 import { MessageService } from 'primeng/api';
 import { forkJoin, map } from 'rxjs';
 import { LoadingService } from '../loading/loading.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,12 +15,12 @@ import { LoadingService } from '../loading/loading.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  userRole: 'comum' | 'gestor' | 'admin' = 'comum';  // Exemplo: ajustar conforme o login
-  userId: number = 0;  // Inicializa com valor padrão
+  role: 'user' | 'manager' | 'admin' = 'user';  // Exemplo: ajustar conforme o login
+  user: any = null;
   totalHoursMonth: number = 0;  // Total de horas lançadas no mês
   pendingTasksCount: number = 0;  // Contagem de tarefas pendentes
-  completedTasksCount: number = 0;  // Tarefas completadas (gestor)
-  ongoingTasksCount: number = 0;  // Tarefas em andamento (gestor)
+  completedTasksCount: number = 0;  // Tarefas completadas (manager)
+  ongoingTasksCount: number = 0;  // Tarefas em andamento (manager)
   totalProjectsManaged: number = 0; // Novo campo para armazenar a quantidade de projetos gerenciados
   totalCompletedTask: number = 0;
 
@@ -52,7 +53,8 @@ export class DashboardComponent implements OnInit {
     private fb: FormBuilder,
     private dashboardService: DashboardService,
     private  taskService: TaskService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private authService: AuthService
   ) {
     this.timeEntryForm = this.fb.group({
       taskId: [null, Validators.required],
@@ -64,64 +66,60 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userRole = this.getUserRole();  // Pode ser 'comum', 'gestor' ou 'admin'
-    this.userId = this.getUserId(); // Obtém do serviço de autenticação
+    this.user = this.authService.getLoggedUser(); // Obtém o usuário logado
+  if (!this.user) {
+    console.error('Usuário não autenticado.');
+    return;
+  }
+  this.role = this.user.role;  // Obtém a role diretamente do usuário logado
 
     this.loadTimeEntries();
     this.loadTasks(); // Carrega as tarefas do backend
     this.loadDashboardData();
-    this.carregarUltimosLancamentos();
   }
 
+  loadDashboardData() {
+    this.loading = true; // Inicia o carregamento
 
-    getUserRole(): 'comum' | 'gestor' | 'admin' {
-      return localStorage.getItem('userRole') as 'comum' | 'gestor' | 'admin' || 'comum';
-    }
-    getUserId(): number {
-      return Number(localStorage.getItem('userId')) || 1;
-    }
-    loadDashboardData() {
-      this.loading = true; // Inicia o carregamento
+    // Usando forkJoin para carregar dados para todos os papéis
+    forkJoin({
+      userHours: this.dashboardService.getUserHours(this.user.id),
+      totalHoursMonth: this.dashboardService.getTotalHoursMonth(this.user.id),
+      pendingTasksCount: this.dashboardService.getPendingTasksCount(this.user.id),
+      taskDistribution: this.dashboardService.getTaskDistribution(this.user.id),
+      completedTask: this.dashboardService.getCompletedTasksCount(this.user.id),
+      // Aqui adicionamos a chamada para contar os projetos gerenciados
+      projectsManaged: this.dashboardService.countProjectsByManager(this.user.id)
+    }).subscribe(
+      ({ userHours, totalHoursMonth, pendingTasksCount, taskDistribution, completedTask, projectsManaged }) => {
+        // Gráfico de distribuição de tarefas
+        this.taskDistributionData = {
+          labels: Object.keys(taskDistribution).map(status => status.replace('_', ' ')),
+          datasets: [{
+            data: Object.values(taskDistribution),
+            backgroundColor: ['#6366F1', '#FF9800', '#15B8A6', '#3B82F6', '#9E9E9E']
+          }]
+        };
 
-      if (this.userRole === 'comum') {
-        forkJoin({
-          userHours: this.dashboardService.getUserHours(this.userId),
-          totalHoursMonth: this.dashboardService.getTotalHoursMonth(this.userId),
-          pendingTasksCount: this.dashboardService.getPendingTasksCount(this.userId),
-          taskDistribution: this.dashboardService.getTaskDistribution(this.userId),
-          completedTask: this.dashboardService.getCompletedTasksCount(this.userId),
-          // Aqui adicionamos a chamada para contar os projetos gerenciados
-          projectsManaged: this.dashboardService.countProjectsByManager(this.userId)
-        }).subscribe(
-          ({ userHours, totalHoursMonth, pendingTasksCount, taskDistribution, completedTask, projectsManaged }) => {
-            // Gráfico de distribuição de tarefas
-            this.taskDistributionData = {
-              labels: Object.keys(taskDistribution).map(status => status.replace('_', ' ')),
-              datasets: [{
-                data: Object.values(taskDistribution),
-                backgroundColor: ['#6366F1', '#FF9800', '#15B8A6', '#3B82F6', '#9E9E9E']
-              }]
-            };
-
-            // Atribuindo os dados aos campos correspondentes
-            this.totalHoursMonth = totalHoursMonth;
-            this.pendingTasksCount = pendingTasksCount;
-            this.totalProjectsManaged = projectsManaged; // Armazena o número de projetos gerenciados
-            this.totalCompletedTask = completedTask;
-            console.log('Completed Task:', this.completedTask);  // Verifique o valor no console
-            this.loading = false;
-          },
-          error => {
-            this.loading = false;
-            this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar o dashboard.' });
-          }
-        );
+        // Atribuindo os dados aos campos correspondentes
+        this.totalHoursMonth = totalHoursMonth;
+        this.pendingTasksCount = pendingTasksCount;
+        this.totalProjectsManaged = projectsManaged; // Armazena o número de projetos gerenciados
+        this.totalCompletedTask = completedTask;
+        console.log('Completed Task:', this.completedTask);  // Verifique o valor no console
+        this.loading = false;
+      },
+      error => {
+        this.loading = false;
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar o dashboard.' });
       }
+    );
+
       // ... restante do código
     }
   loadTasks(): void {
     this.loadingService.show();
-    this.timeEntryService.getTasksByUserId(this.userId).subscribe({
+    this.timeEntryService.getTasksByUserId(this.user.id).subscribe({
       next: (tasks) => {
         this.tasks = Array.isArray(tasks) ? tasks : [];
         this.loadingService.hide();
@@ -136,7 +134,7 @@ export class DashboardComponent implements OnInit {
 
 
   loadTimeEntries(): void {
-    this.timeEntryService.getUserTimeEntries(this.userId).subscribe(entries => {
+    this.timeEntryService.getUserTimeEntries(this.user.id).subscribe(entries => {
       this.timeEntries = entries;
     });
   }
@@ -180,7 +178,7 @@ export class DashboardComponent implements OnInit {
 
       const entry = {
         ...this.timeEntryForm.value,
-        userId: this.userId,
+        userId: this.user.id,
         startTime: startTimeStr,  // Mantém como string no formato HH:mm
         endTime: endTimeStr,      // Mantém como string no formato HH:mm
         totalHours: this.calculateTotalHours(startDateTime, endDateTime)
@@ -231,7 +229,7 @@ export class DashboardComponent implements OnInit {
   }
 
   carregarUltimosLancamentos(): void {
-    this.timeEntryService.getUserTimeEntries(this.userId).subscribe(entries => {
+    this.timeEntryService.getUserTimeEntries(this.user.id).subscribe(entries => {
       const taskRequests = entries.map(entry =>
         this.taskService.getTaskById(entry.taskId).pipe(
           map(task => ({

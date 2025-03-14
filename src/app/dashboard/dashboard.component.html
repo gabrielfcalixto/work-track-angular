@@ -31,7 +31,7 @@
 
       </p-card>
 
-      <ng-container *ngIf="userRole === 'gestor'">
+      <ng-container *ngIf="role === 'manager'">
         <p-card class="col-12 md:col-6 mb-4">
           <h5>Tarefas Completadas</h5>
           <p>{{ completedTasksCount }} tarefas completadas</p>
@@ -46,7 +46,7 @@
 
   <!-- Gráficos lado a lado -->
   <div class="charts-wrapper grid">
-    <ng-container *ngIf="userRole === 'comum'">
+    <ng-container >
       <!-- <p-card class="col-12 md:col-6 mb-4">
         <app-chart [chartData]="userHoursData" [chartOptions]="chartOptions" chartType="line"></app-chart>
       </p-card> -->
@@ -72,13 +72,13 @@
       </p-card>
     </ng-container>
 
-    <ng-container *ngIf="userRole === 'gestor'">
+    <ng-container *ngIf="role === 'manager'">
       <p-card class="col-12 md:col-6 mb-4">
         <app-chart [chartData]="projectProgressData" [chartOptions]="chartOptions" chartType="line"></app-chart>
       </p-card>
     </ng-container>
 
-    <ng-container *ngIf="userRole === 'admin'">
+    <ng-container *ngIf="role === 'admin'">
       <p-card class="col-12 md:col-6 mb-4">
         <app-chart [chartData]="userActivityData" [chartOptions]="chartOptions" chartType="polarArea"></app-chart>
       </p-card>
