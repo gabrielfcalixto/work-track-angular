@@ -1,6 +1,10 @@
+<p-toast></p-toast>
+
 <div class="dashboard-container p-4">
-  <p-toast></p-toast>
-  <div class="button-container">
+
+  <p-toolbar>
+    <h2>Dashboard</h2>
+    <div class="button-container">
     <button
       pButton
       type="button"
@@ -10,8 +14,7 @@
       class="p-button-primary launch-button"
     ></button>
   </div>
-
-  <p-fieldset legend="Dashboard" class="fieldset-container">
+</p-toolbar>
     <div class="charts-wrapper grid">
       <p-card class="col-12 md:col-6 mb-4">
         <div class="card-content">
@@ -24,7 +27,10 @@
           <h5>Atividades Pendentes</h5>
           <p class="card-value">{{ pendingTasksCount }} </p>
         </div>
+
+
       </p-card>
+
       <ng-container *ngIf="userRole === 'gestor'">
         <p-card class="col-12 md:col-6 mb-4">
           <h5>Tarefas Completadas</h5>
@@ -36,117 +42,29 @@
         </p-card>
       </ng-container>
     </div>
-  </p-fieldset>
 
-  <!-- Modal para lançar horas -->
-  <p-dialog
-    [(visible)]="displayDialog"
-    header="Adicionar Horas"
-    [modal]="true"
-    [closable]="false"
-    [style]="{ width: '450px' }"
-  >
-    <form [formGroup]="timeEntryForm" class="p-fluid">
-      <!-- Campo Tarefa -->
-      <div class="p-field">
-        <label for="task">Tarefa</label>
-        <p-dropdown
-        id="task"
-        [options]="tasks"
-        [(ngModel)]="selectedTask"
-        placeholder="Selecione a Tarefa"
-        [editable]="true"
-        optionLabel="name"
-        appendTo="body"
-        formControlName="taskId"
-        (onChange)="onTaskSelect($event)"
-        [ngClass]="{'p-invalid': isFieldInvalid('taskId')}">
-      </p-dropdown>
-      </div>
-      <div class="p-field">
-        <label for="description">Descrição</label>
-        <textarea
-          id="description"
-          rows="5"
-          pInputTextarea
-          formControlName="description"
-          placeholder="Descreva a tarefa"
-          [autoResize]="false"
-          [ngClass]="{'p-invalid': isFieldInvalid('description')}"
-        ></textarea>
-      </div>
-
-      <!-- Campo Data -->
-      <div class="p-field">
-        <label for="entryDate">Data</label>
-        <p-calendar
-          id="entryDate"
-          formControlName="entryDate"
-          dateFormat="dd/mm/yy"
-          [showIcon]="true"
-          placeholder="Selecione a data"
-          appendTo="body"
-          [ngClass]="{'p-invalid': isFieldInvalid('entryDate')}"
-        >
-        </p-calendar>
-      </div>
-
-      <!-- Campo Hora de Início -->
-      <div class="p-field">
-        <label for="startTime">Hora Início</label>
-        <input
-          type="text"
-          id="startTime"
-          formControlName="startTime"
-          placeholder="HH:mm"
-          pInputText
-          (input)="autoFormatTime('startTime')"
-          [ngClass]="{'p-invalid': isFieldInvalid('startTime')}"
-        />
-      </div>
-
-      <!-- Campo Hora de Fim -->
-      <div class="p-field">
-        <label for="endTime">Hora Fim</label>
-        <input
-          type="text"
-          id="endTime"
-          formControlName="endTime"
-          placeholder="HH:mm"
-          pInputText
-          (input)="autoFormatTime('endTime')"
-          [ngClass]="{'p-invalid': isFieldInvalid('endTime')}"
-        />
-      </div>
-    </form>
-
-    <!-- Botões de Ação -->
-    <ng-template pTemplate="footer">
-      <button
-        pButton
-        type="button"
-        label="Cancelar"
-        icon="pi pi-times"
-        class="p-button-text"
-        (click)="closeDialog()"
-      ></button>
-      <button
-        pButton
-        type="button"
-        label="Salvar"
-        icon="pi pi-check"
-        (click)="saveTimeEntry()"
-        [disabled]="timeEntryForm.invalid"
-      ></button>
-    </ng-template>
-  </p-dialog>
 
   <!-- Gráficos lado a lado -->
   <div class="charts-wrapper grid">
     <ng-container *ngIf="userRole === 'comum'">
-      <p-card class="col-12 md:col-6 mb-4">
-        <app-chart [chartData]="userHoursData" [chartOptions]="chartOptions" chartType="bar"></app-chart>
+      <!-- <p-card class="col-12 md:col-6 mb-4">
+        <app-chart [chartData]="userHoursData" [chartOptions]="chartOptions" chartType="line"></app-chart>
+      </p-card> -->
+
+      <!-- Gráfico de Projetos Gerenciados -->
+
+       <p-card class="col-12 md:col-6 mb-4">
+        <div class="card-content1">
+          <h5>Atividades Completadas</h5>
+          <p class="card-value">{{ completedTasksCount }} </p>
+        </div>
+
+
       </p-card>
+
+    <!-- <p-card class="col-12 md:col-6 mb-4">
+      <app-chart [chartData]="totalProjectsManaged" [chartOptions]="chartOptions" chartType="bar"></app-chart>
+    </p-card> -->
 
       <!-- Novo gráfico de pizza -->
       <p-card class="col-12 md:col-6 mb-4">
@@ -166,8 +84,6 @@
       </p-card>
     </ng-container>
   </div>
-
-
 
    <!-- Tabela de últimos lançamentos -->
   <p-panel header="Últimos Lançamentos" class="mt-4">
@@ -194,3 +110,106 @@
   </p-table>
   </p-panel>
 </div>
+
+ <!-- Modal para lançar horas -->
+ <p-dialog
+ [(visible)]="displayDialog"
+ header="Adicionar Horas"
+ [modal]="true"
+ [closable]="false"
+ [style]="{ width: '450px' }"
+>
+ <form [formGroup]="timeEntryForm" class="p-fluid">
+   <!-- Campo Tarefa -->
+   <div class="p-field">
+     <label for="task">Tarefa</label>
+     <p-dropdown
+     id="task"
+     [options]="tasks"
+     [(ngModel)]="selectedTask"
+     placeholder="Selecione a Tarefa"
+     [editable]="true"
+     optionLabel="name"
+     appendTo="body"
+     formControlName="taskId"
+     (onChange)="onTaskSelect($event)"
+     [ngClass]="{'p-invalid': isFieldInvalid('taskId')}">
+   </p-dropdown>
+   </div>
+   <div class="p-field">
+     <label for="description">Descrição</label>
+     <textarea
+       id="description"
+       rows="5"
+       pInputTextarea
+       formControlName="description"
+       placeholder="Descreva a tarefa"
+       [autoResize]="false"
+       [ngClass]="{'p-invalid': isFieldInvalid('description')}"
+     ></textarea>
+   </div>
+
+   <!-- Campo Data -->
+   <div class="p-field">
+     <label for="entryDate">Data</label>
+     <p-calendar
+       id="entryDate"
+       formControlName="entryDate"
+       dateFormat="dd/mm/yy"
+       [showIcon]="true"
+       placeholder="Selecione a data"
+       appendTo="body"
+       [ngClass]="{'p-invalid': isFieldInvalid('entryDate')}"
+     >
+     </p-calendar>
+   </div>
+
+   <!-- Campo Hora de Início -->
+   <div class="p-field">
+     <label for="startTime">Hora Início</label>
+     <input
+       type="text"
+       id="startTime"
+       formControlName="startTime"
+       placeholder="HH:mm"
+       pInputText
+       (input)="autoFormatTime('startTime')"
+       [ngClass]="{'p-invalid': isFieldInvalid('startTime')}"
+     />
+   </div>
+
+   <!-- Campo Hora de Fim -->
+   <div class="p-field">
+     <label for="endTime">Hora Fim</label>
+     <input
+       type="text"
+       id="endTime"
+       formControlName="endTime"
+       placeholder="HH:mm"
+       pInputText
+       (input)="autoFormatTime('endTime')"
+       [ngClass]="{'p-invalid': isFieldInvalid('endTime')}"
+     />
+   </div>
+ </form>
+
+ <!-- Botões de Ação -->
+ <ng-template pTemplate="footer">
+   <button
+     pButton
+     type="button"
+     label="Cancelar"
+     icon="pi pi-times"
+     class="p-button-text"
+     (click)="closeDialog()"
+   ></button>
+   <button
+     pButton
+     type="button"
+     label="Salvar"
+     icon="pi pi-check"
+     (click)="saveTimeEntry()"
+     [disabled]="timeEntryForm.invalid"
+   ></button>
+ </ng-template>
+</p-dialog>

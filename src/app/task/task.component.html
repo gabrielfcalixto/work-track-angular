@@ -15,7 +15,7 @@
         <th pSortableColumn="name">Nome <p-sortIcon field="name"></p-sortIcon></th>
         <!-- <th pSortableColumn="description">Descrição <p-sortIcon field="description"></p-sortIcon></th> -->
         <th pSortableColumn="estimatedHours">Horas <p-sortIcon field="estimatedHours"></p-sortIcon></th>
-        <th pSortableColumn="totalHours">Horas lançadas <p-sortIcon field="totalHours"></p-sortIcon></th>
+        <!-- <th pSortableColumn="totalHours">Horas lançadas <p-sortIcon field="totalHours"></p-sortIcon></th> -->
         <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
         <th>Ações</th>
       </tr>
@@ -26,12 +26,16 @@
         <td>{{ task.name }}</td>
         <!-- <td>{{ task.description }}</td> -->
         <td>{{ task.estimatedHours }}</td>
-        <td>{{ task.totalHours }}</td>
+        <!-- <td>{{ task.totalHours }}</td> -->
         <td>{{ getStatusName(task.status) }}</td>
         <td>
+          <div class="botoes-acao">
+
           <p-button icon="pi pi-pencil" (click)="openEditDialog(task)"></p-button>
           <p-button icon="pi pi-key" (click)="openStatusDialog(task)"></p-button>
           <!-- <p-button icon="pi pi-trash" (click)="confirmDelete(task)" severity="danger"></p-button> -->
+        </div>
+
         </td>
       </tr>
     </ng-template>

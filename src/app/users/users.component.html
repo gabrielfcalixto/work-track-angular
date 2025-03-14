@@ -26,8 +26,10 @@
         <td>{{ user.email }}</td>
         <td>{{ user.role }}</td>
         <td>
+          <div class="botoes-acao">
           <p-button icon="pi pi-pencil" (click)="openEditDialog(user)"></p-button>
           <p-button icon="pi pi-key" (click)="openPermissionDialog(user)"></p-button>
+        </div>
         </td>
       </tr>
     </ng-template>

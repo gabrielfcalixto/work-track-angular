@@ -44,4 +44,9 @@ export class DashboardService {
     return this.http.get(`${this.apiUrl}/tasks/distribution/${userId}`);
   }
 
+    // Método para contar os projetos gerenciados
+    countProjectsByManager(managerId: number): Observable<number> {
+      return this.http.get<number>(`${this.apiUrl}/projects/managed/${managerId}`);
+    }
+
 }

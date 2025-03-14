@@ -8,48 +8,59 @@ import { Component, Input, OnInit } from '@angular/core';
 export class ChartComponent implements OnInit {
   @Input() chartData: any;
   @Input() chartOptions: any;
-  @Input() chartType: 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' | 'mixed' = 'bar';
+  @Input() chartType: 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' | 'mixed' = 'pie';
   @Input() darkMode: boolean = false;
 
   defaultOptions: any;
 
   ngOnInit() {
-    const textColor = this.darkMode ? '#ebedef' : '#495057';
-    const gridColor = this.darkMode ? '#333' : '#ebedef';
+    const textColor = this.darkMode ? 'var(--primary-text)' : 'var(--secondary-text)';
+    const gridColor = this.darkMode ? 'var(--surface-d)' : 'var(--surface-e)';
 
-    // Configuração padrão para gráficos
+    // Configuração aprimorada para gráficos, removendo as grades
     this.defaultOptions = {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
         legend: {
+          position: 'top', // Melhor localização da legenda
           labels: {
-            color: textColor
+            color: textColor,
+            font: {
+              family: 'Arial, sans-serif', // Fonte mais limpa
+              size: 14
+            }
           }
         },
         tooltip: {
+          backgroundColor: this.darkMode ? 'rgba(0, 0, 0, 0.7)' : 'var(--surface-b)', // Tooltip com fundo mais legível
+          titleColor: textColor,
+          bodyColor: textColor,
           callbacks: {
-            label: (context: any) => ` ${context.label}: ${context.raw}%`,
+            label: (context: any) => `${context.label}: ${context.raw}%`, // Formatação de label mais amigável
           }
         },
         datalabels: {
           display: true,
           color: textColor,
-          formatter: (value: any) => `${value}%`
+          font: {
+            weight: 'bold',
+            size: 14
+          },
+          formatter: (value: any) => `${value}%`, // Exibição de valores com porcentagem
         }
       },
       animation: {
-        duration: 800,
-        easing: 'easeInOutQuad'
+        duration: 1000, // Animação mais suave
+        easing: 'easeOutBounce', // Efeito de animação mais interessante
       },
       scales: {
+        // Removendo as grades, deixando os eixos sem grid
         x: {
-          ticks: { color: textColor },
-          grid: { color: gridColor }
+          display: false, // Desabilitar exibição do eixo X
         },
         y: {
-          ticks: { color: textColor },
-          grid: { color: gridColor }
+          display: false, // Desabilitar exibição do eixo Y
         }
       }
     };

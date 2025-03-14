@@ -20,6 +20,9 @@ export class DashboardComponent implements OnInit {
   pendingTasksCount: number = 0;  // Contagem de tarefas pendentes
   completedTasksCount: number = 0;  // Tarefas completadas (gestor)
   ongoingTasksCount: number = 0;  // Tarefas em andamento (gestor)
+  totalProjectsManaged: number = 0; // Novo campo para armazenar a quantidade de projetos gerenciados
+  totalCompletedTask: number = 0;
+
   timeEntries: TimeEntry[] = [];
   timeEntryForm: FormGroup;
   displayDialog = false;
@@ -31,6 +34,7 @@ export class DashboardComponent implements OnInit {
   projectProgressData: any;
   userActivityData: any;
   taskDistributionData: any;
+  completedTask:any;
   ultimosLancamentos: any[] = [];
 
   chartOptions: any = {
@@ -76,80 +80,45 @@ export class DashboardComponent implements OnInit {
     getUserId(): number {
       return Number(localStorage.getItem('userId')) || 1;
     }
+    loadDashboardData() {
+      this.loading = true; // Inicia o carregamento
 
-  loadDashboardData() {
-    this.loading = true; // Inicia o carregamento
+      if (this.userRole === 'comum') {
+        forkJoin({
+          userHours: this.dashboardService.getUserHours(this.userId),
+          totalHoursMonth: this.dashboardService.getTotalHoursMonth(this.userId),
+          pendingTasksCount: this.dashboardService.getPendingTasksCount(this.userId),
+          taskDistribution: this.dashboardService.getTaskDistribution(this.userId),
+          completedTask: this.dashboardService.getCompletedTasksCount(this.userId),
+          // Aqui adicionamos a chamada para contar os projetos gerenciados
+          projectsManaged: this.dashboardService.countProjectsByManager(this.userId)
+        }).subscribe(
+          ({ userHours, totalHoursMonth, pendingTasksCount, taskDistribution, completedTask, projectsManaged }) => {
+            // Gráfico de distribuição de tarefas
+            this.taskDistributionData = {
+              labels: Object.keys(taskDistribution).map(status => status.replace('_', ' ')),
+              datasets: [{
+                data: Object.values(taskDistribution),
+                backgroundColor: ['#6366F1', '#FF9800', '#15B8A6', '#3B82F6', '#9E9E9E']
+              }]
+            };
 
-    if (this.userRole === 'comum') {
-      forkJoin({
-        userHours: this.dashboardService.getUserHours(this.userId),
-        totalHoursMonth: this.dashboardService.getTotalHoursMonth(this.userId),
-        pendingTasksCount: this.dashboardService.getPendingTasksCount(this.userId),
-        taskDistribution: this.dashboardService.getTaskDistribution(this.userId)
-      }).subscribe(
-        ({ userHours, totalHoursMonth, pendingTasksCount, taskDistribution }) => {
-          // Gráfico de distribuição de tarefas
-          this.taskDistributionData = {
-            labels: Object.keys(taskDistribution).map(status => status.replace('_', ' ')),
-            datasets: [{
-              data: Object.values(taskDistribution),
-              backgroundColor: ['#6366F1', '#FF9800', '#15B8A6', '#3B82F6', '#9E9E9E']
-            }]
-          };
-
-          this.totalHoursMonth = totalHoursMonth;
-          this.pendingTasksCount = pendingTasksCount;
-          this.loading = false;
-        },
-        error => {
-          this.loading = false;
-          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar o dashboard.' });
-        }
-      );
+            // Atribuindo os dados aos campos correspondentes
+            this.totalHoursMonth = totalHoursMonth;
+            this.pendingTasksCount = pendingTasksCount;
+            this.totalProjectsManaged = projectsManaged; // Armazena o número de projetos gerenciados
+            this.totalCompletedTask = completedTask;
+            console.log('Completed Task:', this.completedTask);  // Verifique o valor no console
+            this.loading = false;
+          },
+          error => {
+            this.loading = false;
+            this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar o dashboard.' });
+          }
+        );
+      }
+      // ... restante do código
     }
-     else if (this.userRole === 'gestor') {
-      // Para gestores, carregamos as tarefas concluídas e em andamento
-      forkJoin({
-        completedTasks: this.dashboardService.getCompletedTasksCount(this.userId),
-        ongoingTasks: this.dashboardService.getOngoingTasksCount(this.userId)
-      }).subscribe(
-        ({ completedTasks, ongoingTasks }) => {
-          this.completedTasksCount = completedTasks;
-          this.ongoingTasksCount = ongoingTasks;
-
-          // Monta os dados do gráfico de status das tarefas
-          this.taskStatusData = {
-            labels: ['Concluídas', 'Em andamento'],
-            datasets: [{
-              label: 'Tarefas',
-              data: [completedTasks, ongoingTasks],
-              backgroundColor: ['#66BB6A', '#FFA726']
-            }]
-          };
-
-          this.loading = false;
-        },
-        error => {
-          this.loading = false;
-          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar os dados do gestor.' });
-        }
-      );
-
-    } else if (this.userRole === 'admin') {
-      // Se for admin, você pode carregar os dados gerais
-      this.dashboardService.getDashboardData().subscribe(
-        data => {
-          // Aqui você pode preencher os gráficos com base nos dados do admin
-          this.loading = false;
-        },
-        error => {
-          this.loading = false;
-          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar os dados do admin.' });
-        }
-      );
-    }
-  }
-
   loadTasks(): void {
     this.loadingService.show();
     this.timeEntryService.getTasksByUserId(this.userId).subscribe({
