@@ -1,279 +1,141 @@
-import { UsersService } from './../users/users.service';
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import jsPDF from 'jspdf';
-import * as XLSX from 'xlsx';
-import { Project } from './project.model';
-import { ProjectService } from './project.service';
+import { finalize, forkJoin } from 'rxjs';
+import { Client, ClientsService } from '../clients/clients.service';
+import { apiError } from '../shared/api-error';
+import { ReportFormat, ReportService } from '../shared/report.service';
 import { Users } from '../users/users.model';
-import { LoadingService } from '../loading/loading.service';
-
+import { UsersService } from '../users/users.service';
+import { Project, ProjectStatus, projectStatuses } from './project.model';
+import { ProjectService } from './project.service';
 
 @Component({
-  selector: 'app-user-management',
+  selector: 'app-project',
   templateUrl: './project.component.html',
-  styleUrls: ['./project.component.scss'],
+  styleUrls: ['../shared/management.scss'],
   providers: [ConfirmationService, MessageService]
 })
 export class ProjectComponent implements OnInit {
-  projects: Project[] = [];
-  users: Users[] = []; // Lista de usuários
-  selectedProject: Project = {} as Project;
-  displayAddDialog = false;
-  displayEditDialog = false;
-  displayPermissionDialog = false;
-  displayDeleteDialog = false;
-  searchTerm: string = '';
-  status = [
-    { name: 'Pendente', value: 'NAO_INICIADO' },   // Mapeando para o enum
-    { name: 'Em andamento', value: 'EM_ANDAMENTO' },
-    { name: 'Concluído', value: 'CONCLUIDO' },
-    { name: 'Em espera', value: 'EM_ESPERA' },
-    { name: 'Cancelada', value: 'CANCELADO' },
-  ];
+  readonly statusLabels = projectStatuses;
+  readonly statuses = Object.keys(projectStatuses) as ProjectStatus[];
+  clients: Client[] = [];
+  managers: Users[] = [];
+  readonly form = this.fb.nonNullable.group({
+    name: ['', Validators.required],
+    description: ['', Validators.required],
+    hours: this.fb.control<number | null>(0, [Validators.required, Validators.min(0)]),
+    status: this.fb.nonNullable.control<ProjectStatus>('NAO_INICIADO'),
+    managerId: this.fb.control<number | null>(null, Validators.required),
+    clientId: this.fb.control<number | null>(null, Validators.required),
+    teamMemberIds: this.fb.nonNullable.control<number[]>([]),
+    startDate: ['', Validators.required],
+    deadline: ['', Validators.required]
+  });
+  records: Project[] = [];
+  users: Users[] = [];
+  editingId?: number;
+  loading = false;
+  saving = false;
+  dialog = false;
+  error = '';
+  formError = '';
 
-  newProject: Project = {
-    name: '',
-    description: '',
-    hours: 0,
-    status: '',
-    managerId: undefined,
-    clientId: undefined,
-    teamMemberIds: [],
-    startDate: '',
-    deadline: ''
-  };
   constructor(
-    private projectService: ProjectService,
-    private confirmationService: ConfirmationService,
-    private messageService: MessageService,
-    private userService: UsersService,
-    private loadingService: LoadingService
+    private readonly fb: FormBuilder,
+    private readonly service: ProjectService,
+    private readonly clientsService: ClientsService,
+    private readonly usersService: UsersService,
+    private readonly messages: MessageService,
+    private readonly confirmation: ConfirmationService,
+    private readonly reports: ReportService
   ) {}
 
-  ngOnInit() {
-    this.loadProject();
-    this.loadUsers();
-  }
-  loadProject() {
-    this.loadingService.show();
-    this.projectService.getProjects().subscribe(
-      project => {
-        console.log(project);  // Verifique se os usuários estão sendo retornados
-        this.projects = project;
-        this.loadingService.hide();
-      },
-      error => {
-        console.error('Erro ao carregar as projects:', error);
-        this.loadingService.hide();
-      }
-    );
-  }
-  getStatusName(statusValue: string): string {
-    const status = this.status.find(option => option.value === statusValue);
-    return status ? status.name : 'Desconhecido';
+  ngOnInit(): void {
+    this.load();
   }
 
-
-  loadUsers() {
-    this.userService.getUsers().subscribe(
-      (users) => {
-        this.users = users;
-      },
-      (error) => {
-        console.error('Erro ao carregar os usuários', error);
-      }
-    );
-  }
-
-  openAddDialog() {
-    this.newProject = {   name: '',
-      description: '',
-      hours: 0,
-      status: '',
-      managerId: undefined,
-      clientId: undefined,
-      teamMemberIds: [],
-      startDate: '',
-      deadline: '' };
-    this.displayAddDialog = true;
-  }
-
-  addProject() {
-    this.loadingService.show();
-    this.projectService.addProject(this.newProject).subscribe({
-      next: () => {
-        this.displayAddDialog = false;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Tarefa adicionada!'
-        });
-        this.loadProject();
-        this.loadingService.hide();
-      },
-      error: (err) => {
-        this.loadingService.hide();
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: err.error.message || 'Falha ao adicionar a tarefa. Tente novamente.'
-        });
-      }
-    });
-  }
-  openEditDialog(project: Project) {
-    this.selectedProject = { ...project };
-    this.displayEditDialog = true;
-  }
-
-  saveEdit() {
-    if (!this.selectedProject) {
-      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Nenhuma tarefa selecionada!' });
-      return;
-    }
-
-    if (!this.selectedProject.name || !this.selectedProject.description || !this.selectedProject.hours || !this.selectedProject.status || !this.selectedProject.clientId || !this.selectedProject.teamMemberIds || !this.selectedProject.deadline) {
-      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Todos os campos são obrigatórios!' });
-      return;
-    }
-
-    this.loadingService.show();
-
-    this.projectService.editProject(this.selectedProject).subscribe(() => {
-      this.displayEditDialog = false;
-      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado!' });
-      this.loadProject();
-      this.loadingService.hide();
-    });
-  }
-  openStatusDialog(project: Project) {
-    this.selectedProject = { ...project };
-    this.displayPermissionDialog = true;
-  }
-
-  saveStatus() {
-    if (this.selectedProject && this.selectedProject.status && this.selectedProject.id !== undefined) {
-      this.loadingService.show();
-
-      const statusValue = this.selectedProject.status;
-
-      this.projectService.updateStatus(this.selectedProject.id, { status: statusValue }).subscribe({
-        next: () => {
-          this.displayPermissionDialog = false;
-          this.loadingService.hide();
-          this.messageService.add({
-            severity: 'info',
-            summary: 'Status atualizado',
-            detail: 'Status da tarefa foi alterado!'
-          });
-          this.loadProject(); // Atualiza a lista de tarefas
+  load(): void {
+    this.loading = true;
+    this.error = '';
+    forkJoin({ records: this.service.list(), users: this.usersService.getUsers(), clients: this.clientsService.list() })
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: ({ records, users, clients }) => {
+          this.records = records;
+          this.users = users;
+          this.clients = clients;
+          this.managers = users.filter(user => user.role !== 'USER');
         },
-        error: (err) => {
-          this.loadingService.hide();
-          console.error('Erro ao atualizar status:', err);
-
-          // Verifica se a mensagem específica está em outro lugar
-          const errorMessage =
-            err?.error?.message ||
-            err?.error ||
-            err?.message ||
-            'Falha ao alterar o status. Tente novamente.';
-
-          // Tratamento específico para a exceção de reabertura de tarefa concluída
-          if (errorMessage.includes('Não é possível reabrir uma tarefa já concluída')) {
-            this.messageService.add({
-              severity: 'warn',
-              summary: 'Ação não permitida',
-              detail: 'Não é possível reabrir uma tarefa que já foi concluída.'
-            });
-          } else {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro ao atualizar status',
-              detail: errorMessage
-            });
-          }
-        }
+        error: error => this.error = apiError(error, 'Não foi possível carregar os projetos.')
       });
-    } else {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Nenhuma tarefa selecionada',
-        detail: 'Selecione uma tarefa antes de atualizar o status.'
-      });
+  }
+
+  open(record?: Project): void {
+    this.editingId = record?.id;
+    this.form.reset();
+    if (record) this.form.patchValue(record);
+    this.managers = this.users.filter(user => user.role !== 'USER' || user.id === record?.managerId);
+    this.formError = '';
+    this.dialog = true;
+  }
+
+  save(): void {
+    if (this.saving || this.form.invalid) return;
+    const fields = this.form.getRawValue();
+    if (fields.deadline < fields.startDate) {
+      this.formError = 'O prazo deve ser igual ou posterior à data de início.';
+      return;
+    }
+    if (fields.hours === null || fields.managerId === null || fields.clientId === null) return;
+    const request = { ...fields, hours: fields.hours, managerId: fields.managerId, clientId: fields.clientId };
+    this.saving = true;
+    this.formError = '';
+    this.service.save(request, this.editingId).pipe(finalize(() => this.saving = false)).subscribe({
+      next: () => {
+        this.messages.add({ severity: 'success', summary: 'Projeto salvo' });
+        this.dialog = false;
+        this.load();
+      },
+      error: error => this.formError = apiError(error, 'Não foi possível salvar o projeto.')
+    });
+  }
+
+  confirmDelete(record: Project): void {
+    this.confirmation.confirm({
+      header: 'Excluir projeto', message: `Excluir “${record.name}”?`, acceptLabel: 'Excluir', rejectLabel: 'Cancelar',
+      accept: () => this.service.delete(record.id).subscribe({
+        next: () => {
+          this.messages.add({ severity: 'success', summary: 'Projeto excluído' });
+          this.load();
+        },
+        error: error => this.messages.add({ severity: 'error', summary: 'Erro',
+          detail: apiError(error, 'Não foi possível excluir o projeto.') })
+      })
+    });
+  }
+
+  statusLabel(value: ProjectStatus): string {
+    return this.statusLabels[value];
+  }
+
+  clientName(id: number): string {
+    return this.clients.find(client => client.id === id)?.name ?? '—';
+  }
+
+  userName(id: number): string {
+    return this.users.find(user => user.id === id)?.name ?? '—';
+  }
+
+  async export(format: ReportFormat): Promise<void> {
+    try {
+      await this.reports.download(format, 'Projetos', 'projetos', this.records.map(record => ({
+        Projeto: record.name, Descrição: record.description, Horas: record.hours,
+        Status: this.statusLabels[record.status], Início: record.startDate, Prazo: record.deadline,
+        Cliente: this.clientName(record.clientId), Responsável: this.userName(record.managerId)
+      })));
+    } catch {
+      this.messages.add({ severity: 'error', summary: 'Falha ao exportar o relatório' });
     }
   }
-
-
-  confirmDelete(project: Project) {
-
-    this.selectedProject ={...project};
-    this.displayDeleteDialog = true;
-  }
-
-
-  deleteProject(project: Project) {
-    if (!project || project.id === undefined) return;
-
-    this.loadingService.show();
-
-    this.projectService.deleteProject(project.id).subscribe({
-      next: () => {
-        this.displayDeleteDialog = false;
-        this.messageService.add({ severity: 'warn', summary: 'Tarefa removida', detail: 'Tarefa foi excluída!' });
-        this.loadProject();
-        this.loadingService.hide();
-      },
-      error: (err) => {
-        this.loadingService.hide();
-
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro ao excluir',
-          detail: err?.error?.message || 'Falha ao excluir a tarefa. Tente novamente.'
-        });
-      }
-    });
-  }
-
-
-
-  gerarPDF() {
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text('Relatório de Tarefas', 10, 10);
-
-    let y = 20; // Posição inicial
-
-    this.projects.forEach((project, index) => {
-      doc.setFontSize(12);
-      doc.text(`Nome: ${project.name}`, 10, y);
-      doc.text(`Description: ${project.description}`, 10, y + 6);
-      doc.text(`Horas: ${project.hours}`, 10, y + 12);
-      doc.text(`Status: ${project.status}`, 10, y + 18);
-
-      y += 30; // Ajusta o espaçamento entre os usuários
-    });
-
-    doc.save('relatorio_usuarios.pdf');
-  }
-
-
-  gerarExcel() {
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
-      this.projects.map(project => ({
-        Nome: project.name,
-        Descrição: project.description,
-        Horas: project.hours,
-        Status: project.status
-      }))
-    );
-
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Tarefas');
-    XLSX.writeFile(wb, 'relatorio_tarefas.xlsx');
-  }
-
-
 }

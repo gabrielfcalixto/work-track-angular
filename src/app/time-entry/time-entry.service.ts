@@ -1,30 +1,32 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { TimeEntry } from './time-entry.model';
+import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { Task } from '../task/task.model';
+import { TimeEntry, TimeEntryRequest } from './time-entry.model';
 
 @Injectable({ providedIn: 'root' })
 export class TimeEntryService {
-  private apiUrl = 'http://localhost:8080';
+  private readonly apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
-  // Método para buscar as tarefas do usuário
-  getTasksByUserId(userId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/task/usertask/${userId}`);
+  listMyTasks() {
+    return this.http.get<Task[]>(`${this.apiUrl}/task/me`);
   }
 
-  getUserTimeEntries(userId: number): Observable<TimeEntry[]> {
-    return this.http.get<TimeEntry[]>(`${this.apiUrl}/time-entries/user/${userId}`);
+  listMine() {
+    return this.http.get<TimeEntry[]>(`${this.apiUrl}/time-entries/me`);
   }
 
-  saveTimeEntry(entry: TimeEntry): Observable<TimeEntry> {
-    return this.http.post<TimeEntry>(`${this.apiUrl}/time-entries/add`, entry);
+  create(entry: TimeEntryRequest) {
+    return this.http.post<TimeEntry>(`${this.apiUrl}/time-entries`, entry);
   }
 
-  getTaskById(taskId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/task/${taskId}`);
+  update(id: number, entry: TimeEntryRequest) {
+    return this.http.put<TimeEntry>(`${this.apiUrl}/time-entries/${id}`, entry);
   }
 
-
+  delete(id: number) {
+    return this.http.delete<void>(`${this.apiUrl}/time-entries/${id}`);
+  }
 }

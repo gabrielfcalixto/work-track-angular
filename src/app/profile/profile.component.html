@@ -1,76 +1,42 @@
-<p-toast></p-toast>
+<p-toast />
 
-<div *ngIf="!user" class="loading">
-  <p-progressSpinner
-    styleClass="custom-spinner"
-    strokeWidth="4"
-    animationDuration="1s">
-  </p-progressSpinner>
+<p *ngIf="!user && !error" role="status">Carregando perfil…</p>
+<div *ngIf="error" role="alert">
+  <p>{{ error }}</p>
+  <p-button label="Tentar novamente" (onClick)="loadUserProfile()" />
 </div>
 
 <div class="profile-container" *ngIf="user">
   <p-card class="profile-card">
     <div class="profile-header">
-      <div class="avatar-container">
-        <app-avatar [userName]="user?.name"></app-avatar>
-      </div>
+      <app-avatar [userName]="user.name" />
       <h1>{{ user.name }}</h1>
     </div>
-
-    <div class="profile-info">
-      <p-fieldset legend="Informações do Perfil" class="info-fieldset">
-        <div class="info-grid">
-          <div class="info-item">
-            <strong>Email: </strong>
-            <span>{{ user.email }}</span>
-          </div>
-          <div class="info-item">
-            <strong>Usuário: </strong>
-            <span>{{ user.login }}</span>
-          </div>
-          <div class="info-item">
-            <strong>Data de Entrada: </strong>
-            <span>{{ user.joinDate | date:'dd/MM/yyyy' }}</span>
-          </div>
-          <button pButton type="button" label="Redefinir Senha" class="p-button" (click)="showResetPasswordDialog()"></button>
-        </div>
-      </p-fieldset>
-    </div>
+    <p-fieldset legend="Informações do perfil">
+      <dl>
+        <dt>E-mail</dt><dd>{{ user.email }}</dd>
+        <dt>Usuário</dt><dd>{{ user.login }}</dd>
+        <dt>Data de entrada</dt><dd>{{ user.joinDate | date:'dd/MM/yyyy' }}</dd>
+      </dl>
+      <p-button label="Alterar senha" (onClick)="displayResetPasswordDialog = true" />
+    </p-fieldset>
   </p-card>
 </div>
 
-<!-- Diálogo para redefinir senha -->
-<p-dialog
-  header="Redefinir Senha"
-  [(visible)]="displayResetPasswordDialog"
-  [modal]="true"
-  [style]="{ width: '300px' }"
-  [draggable]="false"
-  [resizable]="false">
-  <div class="reset-password-form">
+<p-dialog header="Alterar senha" [(visible)]="displayResetPasswordDialog" [modal]="true"
+          [style]="{ width: 'min(27rem, 94vw)' }" [draggable]="false" [resizable]="false"
+          [closable]="!saving" [closeOnEscape]="!saving" (onHide)="hideResetPasswordDialog()">
+  <form class="reset-password-form" (ngSubmit)="resetPassword()">
     <div class="p-field">
-      <label for="oldPassword">Senha Antiga</label>
-      <input
-        id="oldPassword"
-        [(ngModel)]="oldPassword"
-        placeholder="Digite sua senha antiga"
-        type="text"
-        class="p-inputtext p-component full-width">
+      <label for="oldPassword">Senha atual</label>
+      <input id="oldPassword" name="oldPassword" type="password" autocomplete="current-password"
+             [(ngModel)]="oldPassword" pInputText class="full-width" required />
     </div>
-
     <div class="p-field">
-      <label for="newPassword">Nova Senha</label>
-      <input
-        id="newPassword"
-        [(ngModel)]="newPassword"
-        placeholder="Digite sua nova senha"
-        type="text"
-        class="p-inputtext p-component full-width">
+      <label for="newPassword">Nova senha</label>
+      <input id="newPassword" name="newPassword" type="password" autocomplete="new-password"
+             [(ngModel)]="newPassword" pInputText class="full-width" minlength="8" required />
     </div>
-  </div>
-
-  <ng-template pTemplate="footer">
-    <button pButton type="button" label="Cancelar" class="p-button-text" (click)="hideResetPasswordDialog()"></button>
-    <button pButton type="button" label="Salvar" class="p-button" (click)="resetPassword()"></button>
-  </ng-template>
+    <p-button type="submit" label="Salvar" [loading]="saving" [disabled]="!oldPassword || newPassword.length < 8" />
+  </form>
 </p-dialog>

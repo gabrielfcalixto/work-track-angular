@@ -1,0 +1,49 @@
+<div class="hours-overview">
+  <section class="card" aria-labelledby="weekly-chart-title">
+    <header>
+      <h2 id="weekly-chart-title">Horas por dia</h2>
+      <p>{{ week.weekStart | date:'dd/MM' }} a {{ week.weekEnd | date:'dd/MM/yyyy' }}</p>
+    </header>
+    <div class="total">{{ week.totalHours | number:'1.0-2' }} h <span>nesta semana</span></div>
+    <ul class="chart" role="list" aria-label="Horas registradas de segunda a domingo">
+      <li *ngFor="let day of week.days" [title]="(day.date | date:'EEEE, dd/MM') + ' · ' + (day.hours | number:'1.0-2') + ' h'">
+        <strong>{{ day.hours | number:'1.0-2' }}</strong>
+        <div class="bar-track" aria-hidden="true">
+          <span [style.height.%]="100 * day.hours / peakHours"></span>
+        </div>
+        <time [attr.datetime]="day.date" [attr.aria-label]="day.date | date:'EEEE, dd/MM'">{{ day.date | date:'EEE' }}</time>
+      </li>
+    </ul>
+  </section>
+
+  <section class="card" aria-labelledby="weekly-goal-title">
+    <header class="goal-header">
+      <h2 id="weekly-goal-title">Meta semanal</h2>
+      <button *ngIf="!editingGoal" pButton type="button" class="p-button-text p-button-sm"
+              label="Editar meta" (click)="editGoal()"></button>
+    </header>
+    <div class="total">
+      {{ week.totalHours | number:'1.0-2' }} <span>de {{ week.goalHours | number:'1.0-2' }} h</span>
+    </div>
+    <div class="goal-progress">
+      <progress [value]="percentage" max="100" aria-label="Progresso da meta semanal"></progress>
+      <strong>{{ percentage }}%</strong>
+    </div>
+    <p *ngIf="remainingHours > 0; else reached">Faltam {{ remainingHours | number:'1.0-2' }} h para a meta.</p>
+    <ng-template #reached><p class="reached"><i class="pi pi-check-circle" aria-hidden="true"></i> Meta atingida</p></ng-template>
+
+    <form *ngIf="editingGoal" [formGroup]="form" (ngSubmit)="saveGoal()">
+      <label for="weekly-goal-hours">Horas por semana</label>
+      <input pInputText type="number" id="weekly-goal-hours" formControlName="hours" min="1" max="168" step="0.01"
+             required [readonly]="saving" aria-describedby="weekly-goal-help" />
+      <small id="weekly-goal-help">De 1 a 168 horas, com até duas casas decimais.</small>
+      <p *ngIf="error" role="alert">{{ error }}</p>
+      <div class="form-actions">
+        <button pButton type="button" label="Cancelar" class="p-button-text p-button-sm"
+                [disabled]="saving" (click)="editingGoal = false"></button>
+        <p-button type="submit" label="Salvar meta" size="small" [disabled]="form.invalid" [loading]="saving" />
+      </div>
+    </form>
+    <p *ngIf="saved" role="status">Meta semanal salva.</p>
+  </section>
+</div>

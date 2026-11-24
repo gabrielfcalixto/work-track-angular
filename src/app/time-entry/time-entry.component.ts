@@ -1,231 +1,187 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { finalize, forkJoin } from 'rxjs';
+import { apiError } from '../shared/api-error';
+import { Task } from '../task/task.model';
+import { TimeEntry, TimeEntryRequest } from './time-entry.model';
 import { TimeEntryService } from './time-entry.service';
-import { MessageService } from 'primeng/api';
-import { LoadingService } from '../loading/loading.service';
-import jsPDF from 'jspdf';
-import * as XLSX from 'xlsx';
-import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-time-entry',
   templateUrl: './time-entry.component.html',
   styleUrls: ['./time-entry.component.scss'],
-  providers: [MessageService],
+  providers: [MessageService, ConfirmationService]
 })
 export class TimeEntryComponent implements OnInit {
-  user: any = null;
-  timeEntries: any[] = [];
+  readonly today = this.localDate(new Date());
+  readonly form = this.fb.nonNullable.group({
+    taskId: this.fb.control<number | null>(null),
+    description: ['', [Validators.required, Validators.maxLength(255)]],
+    entryDate: [this.today, Validators.required],
+    startTime: ['', Validators.required],
+    endTime: ['', Validators.required]
+  });
+  entries: TimeEntry[] = [];
+  visibleEntries: TimeEntry[] = [];
+  tasks: Task[] = [];
+  visibleHours = 0;
+  filter = { from: '', to: '', task: '' };
+  loading = false;
+  saving = false;
+  error = '';
+  formError = '';
   displayDialog = false;
-  timeEntryForm: FormGroup;
-  tasks: any[] = []; // Lista de tarefas
-  selectedTask: any; // Tarefa selecionada
-  ultimosLancamentos: any[] = [];
+  editing?: TimeEntry;
 
   constructor(
-    private fb: FormBuilder,
-    private timeEntryService: TimeEntryService,
-    private messageService: MessageService,
-    private loadingService: LoadingService,
-    private authService: AuthService // Injetando o serviço de autenticação
-  ) {
-    // Pega o usuário logado
-    this.user = this.authService.getLoggedUser();
-    console.log('Usuário logado:', this.user);
-
-    this.timeEntryForm = this.fb.group({
-      taskId: [null, Validators.required],
-      description: [null, Validators.required],
-      entryDate: [null, Validators.required],
-      startTime: [null, Validators.required],
-      endTime: [null, Validators.required],
-    });
-  }
+    private readonly fb: FormBuilder,
+    private readonly service: TimeEntryService,
+    private readonly messages: MessageService,
+    private readonly confirmation: ConfirmationService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.loadTimeEntries();
-    this.loadTasks();
+    this.load();
   }
 
-  loadTimeEntries(): void {
-    // Passa o ID do usuário para o serviço
-    this.timeEntryService.getUserTimeEntries(this.user.id).subscribe({
-      next: (entries) => {
-        this.timeEntries = entries;
-        this.loadingService.hide();
-      },
-      error: () => {
-        this.loadingService.hide();
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: 'Falha ao carregar as entradas de tempo.',
-        });
-      },
-    });
+  load(): void {
+    this.loading = true;
+    this.error = '';
+    forkJoin({ entries: this.service.listMine(), tasks: this.service.listMyTasks() })
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: ({ entries, tasks }) => {
+          this.entries = entries;
+          this.tasks = tasks;
+          this.applyFilters();
+          if (this.route.snapshot.queryParamMap.get('novo') === '1') {
+            this.openDialog();
+            void this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
+          }
+        },
+        error: error => this.error = apiError(error, 'Não foi possível carregar os lançamentos.')
+      });
   }
 
-  loadTasks(): void {
-    this.loadingService.show();
-    // Passa o ID do usuário para o serviço
-    this.timeEntryService.getTasksByUserId(this.user.id).subscribe({
-      next: (tasks) => {
-        this.tasks = Array.isArray(tasks) ? tasks : [];
-        this.loadingService.hide();
-      },
-      error: () => {
-        this.loadingService.hide();
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: 'Falha ao carregar tarefas.',
-        });
-        this.tasks = [];
-      },
-    });
+  applyFilters(): void {
+    const { from, to, task } = this.filter;
+    const text = task.trim().toLocaleLowerCase('pt-BR');
+    this.visibleEntries = this.entries.filter(entry =>
+      (!from || entry.entryDate >= from) && (!to || entry.entryDate <= to)
+      && (!text || entry.taskName.toLocaleLowerCase('pt-BR').includes(text)));
+    this.visibleHours = this.visibleEntries.reduce((sum, entry) => sum + entry.hoursLogged, 0);
   }
 
-  openDialog(): void {
+  clearFilters(): void {
+    this.filter = { from: '', to: '', task: '' };
+    this.applyFilters();
+  }
+
+  openDialog(entry?: TimeEntry): void {
+    this.editing = entry;
+    this.formError = '';
+    this.form.reset(entry ?? { entryDate: this.today });
     this.displayDialog = true;
   }
 
-  closeDialog(): void {
-    this.displayDialog = false;
-    this.timeEntryForm.reset();
+  save(): void {
+    if (this.saving) return;
+    const values = this.form.getRawValue();
+    const description = values.description.trim();
+    if (this.form.invalid || !description || (!this.editing && values.taskId === null)) {
+      this.formError = 'Preencha todos os campos.';
+      return;
+    }
+    if (values.entryDate > this.today || values.endTime <= values.startTime) {
+      this.formError = 'Use uma data até hoje e um horário final posterior ao inicial.';
+      return;
+    }
+
+    const request: TimeEntryRequest = { ...values, description, taskId: values.taskId ?? undefined };
+    const action = this.editing ? this.service.update(this.editing.id, request) : this.service.create(request);
+    this.formError = '';
+    this.saving = true;
+    action.pipe(finalize(() => this.saving = false)).subscribe({
+      next: () => {
+        this.displayDialog = false;
+        this.messages.add({ severity: 'success', summary: 'Lançamento salvo' });
+        this.load();
+      },
+      error: error => this.formError = apiError(error, 'Não foi possível salvar o lançamento.')
+    });
   }
 
-  saveTimeEntry(): void {
-    if (this.timeEntryForm.valid) {
-      const startTimeStr = this.formatTime(this.timeEntryForm.value.startTime);
-      const endTimeStr = this.formatTime(this.timeEntryForm.value.endTime);
+  confirmDelete(entry: TimeEntry): void {
+    this.confirmation.confirm({
+      header: 'Excluir lançamento',
+      message: 'As horas deste lançamento serão retiradas do total da tarefa.',
+      acceptLabel: 'Excluir',
+      rejectLabel: 'Cancelar',
+      accept: () => this.delete(entry.id)
+    });
+  }
 
-      const startDateTime = new Date(`1970-01-01T${startTimeStr}`);
-      const endDateTime = new Date(`1970-01-01T${endTimeStr}`);
+  async exportExcel(): Promise<void> {
+    const rows = this.visibleEntries.map(entry => ({
+      Tarefa: entry.taskName, Descrição: entry.description, Data: entry.entryDate,
+      Início: entry.startTime, Fim: entry.endTime, Horas: entry.hoursLogged
+    }));
+    try {
+      const { utils, writeFile } = await import('xlsx');
+      const workbook = utils.book_new();
+      utils.book_append_sheet(workbook, utils.json_to_sheet(rows), 'Lançamentos');
+      writeFile(workbook, 'work-track-lancamentos.xlsx');
+    } catch {
+      this.messages.add({ severity: 'error', summary: 'Falha ao exportar Excel' });
+    }
+  }
 
-      if (endDateTime < startDateTime) {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: 'A hora final não pode ser menor que a hora inicial.',
-        });
-        return;
+  async exportPdf(): Promise<void> {
+    const entries = this.visibleEntries;
+    try {
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text('Lançamentos de horas', 14, 18);
+      doc.setFontSize(10);
+      let y = 29;
+      for (const entry of entries) {
+        const hours = entry.hoursLogged.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+        const date = entry.entryDate.split('-').reverse().join('/');
+        const lines: string[] = doc.splitTextToSize(
+          `${date} · ${entry.startTime}–${entry.endTime} · ${hours} h\n${entry.taskName}\n${entry.description}`, 182);
+        const rowHeight = 5 * lines.length + 5;
+        if (y + rowHeight > 282) {
+          doc.addPage();
+          y = 18;
+        }
+        doc.text(lines, 14, y);
+        y += rowHeight;
       }
-
-      const entry = {
-        ...this.timeEntryForm.value,
-        userId: this.user.id, // Usa o ID do usuário logado
-        startTime: startTimeStr,
-        endTime: endTimeStr,
-        totalHours: this.calculateTotalHours(startDateTime, endDateTime),
-      };
-
-      this.loadingService.show(); // Exibe o loading
-      this.timeEntryService.saveTimeEntry(entry).subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Horas adicionadas!',
-          });
-          this.loadTimeEntries();
-          this.closeDialog();
-          this.loadingService.hide(); // Esconde o loading
-        },
-        error: () => {
-          this.loadingService.hide(); // Esconde o loading em caso de erro
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Falha ao salvar horas.',
-          });
-        },
-      });
+      doc.save('work-track-lancamentos.pdf');
+    } catch {
+      this.messages.add({ severity: 'error', summary: 'Falha ao exportar PDF' });
     }
   }
 
-  formatTime(value: any): string {
-    if (!value) return ''; // Evita erros com valores nulos
-    if (typeof value === 'string') return value; // Se já for string, retorna como está
-
-    const hours = value.getHours().toString().padStart(2, '0');
-    const minutes = value.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}:00`;
-  }
-
-  // Método para calcular o total de horas
-  calculateTotalHours(startTime: Date, endTime: Date): number {
-    const diff = endTime.getTime() - startTime.getTime();
-    return diff / (1000 * 60 * 60); // Converte milissegundos para horas
-  }
-
-  isFieldInvalid(field: string): boolean {
-    const control = this.timeEntryForm.get(field);
-    return !!(control?.invalid && control?.touched);
-  }
-
-  autoFormatTime(field: string): void {
-    let value = this.timeEntryForm.get(field)?.value || '';
-
-    // Remove caracteres não numéricos
-    value = value.replace(/\D/g, '');
-
-    // Formata automaticamente HH:mm
-    if (value.length >= 2) {
-      value = value.substring(0, 2) + ':' + value.substring(2, 4);
-    }
-
-    this.timeEntryForm.get(field)?.setValue(value.substring(0, 5)); // Limita a 5 caracteres
-  }
-
-  // Método para tratar a seleção de tarefa
-  onTaskSelect(event: any): void {
-    this.selectedTask = event.value;
-    this.timeEntryForm.get('taskId')?.setValue(this.selectedTask.id);
-  }
-
-  gerarPDF() {
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text('Relatório de Tarefas', 10, 10);
-
-    let y = 20; // Posição inicial
-
-    this.timeEntries.forEach((timeEntry, index) => {
-      doc.setFontSize(12);
-      doc.text(`Tarefas: ${timeEntry.taskName}`, 10, y);
-      doc.text(`Description: ${timeEntry.description}`, 10, y + 6);
-      doc.text(`Horas Estimadas: ${timeEntry.entryDate}`, 10, y + 12);
-      doc.text(`Horas Lançadas: ${timeEntry.startTime}`, 10, y + 18);
-      doc.text(`Horas Lançadas: ${timeEntry.endTime}`, 10, y + 24);
-      doc.text(`Status: ${timeEntry.status}`, 10, y + 30);
-
-      y += 36; // Ajusta o espaçamento entre os usuários
+  private delete(id: number): void {
+    this.service.delete(id).subscribe({
+      next: () => {
+        this.messages.add({ severity: 'success', summary: 'Lançamento excluído' });
+        this.load();
+      },
+      error: error => this.messages.add({ severity: 'error', summary: 'Erro',
+        detail: apiError(error, 'Não foi possível excluir o lançamento.') })
     });
-
-    doc.save('relatorio_usuarios.pdf');
   }
 
-  gerarExcel() {
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
-      this.timeEntries.map((timeEntry) => ({
-        Nome: timeEntry.taskName,
-        Descrição: timeEntry.description,
-        Horas_Estimadas: timeEntry.entryDate,
-        Horas_Totais: timeEntry.startTime,
-        Hora_Final: timeEntry.endTime,
-      }))
-    );
-
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Tarefas');
-    XLSX.writeFile(wb, 'relatorio_tarefas.xlsx');
-  }
-
-  private showErrorMessage(defaultMessage: string, err: any) {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Erro',
-      detail: err?.error?.message || defaultMessage,
-    });
+  private localDate(date: Date): string {
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${date.getFullYear()}-${month}-${day}`;
   }
 }

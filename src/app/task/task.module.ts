@@ -1,23 +1,20 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PrimeNGModule } from '../prime-ng/prime-ng.module';
-import { HttpClientModule } from '@angular/common/http';
-import { TableModule } from 'primeng/table';
+import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { InputTextarea, InputTextareaModule } from 'primeng/inputtextarea';
-
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { TaskComponent } from './task.component';
 
 @NgModule({
-  declarations: [
-
-  ],
-  imports: [
-    CommonModule,
-    PrimeNGModule,
-    HttpClientModule,
-    MultiSelectModule,
-    InputTextareaModule
-
-  ],
+  declarations: [TaskComponent],
+  imports: [CommonModule, ReactiveFormsModule, ButtonModule, ConfirmDialogModule, DialogModule, InputTextModule,
+    InputTextareaModule, MultiSelectModule, TableModule, ToastModule, RouterModule.forChild([{ path: '', component: TaskComponent }])]
 })
-export class TaskModule { }
+export class TaskModule {}

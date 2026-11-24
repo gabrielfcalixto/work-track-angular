@@ -1,9 +1,10 @@
-import { LoadingService } from './../loading/loading.service';
 import { Component, OnInit } from '@angular/core';
-import { ProfileService } from './profile.service';
 import { MessageService } from 'primeng/api';
-import { AuthService } from '../auth/auth.service'; // Serviço de autenticação
+import { finalize } from 'rxjs';
+import { apiError } from '../shared/api-error';
 import { UsersService } from '../users/users.service';
+import { Profile } from './profile.model';
+import { ProfileService } from './profile.service';
 
 @Component({
   selector: 'app-profile',
@@ -12,108 +13,29 @@ import { UsersService } from '../users/users.service';
   providers: [MessageService]
 })
 export class ProfileComponent implements OnInit {
-  user: any = null;
-
-
-
-  // Variáveis para o diálogo de redefinição de senha
-  displayResetPasswordDialog: boolean = false;
-  oldPassword: string = '';
-  newPassword: string = '';
+  user?: Profile;
+  error = '';
+  displayResetPasswordDialog = false;
+  saving = false;
+  oldPassword = '';
+  newPassword = '';
 
   constructor(
-    private userService: UsersService, // Adicionando o serviço de autenticação
-    private authService: AuthService, // Injetando o serviço de autenticação
-    private profileService: ProfileService,
-    private messageService: MessageService,
-    private loadingService: LoadingService
-  ) {
-    this.user = this.authService.getLoggedUser();
-  }
+    private readonly users: UsersService,
+    private readonly profiles: ProfileService,
+    private readonly messages: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.loadUserProfile();
   }
 
   loadUserProfile(): void {
-    const loggedUser = this.authService.getLoggedUser(); // Obtém o usuário autenticado
-    console.log('Usuário logado:', loggedUser); // 👀 Verificar no console
-
-    if (!loggedUser || !loggedUser.id) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Aviso',
-        detail: 'Usuário não autenticado'
-      });
-      return;
-    }
-
-    this.profileService.getUserById(loggedUser.id).subscribe({
-      next: (data) => {
-        console.log('Dados do perfil carregados!'); // 👀 Verificar no console
-        this.user = data;
-      },
-      error: (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: 'Falha ao carregar perfil'
-        });
-        console.error('Erro ao carregar perfil:', error);
-      }
+    this.error = '';
+    this.profiles.getProfile().subscribe({
+      next: profile => this.user = profile,
+      error: error => this.error = apiError(error, 'Não foi possível carregar o perfil.')
     });
-  }
-
-
-  uploadProfilePicture(event: any): void {
-    console.log('Evento de upload:', event); // 👀 Verificar se o evento está correto
-
-    const file = event.files ? event.files[0] : null;
-    console.log('Arquivo selecionado:', file); // 👀 Verificar se o arquivo está presente
-
-    if (!file) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Aviso',
-        detail: 'Nenhum arquivo selecionado'
-      });
-      return;
-    }
-
-    this.profileService.uploadProfilePicture(file).subscribe({
-      next: (response) => {
-        console.log('Resposta do upload:', response); // 👀 Verificar a resposta da API
-        if (this.user) {
-          this.user.profilePicture = response.url;
-        }
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Foto de perfil atualizada'
-        });
-      },
-      error: (error) => {
-        console.error('Erro ao fazer upload:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: 'Falha ao atualizar foto de perfil'
-        });
-      }
-    });
-  }
-
-  onUpload(event: any): void {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Upload Concluído',
-      detail: 'Arquivo enviado com sucesso'
-    });
-  }
-
-  // Métodos para o diálogo de redefinição de senha
-  showResetPasswordDialog(): void {
-    this.displayResetPasswordDialog = true;
   }
 
   hideResetPasswordDialog(): void {
@@ -122,26 +44,18 @@ export class ProfileComponent implements OnInit {
     this.newPassword = '';
   }
 
-  resetPassword() {
-    if (!this.oldPassword || !this.newPassword) {
-      this.messageService.add({ severity: 'warn', summary: 'Aviso', detail: 'Preencha todos os campos' });
-      return;
-    }
-
-    this.loadingService.show(); // ⏳ Mostra o loading
-
-    this.userService.changePassword(this.user.id, this.oldPassword, this.newPassword)
+  resetPassword(): void {
+    if (!this.user || this.saving || !this.oldPassword || this.newPassword.length < 8) return;
+    this.saving = true;
+    this.users.changePassword(this.user.id, this.oldPassword, this.newPassword)
+      .pipe(finalize(() => this.saving = false))
       .subscribe({
         next: () => {
-          this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Senha alterada!' });
+          this.messages.add({ severity: 'success', summary: 'Senha alterada' });
           this.hideResetPasswordDialog();
-          this.loadingService.hide(); // ✅ Garante que o loading some
         },
-        error: (error) => {
-          this.messageService.add({ severity: 'error', summary: 'Erro', detail: error.error?.error || 'Erro ao alterar a senha' });
-          this.loadingService.hide(); // ✅ Esconde o loading em caso de erro
-        }
+        error: error => this.messages.add({ severity: 'error', summary: 'Erro',
+          detail: apiError(error, 'Não foi possível alterar a senha.') })
       });
   }
 }
-

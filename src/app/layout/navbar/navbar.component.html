@@ -1,24 +1,16 @@
-<nav class="navbar">
-<app-sidebar #sidenav ></app-sidebar>
-  <div class="logo">
-    <!-- <img [src]="logoPath" alt="Logo" /> -->
-    <h1>WORKTRACK <i class="pi pi-check-circle
-      custom-icon
-      "></i></h1>
+<nav class="navbar" aria-label="Barra principal">
+  <div class="brand">
+    <app-sidebar />
+    <a routerLink="/dashboard">Work Track <i class="pi pi-check-circle" aria-hidden="true"></i></a>
   </div>
   <div class="navbar-actions">
-    <button (click)="toggleTheme()" class="theme-toggle-btn">
-      <i class="pi" [ngClass]="isDarkMode ? 'pi-sun' : 'pi-moon'">
-      </i>
+    <button pButton type="button" class="p-button-text" (click)="toggleTheme()"
+            [attr.aria-label]="isDarkMode ? 'Ativar tema claro' : 'Ativar tema escuro'">
+      <i class="pi" [ngClass]="isDarkMode ? 'pi-sun' : 'pi-moon'" aria-hidden="true"></i>
     </button>
-    <!-- Avatar -->
-    <div class="profile-icon" (click)="navigateToProfile()">
-      <app-avatar [userName]="user?.name"></app-avatar>
-
-    </div>
-
-    <div class="logout-icon" (click)="logout()">
-      <i class="pi pi-sign-out"></i>
-    </div>
+    <a routerLink="/profile" aria-label="Meu perfil" class="profile-link"><app-avatar [userName]="user?.name ?? ''" /></a>
+    <button pButton type="button" class="p-button-text" (click)="logout()" aria-label="Sair">
+      <i class="pi pi-sign-out" aria-hidden="true"></i>
+    </button>
   </div>
 </nav>

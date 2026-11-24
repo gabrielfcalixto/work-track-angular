@@ -1,12 +1,15 @@
-export interface TimeEntry{
-  id?: number;
-  taskId: number;
-  userId: number;
-  description?: string;
+export interface TimeEntryRequest {
+  taskId?: number;
+  description: string;
   entryDate: string;
   startTime: string;
   endTime: string;
-  hoursLogged?: number;
-  taskName?: string;  // Campo adicional para o nome da tarefa
+}
 
+export interface TimeEntry extends TimeEntryRequest {
+  id: number;
+  taskId: number;
+  taskName: string;
+  userId: number;
+  hoursLogged: number;
 }

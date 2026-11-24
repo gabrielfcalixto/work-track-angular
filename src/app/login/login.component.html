@@ -1,113 +1,52 @@
-<button
-  (click)="toggleTheme()"
-  class="theme-toggle-btn p-button-rounded p-button-text"
->
-  <i class="pi" [ngClass]="isDarkMode ? 'pi-sun' : 'pi-moon'"></i>
+<button type="button" (click)="toggleTheme()" class="theme-toggle-btn p-button-rounded p-button-text"
+        [attr.aria-label]="isDarkMode ? 'Ativar tema claro' : 'Ativar tema escuro'">
+  <i class="pi" [ngClass]="isDarkMode ? 'pi-sun' : 'pi-moon'" aria-hidden="true"></i>
 </button>
 
 <div class="login-container">
-  <p-card header="" class="login-card">
+  <p-card class="login-card">
     <div class="logo">
-      <!-- <img [src]="logoPath" alt="Logo" /> -->
-      <h1>WORKTRACK <i class="pi pi-check-circle
-        custom-icon
-        "></i></h1>
+      <h1>WORKTRACK <i class="pi pi-check-circle custom-icon" aria-hidden="true"></i></h1>
     </div>
-    <div class="p-fluid">
+    <form class="p-fluid" (ngSubmit)="onSubmit()">
       <p-floatLabel>
-        <input id="username" type="text" pInputText [(ngModel)]="username" />
+        <input id="username" name="username" autocomplete="username" pInputText [(ngModel)]="username" required />
         <label for="username">Usuário</label>
       </p-floatLabel>
       <p-floatLabel>
-        <p-password
-          id="password"
-          [(ngModel)]="password"
-          [feedback]="false"
-          [toggleMask]="true"
-          [inputStyle]="{'width':'100%'}">
-        </p-password>
+        <p-password inputId="password" name="password" autocomplete="current-password" [(ngModel)]="password"
+                    [feedback]="false" [toggleMask]="true" [inputStyle]="{ width: '100%' }" required />
         <label for="password">Senha</label>
       </p-floatLabel>
-      <!-- Botão de Lembrar-me -->
       <div class="remember-me">
-        <p-checkbox [(ngModel)]="rememberMe" [binary]="true"></p-checkbox>
-        <label for="rememberMe">Lembrar-me</label>
+        <p-checkbox inputId="remember-me" name="remember-me" [(ngModel)]="rememberMe" [binary]="true" />
+        <label for="remember-me">Lembrar-me</label>
       </div>
-
-      <!-- Botão de Login com Spinner -->
-      <p-button
-        label="Login"
-        icon="pi pi-sign-in"
-        (click)="onSubmit()"
-        [loading]="loading"
-        [disabled]="!username || !password"
-      ></p-button>
-    </div>
-    <!-- Link para Recuperação de Senha -->
+      <p-button type="submit" label="Entrar" ariaLabel="Entrar" icon="pi pi-sign-in" [loading]="loading"
+                [disabled]="!username.trim() || !password" />
+    </form>
     <div class="forgot-password">
-      <a class="p-button-link" (click)="showForgotPasswordDialog = true"
-        >Esqueceu a senha?</a
-      >
+      <button pButton type="button" class="p-button-link" label="Esqueceu a senha?"
+              (click)="showForgotPasswordDialog = true"></button>
     </div>
-
-   <div class="reset-password">
-    <p-dialog
-    [(visible)]="showForgotPasswordDialog"
-    header="Recuperação de Senha"
-    [modal]="true"
-    [closable]="true"
-
-    [style]="{ width: '20vw' }"
-  >
-    <div class="p-fluid">
-      <!-- Etapa 1: Solicitar Código -->
-      <div *ngIf="resetPasswordStep === 'request'">
-        <input
-          [(ngModel)]="email"
-          placeholder="Digite seu e-mail"
-          pInputText
-        />
-        <button
-          (click)="requestResetCode()"
-          pButton
-          [loading]="loading"
-          label="Solicitar Código"
-          icon="pi pi-envelope"
-        ></button>
-      </div>
-
-      <!-- Etapa 2: Redefinir Senha -->
-      <div *ngIf="resetPasswordStep === 'reset'">
-        <h2>Redefinir Senha</h2>
-        <input
-          [(ngModel)]="email"
-          placeholder="Digite seu e-mail"
-          pInputText
-          disabled
-        />
-        <input
-          [(ngModel)]="code"
-          placeholder="Digite o código recebido"
-          pInputText
-        />
-        <input
-          [(ngModel)]="newPassword"
-          type="password"
-          pInputText
-          placeholder="Nova senha"
-        />
-        <button
-          (click)="resetPassword()"
-          pButton
-          label="Redefinir Senha"
-          icon="pi pi-check"
-        ></button>
-      </div>
-    </div>
-  </p-dialog>
-   </div>
   </p-card>
-
-  <!-- Toast para feedback -->
-  <p-toast></p-toast>
 </div>
+
+<p-dialog [(visible)]="showForgotPasswordDialog" header="Recuperação de senha" [modal]="true"
+          [draggable]="false" [resizable]="false" [style]="{ width: 'min(28rem, 94vw)' }"
+          [closable]="!loading" [closeOnEscape]="!loading" (onHide)="clearRecovery()">
+  <form *ngIf="resetPasswordStep === 'request'" class="p-fluid" (ngSubmit)="requestResetCode()" #recoveryForm="ngForm">
+    <label for="recovery-email">E-mail cadastrado</label>
+    <input id="recovery-email" name="email" type="email" autocomplete="email" [(ngModel)]="email" pInputText required email />
+    <p-button type="submit" label="Solicitar código" [loading]="loading" [disabled]="!recoveryForm.valid" />
+  </form>
+  <form *ngIf="resetPasswordStep === 'reset'" class="p-fluid" (ngSubmit)="resetPassword()" #resetForm="ngForm">
+    <label for="recovery-code">Código recebido</label>
+    <input id="recovery-code" name="code" autocomplete="one-time-code" [(ngModel)]="code" pInputText required />
+    <label for="new-password">Nova senha</label>
+    <input id="new-password" name="newPassword" type="password" autocomplete="new-password"
+           [(ngModel)]="newPassword" pInputText minlength="8" required />
+    <p-button type="submit" label="Redefinir senha" [loading]="loading" [disabled]="!resetForm.valid" />
+  </form>
+</p-dialog>
+<p-toast />

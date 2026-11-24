@@ -1,166 +1,95 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ThemeService } from '../services/theme.service';
-import { LoginService } from './login.service';
 import { MessageService } from 'primeng/api';
+import { finalize } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { ThemeService } from '../services/theme.service';
+import { apiError } from '../shared/api-error';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   providers: [MessageService]
-
 })
-export class LoginComponent implements OnInit {
-  username: string = '';
-  password: string = '';
-  isDarkMode: boolean = false;
-  errorMessage: string = '';
-  loading: boolean = false;
-  rememberMe: boolean = false;
-  email: string = '';
-  code: string = '';
-  newPassword: string = '';
-  resetPasswordStep: 'request' | 'reset' = 'request'; // Etapa de recuperação de senha
-  showForgotPasswordDialog: boolean = false; // Controle do diálogo
-  logoPath = 'assets/imagens/logo-preta.png';
-
-
-
+export class LoginComponent {
+  username = '';
+  password = '';
+  rememberMe = false;
+  isDarkMode = document.body.classList.contains('dark-mode');
+  loading = false;
+  showForgotPasswordDialog = false;
+  resetPasswordStep: 'request' | 'reset' = 'request';
+  email = '';
+  code = '';
+  newPassword = '';
 
   constructor(
-    private router: Router,
-    private themeService: ThemeService,
-    private loginService: LoginService,
-    private messageService: MessageService,
-    private authService: AuthService
+    private readonly router: Router,
+    private readonly theme: ThemeService,
+    private readonly messages: MessageService,
+    private readonly auth: AuthService
   ) {}
 
-  ngOnInit(): void {
-    this.isDarkMode = document.body.classList.contains('dark-mode');
-  }
-
   toggleTheme(): void {
-    this.themeService.toggleTheme();
+    this.theme.toggleTheme();
     this.isDarkMode = !this.isDarkMode;
   }
 
   onSubmit(): void {
+    if (this.loading || !this.username.trim() || !this.password) return;
+
     this.loading = true;
-    this.errorMessage = ''; // Limpa mensagens de erro anteriores
-
-    this.loginService.login(this.username, this.password).subscribe(
-      (response: any) => {
-        this.loading = false;
-        console.log('Login bem-sucedido!', response);
-        localStorage.setItem('token', response.token); // Armazena o token
-        if (this.rememberMe) {
-          localStorage.setItem('rememberMe', 'true'); // Armazena a preferência de "Lembrar-me"
-        }
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Login realizado com sucesso!'
-        });
-        this.router.navigate(['/dashboard']); // Redireciona para o dashboard
-      },
-      (error) => {
-        this.loading = false;
-        console.error('Erro ao logar', error);
-        let errorDetail = 'Ocorreu um erro inesperado. Tente novamente mais tarde.';
-        if (error.status === 0) {
-          errorDetail = 'Não foi possível conectar ao servidor. Verifique sua conexão.';
-        } else if (error.status === 401) {
-          errorDetail = 'Credenciais inválidas. Verifique seu nome de usuário e senha.';
-        } else if (error.status === 400) {
-          errorDetail = 'Por favor, preencha todos os campos corretamente.';
-        }
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: errorDetail
-        });
-      }
-    );
+    this.auth.login(this.username.trim(), this.password)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: ({ token }) => {
+          this.auth.storeSession(token, this.rememberMe);
+          void this.router.navigate(['/dashboard']);
+        },
+        error: error => this.showError(error, 'Não foi possível entrar.')
+      });
   }
 
-  setLogo(): void {
-    this.logoPath = this.isDarkMode ? 'assets/imagens/logo-branca.png' : 'assets/imagens/logo-preta.png';
-  }
-
-  // Método para solicitar o código de reset de senha
   requestResetCode(): void {
-    if (!this.email) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Atenção',
-        detail: 'Por favor, insira seu e-mail.'
-      });
-      return;
-    }
-
-    this.loading = true; // Mostra loading ao clicar
-
-    this.authService.generatePasswordResetCode(this.email).subscribe(
-      (response) => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Código enviado para o seu e-mail!'
-        });
-        this.resetPasswordStep = 'reset'; // Avança para a etapa de redefinir senha
-        this.loading = false;
-      },
-      (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: 'Erro ao solicitar o código. Verifique o e-mail e tente novamente.'
-        });
-        this.loading = false;
-      }
-    );
-  }
-
-  // Método para redefinir a senha
-  resetPassword(): void {
-    if (!this.email || !this.code || !this.newPassword) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Atenção',
-        detail: 'Por favor, preencha todos os campos.'
-      });
-      return;
-    }
+    if (this.loading || !this.email.trim()) return;
 
     this.loading = true;
-
-    this.authService.resetPassword(this.email, this.code, this.newPassword).subscribe(
-      (response) => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Senha redefinida com sucesso!'
-        });
-        this.resetPasswordStep = 'request';
-        this.showForgotPasswordDialog = false;
-        this.email = '';
-        this.code = '';
-        this.newPassword = '';
-        this.loading = false;
-      },
-      (error) => {
-        console.error('Erro ao redefinir senha:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: error.error || 'Erro ao redefinir a senha. Verifique os dados e tente novamente.'
-        });
-        this.loading = false;
-      }
-    );
-
+    this.auth.generatePasswordResetCode(this.email.trim())
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: () => {
+          this.resetPasswordStep = 'reset';
+          this.messages.add({ severity: 'info', summary: 'Recuperação de senha',
+            detail: 'Se o e-mail estiver cadastrado, você receberá um código.' });
+        },
+        error: error => this.showError(error, 'Não foi possível solicitar o código.')
+      });
   }
 
+  resetPassword(): void {
+    if (this.loading || !this.code.trim() || this.newPassword.length < 8) return;
+
+    this.loading = true;
+    this.auth.resetPassword(this.email.trim(), this.code.trim(), this.newPassword)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: () => {
+          this.showForgotPasswordDialog = false;
+          this.messages.add({ severity: 'success', summary: 'Senha redefinida' });
+        },
+        error: error => this.showError(error, 'Não foi possível redefinir a senha.')
+      });
+  }
+
+  clearRecovery(): void {
+    this.resetPasswordStep = 'request';
+    this.email = '';
+    this.code = '';
+    this.newPassword = '';
+  }
+
+  private showError(error: unknown, fallback: string): void {
+    this.messages.add({ severity: 'error', summary: 'Erro', detail: apiError(error, fallback) });
+  }
 }

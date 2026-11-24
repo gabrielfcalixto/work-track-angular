@@ -1,40 +1,21 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CalendarModule } from 'primeng/calendar';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TimeEntryComponent } from './time-entry.component'; // Importe o componente
-import { TableModule } from 'primeng/table'; // Importe o TableModule
-import { DialogModule } from 'primeng/dialog'; // Importe o DialogModule
-import { InputTextModule } from 'primeng/inputtext'; // Importe o InputTextModule
-import { ButtonModule } from 'primeng/button'; // Importe o ButtonModule
-import { ToastModule } from 'primeng/toast'; // Importe o ToastModule
+import { RouterModule } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { ToolbarModule } from 'primeng/toolbar';
-
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { TimeEntryComponent } from './time-entry.component';
 
 @NgModule({
-  declarations: [TimeEntryComponent], // Declare o componente
-  imports: [
-    CommonModule,
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
-    CalendarModule,
-    BrowserAnimationsModule,
-    TableModule, // Adicione o TableModule
-    DialogModule, // Adicione o DialogModule
-    InputTextModule, // Adicione o InputTextModule
-    ButtonModule, // Adicione o ButtonModule
-    ToastModule,
-    DropdownModule,
-    InputTextareaModule,
-    ToolbarModule
-
-
-  ],
-  exports: [TimeEntryComponent] // Exporte o componente
+  declarations: [TimeEntryComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, ButtonModule, ConfirmDialogModule, DialogModule,
+    DropdownModule, InputTextModule, InputTextareaModule, TableModule, ToastModule,
+    RouterModule.forChild([{ path: '', component: TimeEntryComponent }])]
 })
-export class TimeEntryModule { }
+export class TimeEntryModule {}

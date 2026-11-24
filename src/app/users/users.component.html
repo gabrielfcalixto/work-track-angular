@@ -1,145 +1,57 @@
-<p-toast></p-toast>
-<div class="user-container">
-  <p-toolbar>
-    <h2>Usuários</h2>
-    <div class="botoes">
-      <p-button label="Adicionar" icon="pi pi-plus" (click)="openAddDialog()"></p-button>
-        <p-button label="Gerar PDF" icon="pi pi-file-pdf" (click)="gerarPDF()" class="p-button-success"></p-button>
-        <p-button label="Gerar Excel" icon="pi pi-file-excel" (click)="gerarExcel()" class="p-button-info"></p-button>
+<p-toast />
+<p-confirmDialog />
+<section class="management">
+  <header class="page-header">
+    <h1>Usuários</h1>
+    <p-button label="Novo usuário" ariaLabel="Novo usuário" icon="pi pi-plus" (onClick)="open()" />
+  </header>
+  <div *ngIf="error" role="alert"><p>{{ error }}</p><p-button label="Tentar novamente" (onClick)="load()" /></div>
+  <p-table #table [value]="users" [loading]="loading" [globalFilterFields]="['name', 'login', 'email']"
+           [paginator]="users.length > 10" [rows]="10" dataKey="id" responsiveLayout="scroll" *ngIf="!error">
+    <ng-template pTemplate="caption">
+      <div class="table-tools">
+        <input pInputText #search type="search" placeholder="Buscar usuários" aria-label="Buscar usuários"
+               (input)="table.filterGlobal(search.value, 'contains')" />
+        <div class="export">
+          <p-button label="PDF" [text]="true" [disabled]="!users.length" (onClick)="export('pdf')" />
+          <p-button label="Excel" [text]="true" [disabled]="!users.length" (onClick)="export('xlsx')" />
+        </div>
       </div>
-  </p-toolbar>
-
-  <p-table [value]="users" [paginator]="true" [rows]="16" [globalFilterFields]="['name', 'login', 'email']">
-    <ng-template pTemplate="header">
-      <tr>
-        <th pSortableColumn="name">Nome <p-sortIcon field="name"></p-sortIcon></th>
-        <th pSortableColumn="login">Login <p-sortIcon field="login"></p-sortIcon></th>
-        <th pSortableColumn="email">E-mail <p-sortIcon field="email"></p-sortIcon></th>
-        <th pSortableColumn="funcao">Função <p-sortIcon field="funcao"></p-sortIcon></th>
-        <th>Ações</th>
-      </tr>
     </ng-template>
+    <ng-template pTemplate="header"><tr><th>Nome</th><th>Login</th><th>E-mail</th><th>Perfil</th><th>Ações</th></tr></ng-template>
     <ng-template pTemplate="body" let-user>
       <tr>
-        <td>{{ user.name }}</td>
-        <td>{{ user.login }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.role }}</td>
-        <td>
-          <div class="botoes-acao">
-          <p-button icon="pi pi-pencil" (click)="openEditDialog(user)"></p-button>
-          <p-button icon="pi pi-key" (click)="openPermissionDialog(user)"></p-button>
-        </div>
+        <td>{{ user.name }}</td><td>{{ user.login }}</td><td>{{ user.email }}</td><td>{{ $any(labels)[user.role] }}</td>
+        <td class="row-actions">
+          <p-button icon="pi pi-pencil" ariaLabel="Editar usuário" [text]="true" (onClick)="open(user)" />
+          <p-button icon="pi pi-trash" ariaLabel="Excluir usuário" [text]="true" severity="danger"
+                    [disabled]="user.id === currentId" (onClick)="confirmDelete(user)" />
         </td>
       </tr>
     </ng-template>
+    <ng-template pTemplate="emptymessage"><tr><td colspan="5">Nenhum usuário encontrado.</td></tr></ng-template>
   </p-table>
+</section>
 
-  <p-dialog header="Adicionar Usuário" [(visible)]="displayAddDialog" [modal]="true" [style]="{width: '500px'}" [closable]="true">
-    <div class="p-fluid p-formgrid p-grid">
-      <div class="p-field p-col-12">
-        <label for="name">Nome</label>
-        <input id="name" [(ngModel)]="newUser.name" pInputText placeholder="Digite o nome completo" />
-      </div>
-      <div class="p-field p-col-12">
-        <label for="email">E-mail</label>
-        <input id="email" [(ngModel)]="newUser.email" pInputText placeholder="email@exemplo.com" />
-      </div>
-      <div class="p-field p-col-12">
-        <label for="login">Login</label>
-        <input id="login" [(ngModel)]="newUser.login" pInputText placeholder="Digite o login" />
-      </div>
-      <div class="p-field p-col-12">
-        <label for="role">Função</label>
-        <p-dropdown
-          id="role"
-          [(ngModel)]="newUser.role"
-          [options]="roles"
-          optionLabel="name"
-          placeholder="Selecione a função"
-          [showClear]="true"
-          appendTo="body">
-        </p-dropdown>
-      </div>
+<p-dialog [(visible)]="dialog" [header]="editingId ? 'Editar usuário' : 'Novo usuário'" [modal]="true"
+          [closable]="!saving" [closeOnEscape]="!saving" [draggable]="false" [style]="{ width: 'min(32rem, 94vw)' }">
+  <form [formGroup]="form" class="editor-form" (ngSubmit)="save()">
+    <label>Nome <input pInputText formControlName="name" maxlength="255" required /></label>
+    <label>Login <input pInputText formControlName="login" autocomplete="off" maxlength="255" required /></label>
+    <label>E-mail <input pInputText formControlName="email" type="email" maxlength="255" required /></label>
+    <label>Perfil de acesso
+      <select class="p-inputtext" formControlName="role" aria-label="Perfil de acesso">
+        <option *ngFor="let role of roles" [value]="role" [disabled]="editingId === currentId && role !== 'ADMIN'">{{ labels[role] }}</option>
+      </select>
+    </label>
+    <label *ngIf="!editingId">Senha inicial
+      <input pInputText formControlName="password" type="password" autocomplete="new-password" minlength="8" maxlength="72" />
+      <span class="detail">Use pelo menos 8 caracteres. Deixe em branco para envio por e-mail, se disponível.</span>
+    </label>
+    <p class="form-error" *ngIf="formError" role="alert">{{ formError }}</p>
+    <div class="form-actions">
+      <p-button type="button" label="Cancelar" [text]="true" [disabled]="saving" (onClick)="dialog = false" />
+      <p-button type="submit" label="Salvar" [loading]="saving" [disabled]="form.invalid" />
     </div>
-
-    <ng-template pTemplate="footer">
-      <div class="dialog-footer">
-        <p-button label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="displayAddDialog = false"></p-button>
-        <p-button label="Salvar" icon="pi pi-check" (click)="addUser()" [disabled]="!isFormValid()"></p-button>
-      </div>
-    </ng-template>
-  </p-dialog>
-
-
-  <!-- Editar Usuário Dialog -->
-  <p-dialog header="Editar Usuário" [(visible)]="displayEditDialog" [modal]="true" [responsive]="true">
-    <div class="p-fluid">
-      <div class="p-field">
-        <label for="name">Nome</label>
-        <input id="name" [ngModel]="selectedUser.name || ''" (ngModelChange)="selectedUser!.name = $event" pInputText />
-      </div>
-      <div class="p-field">
-        <label for="email">E-mail</label>
-        <input id="email" [ngModel]="selectedUser.email || ''" (ngModelChange)="selectedUser!.email = $event" pInputText />
-      </div>
-      <div class="p-field">
-        <label for="login">Login</label>
-        <input id="login" [ngModel]="selectedUser.login || ''" (ngModelChange)="selectedUser!.login = $event" pInputText />
-      </div>
-
-      <div class="p-field">
-        <label for="role">Role</label>
-        <p-dropdown
-        id="role"
-        [(ngModel)]="selectedUser.role"
-        [options]="roles"
-        optionLabel="name"
-        placeholder="Selecione o papel"
-        [showClear]="true"
-        appendTo="body">
-      </p-dropdown>      </div>
-    </div>
-    <p-footer>
-      <p-button label="Cancelar" icon="pi pi-times" (click)="displayEditDialog = false"></p-button>
-      <p-button label="Salvar" icon="pi pi-check" (click)="saveEdit()"></p-button>
-    </p-footer>
-  </p-dialog>
-
-  <!-- Permissões Dialog -->
-  <p-dialog header="Permissões" [(visible)]="displayPermissionDialog" [modal]="true" [responsive]="true">
-    <div class="p-fluid">
-      <div class="p-field">
-        <div class="p-field">
-          <p-dropdown
-          id="role"
-          [(ngModel)]="selectedUser.role"
-          [options]="roles"
-          optionLabel="name"
-          placeholder="Selecione o papel"
-          [showClear]="true"
-          appendTo="body"
-          optionValue="value">
-
-        </p-dropdown>        </div>
-      </div>
-      </div>
-    <p-footer>
-      <p-button label="Cancelar" icon="pi pi-times" (click)="displayPermissionDialog = false"></p-button>
-      <p-button label="Salvar" icon="pi pi-check" (click)="savePermissions()"></p-button>
-    </p-footer>
-  </p-dialog>
-
-  <!-- Excluir Usuário Dialog -->
-  <p-dialog header="Excluir Usuário" [(visible)]="displayDeleteDialog" [modal]="true" [responsive]="true">
-    <p>Tem certeza que deseja excluir este usuário?</p>
-    <p-footer>
-      <p-button label="Cancelar" icon="pi pi-times" (click)="displayDeleteDialog = false">
-  </p-button>
-      <p-button label="Excluir" icon="pi pi-check" severity="danger"
-  (click)="selectedUser ? deleteUser(selectedUser) : null">
-</p-button>
-
-    </p-footer>
-  </p-dialog>
-</div>
+  </form>
+</p-dialog>

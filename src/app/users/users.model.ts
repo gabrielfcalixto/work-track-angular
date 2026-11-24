@@ -1,12 +1,20 @@
-export interface Role {
-  name: string;
-  value: string;
-}
+import { UserRole } from '../auth/auth.service';
 
-export interface Users {
-  id?: number;
+export const userRoleLabels: Record<UserRole, string> = {
+  ADMIN: 'Administrador',
+  MANAGER: 'Gestor',
+  USER: 'Colaborador'
+};
+
+export interface UserRequest {
   name: string;
   login: string;
   email: string;
-  role: Role | string;  // O role pode ser tanto um objeto 'Role' ou uma string
+  role: UserRole;
+  password?: string;
+}
+
+export interface Users extends Omit<UserRequest, 'password'> {
+  id: number;
+  joinDate: string;
 }

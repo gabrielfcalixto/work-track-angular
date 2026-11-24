@@ -1,142 +1,77 @@
+<p-toast />
+<p-confirmDialog />
 
-<p-toast></p-toast>
-
-<div class="time-entry-container">
-
-  <p-toolbar>
-    <h2>Lançamentos</h2>
-    <div class="botoes">
-      <p-button label="Adicionar" icon="pi pi-plus" (click)="openDialog()"></p-button>
-      <p-button label="Gerar PDF" icon="pi pi-file-pdf" (click)="gerarPDF()" class="p-button-success"></p-button>
-    <p-button label="Gerar Excel" icon="pi pi-file-excel" (click)="gerarExcel()" class="p-button-info"></p-button>
+<section class="activity">
+  <header class="page-header">
+    <div>
+      <h1>Lançamentos de horas</h1>
+      <p>{{ visibleEntries.length }} lançamentos · {{ visibleHours | number:'1.0-2' }} h no resultado</p>
     </div>
-  </p-toolbar>
-  <!-- Tabela com os lançamentos -->
-  <p-table [value]="timeEntries" responsiveLayout="scroll">
+    <p-button label="Lançar horas" ariaLabel="Lançar horas" icon="pi pi-plus" [disabled]="loading || !!error" (onClick)="openDialog()" />
+  </header>
+
+  <div class="filters">
+    <label>Tarefa <input pInputText type="search" [(ngModel)]="filter.task" (ngModelChange)="applyFilters()" /></label>
+    <label>De <input pInputText type="date" [(ngModel)]="filter.from" (ngModelChange)="applyFilters()" /></label>
+    <label>Até <input pInputText type="date" [(ngModel)]="filter.to" (ngModelChange)="applyFilters()" /></label>
+    <p-button label="Limpar" [text]="true" (onClick)="clearFilters()" />
+  </div>
+
+  <div class="report-actions">
+    <p-button label="PDF" ariaLabel="PDF" icon="pi pi-file-pdf" [outlined]="true" [disabled]="!visibleEntries.length" (onClick)="exportPdf()" />
+    <p-button label="Excel" ariaLabel="Excel" icon="pi pi-file-excel" [outlined]="true" [disabled]="!visibleEntries.length" (onClick)="exportExcel()" />
+  </div>
+
+  <div *ngIf="error" role="alert">
+    <p>{{ error }}</p>
+    <p-button label="Tentar novamente" (onClick)="load()" />
+  </div>
+
+  <p-table *ngIf="!error" [value]="visibleEntries" [loading]="loading" dataKey="id" [paginator]="visibleEntries.length > 10"
+           [rows]="10" [tableStyle]="{ 'min-width': '42rem' }" responsiveLayout="scroll">
     <ng-template pTemplate="header">
-      <tr>
-        <th>Tarefa</th>
-        <th>Descrição</th>
-        <th>Data</th>
-        <th>Início</th>
-        <th>Fim</th>
-        <!-- <th>Total (h)</th> -->
-      </tr>
+      <tr><th>Data</th><th>Tarefa</th><th>Descrição</th><th>Período</th><th>Horas</th><th>Ações</th></tr>
     </ng-template>
     <ng-template pTemplate="body" let-entry>
       <tr>
-        <td>{{ entry.taskId }}</td>
-        <td>{{ entry.description }}</td>
-        <td>{{ entry.entryDate | date: 'dd/MM/yyyy' }}</td>
-        <td>{{ entry.startTime }}</td>
-        <td>{{ entry.endTime }}</td>
-        <!-- <td>{{ entry.totalHours?.toFixed(2) }}</td> -->
+        <td>{{ entry.entryDate | date:'dd/MM/yyyy' }}</td>
+        <td>{{ entry.taskName }}</td>
+        <td class="description">{{ entry.description }}</td>
+        <td>{{ entry.startTime }}–{{ entry.endTime }}</td>
+        <td>{{ entry.hoursLogged | number:'1.0-2' }}</td>
+        <td class="row-actions">
+          <p-button icon="pi pi-pencil" ariaLabel="Editar lançamento" [text]="true" (onClick)="openDialog(entry)" />
+          <p-button icon="pi pi-trash" ariaLabel="Excluir lançamento" severity="danger" [text]="true" (onClick)="confirmDelete(entry)" />
+        </td>
       </tr>
     </ng-template>
-  </p-table>
-
-  <!-- Modal para lançar horas -->
-  <p-dialog
-    [(visible)]="displayDialog"
-    header="Adicionar Horas"
-    [modal]="true"
-    [closable]="false"
-    [style]="{ width: '450px' }"
-  >
-    <form [formGroup]="timeEntryForm" class="p-fluid">
-      <!-- Campo Tarefa -->
-      <div class="p-field">
-        <label for="taskDropdown">Tarefa</label>
-        <p-dropdown
-          id="taskDropdown"
-          [options]="tasks"
-          placeholder="Selecione a Tarefa"
-          [editable]="true"
-          optionLabel="name"
-          appendTo="body"
-          formControlName="taskId"
-          (onChange)="onTaskSelect($event)"
-          [ngClass]="{ 'p-invalid': isFieldInvalid('taskId') }"
-        ></p-dropdown>
-      </div>
-
-      <!-- Campo Descrição -->
-      <div class="p-field">
-        <label for="description">Descrição</label>
-        <textarea
-          id="description"
-          rows="3"
-          pInputTextarea
-          formControlName="description"
-          placeholder="Descreva a tarefa"
-          [autoResize]="false"
-          [ngClass]="{ 'p-invalid': isFieldInvalid('description') }"
-        ></textarea>
-
-      </div>
-      <!-- Campo Data -->
-      <div class="p-field">
-        <label for="entryDate">Data</label>
-        <p-calendar
-          id="entryDate"
-          formControlName="entryDate"
-          dateFormat="dd/mm/yy"
-          [showIcon]="true"
-          placeholder="Selecione a data"
-          appendTo="body"
-          [ngClass]="{ 'p-invalid': isFieldInvalid('entryDate') }"
-        ></p-calendar>
-      </div>
-
-      <!-- Campo Hora de Início -->
-      <div class="p-field">
-        <label for="startTime">Hora Início</label>
-        <input
-          type="text"
-          id="startTime"
-          formControlName="startTime"
-          placeholder="HH:mm"
-          pInputText
-          (input)="autoFormatTime('startTime')"
-          [ngClass]="{ 'p-invalid': isFieldInvalid('startTime') }"
-        />
-
-      </div>
-
-      <!-- Campo Hora de Fim -->
-      <div class="p-field">
-        <label for="endTime">Hora Fim</label>
-        <input
-          type="text"
-          id="endTime"
-          formControlName="endTime"
-          placeholder="HH:mm"
-          pInputText
-          (input)="autoFormatTime('endTime')"
-          [ngClass]="{ 'p-invalid': isFieldInvalid('endTime') }"
-        />
-      </div>
-    </form>
-
-    <!-- Botões de Ação -->
-    <ng-template pTemplate="footer">
-      <button
-        pButton
-        type="button"
-        label="Cancelar"
-        icon="pi pi-times"
-        class="p-button-text"
-        (click)="closeDialog()"
-      ></button>
-      <button
-        pButton
-        type="button"
-        label="Salvar"
-        icon="pi pi-check"
-        (click)="saveTimeEntry()"
-        [disabled]="timeEntryForm.invalid"
-      ></button>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="6">Nenhum lançamento encontrado.</td></tr>
     </ng-template>
-  </p-dialog>
+  </p-table>
+</section>
 
-</div>
+<p-dialog [(visible)]="displayDialog" [header]="editing ? 'Editar lançamento' : 'Lançar horas'" [modal]="true"
+          [closable]="!saving" [closeOnEscape]="!saving" [draggable]="false" [style]="{ width: 'min(32rem, 94vw)' }">
+  <form class="entry-form" [formGroup]="form" (ngSubmit)="save()">
+    <div *ngIf="editing; else chooseTask"><strong>Tarefa</strong><p>{{ editing.taskName }}</p></div>
+    <ng-template #chooseTask>
+      <label for="entry-task">Tarefa</label>
+      <p-dropdown inputId="entry-task" formControlName="taskId" [options]="tasks" optionLabel="name" optionValue="id"
+                  placeholder="Selecione a tarefa" emptyMessage="Nenhuma tarefa atribuída a você" appendTo="body" />
+    </ng-template>
+    <label for="entry-description">Descrição</label>
+    <textarea id="entry-description" pInputTextarea formControlName="description" rows="3" maxlength="255"></textarea>
+    <label for="entry-date">Data</label>
+    <input id="entry-date" pInputText formControlName="entryDate" type="date" [max]="today" />
+    <div class="entry-hours">
+      <label>Início <input pInputText formControlName="startTime" type="time" /></label>
+      <label>Fim <input pInputText formControlName="endTime" type="time" /></label>
+    </div>
+    <p *ngIf="formError" class="form-error" role="alert">{{ formError }}</p>
+    <div class="dialog-actions">
+      <p-button type="button" label="Cancelar" [text]="true" [disabled]="saving" (onClick)="displayDialog = false" />
+      <p-button type="submit" label="Salvar" [loading]="saving" [disabled]="!editing && !tasks.length" />
+    </div>
+  </form>
+</p-dialog>

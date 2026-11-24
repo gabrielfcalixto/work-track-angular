@@ -1,12 +1,25 @@
-export interface Project {
-  id?: number;
+export const projectStatuses = {
+  NAO_INICIADO: 'Não iniciado',
+  EM_ANDAMENTO: 'Em andamento',
+  CONCLUIDO: 'Concluído',
+  EM_ESPERA: 'Em espera',
+  CANCELADO: 'Cancelado'
+};
+
+export type ProjectStatus = keyof typeof projectStatuses;
+
+export interface ProjectRequest {
   name: string;
   description: string;
-  hours: number;  // tipo correto para horas (pode ser decimal)
-  status: string;
-  managerId?: number;  // refere-se ao ID do gerente
-  clientId?: number;   // refere-se ao ID do cliente
-  teamMemberIds: number[];  // lista de IDs de membros da equipe
+  hours: number;
+  status: ProjectStatus;
+  managerId: number;
+  clientId: number;
+  teamMemberIds: number[];
   startDate: string;
   deadline: string;
+}
+
+export interface Project extends ProjectRequest {
+  id: number;
 }

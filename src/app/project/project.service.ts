@@ -1,36 +1,25 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Project } from './project.model';
+import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { Project, ProjectRequest } from './project.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ProjectService {
-  private apiUrl = 'http://localhost:8080/project';
+  private readonly url = `${environment.apiUrl}/project`;
 
-  constructor(private http: HttpClient){}
-  getProjects(): Observable<Project[]> {
-    return this.http.get<Project[]>(`${this.apiUrl}`);
+  constructor(private readonly http: HttpClient) {}
+
+  list() {
+    return this.http.get<Project[]>(this.url);
   }
 
-  addProject(project: Project): Observable<Project> {
-    return this.http.post<Project>(`${this.apiUrl}/add`, project);
-
+  save(request: ProjectRequest, id?: number) {
+    return id === undefined
+      ? this.http.post<Project>(this.url, request)
+      : this.http.put<Project>(`${this.url}/${id}`, request);
   }
 
-  editProject(project: Project) {
-    return this.http.put<Project>(`${this.apiUrl}/${project.id}`, project);
-
-  }
-
-
-    updateStatus(projectId: number, statusUpdate: { status: string }): Observable<Project> {
-      return this.http.patch<Project>(`${this.apiUrl}/update-status/${projectId}`, statusUpdate);
-    }
-
-
-  deleteProject(projectId: number) {
-    return this.http.delete<void>(`${this.apiUrl}/${projectId}`);
+  delete(id: number) {
+    return this.http.delete<void>(`${this.url}/${id}`);
   }
 }

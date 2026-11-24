@@ -1,215 +1,71 @@
-<p-toast></p-toast>
+<section class="overview">
+  <header class="overview-header">
+    <div>
+      <h1>Visão geral</h1>
+      <p *ngIf="user">Olá, {{ user.name }}.</p>
+    </div>
+    <a pButton routerLink="/time-entry" [queryParams]="{ novo: 1 }" icon="pi pi-plus" label="Lançar horas" aria-label="Lançar horas"></a>
+  </header>
 
-<div class="dashboard-container p-4">
-
-  <p-toolbar>
-    <h2>Dashboard</h2>
-    <div class="button-container">
-    <button
-      pButton
-      type="button"
-      label="Lançar Horas"
-      icon="pi pi-clock"
-      (click)="openDialog()"
-      class="p-button-primary launch-button"
-    ></button>
+  <p *ngIf="loading" role="status">Carregando indicadores…</p>
+  <div *ngIf="error" role="alert">
+    <p>{{ error }}</p>
+    <button pButton type="button" label="Tentar novamente" (click)="load()"></button>
   </div>
-</p-toolbar>
-    <div class="charts-wrapper grid">
-      <p-card class="col-12 md:col-6 mb-4">
-        <div class="card-content">
-          <h5>Total de Horas Lançadas no Mês</h5>
-          <p class="card-value">{{ (totalHoursMonth).toFixed(2) }}</p>
-        </div>
-      </p-card>
-      <p-card class="col-12 md:col-6 mb-4">
-        <div class="card-content">
-          <h5>Atividades Pendentes</h5>
-          <p class="card-value">{{ pendingTasksCount }} </p>
-        </div>
 
-
-      </p-card>
-
-      <ng-container *ngIf="role === 'manager'">
-        <p-card class="col-12 md:col-6 mb-4">
-          <h5>Tarefas Completadas</h5>
-          <p>{{ completedTasksCount }} tarefas completadas</p>
-        </p-card>
-        <p-card class="col-12 md:col-6 mb-4">
-          <h5>Tarefas em Andamento</h5>
-          <p>{{ ongoingTasksCount }} tarefas em andamento</p>
-        </p-card>
-      </ng-container>
+  <ng-container *ngIf="summary as data">
+    <app-weekly-hours *ngIf="data.weeklyHours as week" [week]="week" (goalSaved)="week.goalHours = $event" />
+    <div class="metrics">
+      <article><span>Horas neste mês</span><strong>{{ data.totalHoursMonth | number:'1.0-2' }} h</strong></article>
+      <article><span>Tarefas pendentes</span><strong>{{ data.pendingTasksCount }}</strong></article>
+      <article><span>Em andamento</span><strong>{{ data.tasksInProgress }}</strong></article>
+      <article><span>Concluídas</span><strong>{{ data.completedTasksCount }}</strong></article>
+    </div>
+    <div class="metrics" *ngIf="user?.role === 'MANAGER'">
+      <article><span>Projetos sob minha gestão</span><strong>{{ data.projectsManaged }}</strong></article>
+      <article><span>Tarefas nos meus projetos</span><strong>{{ data.tasksCreated }}</strong></article>
+    </div>
+    <div class="metrics" *ngIf="user?.role === 'ADMIN'">
+      <article><span>Usuários cadastrados</span><strong>{{ data.totalUsers }}</strong></article>
+      <article><span>Projetos cadastrados</span><strong>{{ data.totalProjects }}</strong></article>
+      <article><span>Tarefas cadastradas</span><strong>{{ data.totalTasks }}</strong></article>
     </div>
 
-
-  <!-- Gráficos lado a lado -->
-  <div class="charts-wrapper grid">
-    <ng-container >
-      <!-- <p-card class="col-12 md:col-6 mb-4">
-        <app-chart [chartData]="userHoursData" [chartOptions]="chartOptions" chartType="line"></app-chart>
-      </p-card> -->
-
-      <!-- Gráfico de Projetos Gerenciados -->
-
-       <p-card class="col-12 md:col-6 mb-4">
-        <div class="card-content1">
-          <h5>Atividades Completadas</h5>
-          <p class="card-value">{{ completedTasksCount }} </p>
+    <div class="detail-grid">
+      <section class="surface">
+        <h2>Próximas tarefas</h2>
+        <p *ngIf="!upcoming.length">Nenhuma tarefa aberta atribuída a você.</p>
+        <ul>
+          <li *ngFor="let task of upcoming">
+            <strong>{{ task.name }}</strong>
+            <span>Prazo {{ task.deadline | date:'dd/MM/yyyy' }}</span>
+          </li>
+        </ul>
+      </section>
+      <section class="surface">
+        <h2>Minhas tarefas por status</h2>
+        <p *ngIf="!taskCount">Nenhuma tarefa atribuída a você.</p>
+        <div class="distribution" *ngIf="taskCount">
+          <div *ngFor="let status of distribution">
+            <div><span>{{ status.label }}</span><strong>{{ status.count }}</strong></div>
+            <meter [value]="status.count" [max]="taskCount" [attr.aria-label]="status.label"></meter>
+          </div>
         </div>
+      </section>
+    </div>
 
-
-      </p-card>
-
-    <!-- <p-card class="col-12 md:col-6 mb-4">
-      <app-chart [chartData]="totalProjectsManaged" [chartOptions]="chartOptions" chartType="bar"></app-chart>
-    </p-card> -->
-
-      <!-- Novo gráfico de pizza -->
-      <p-card class="col-12 md:col-6 mb-4">
-        <app-chart [chartData]="taskDistributionData" [chartOptions]="chartOptions" chartType="pie"></app-chart>
-      </p-card>
-    </ng-container>
-
-    <ng-container *ngIf="role === 'manager'">
-      <p-card class="col-12 md:col-6 mb-4">
-        <app-chart [chartData]="projectProgressData" [chartOptions]="chartOptions" chartType="line"></app-chart>
-      </p-card>
-    </ng-container>
-
-    <ng-container *ngIf="role === 'admin'">
-      <p-card class="col-12 md:col-6 mb-4">
-        <app-chart [chartData]="userActivityData" [chartOptions]="chartOptions" chartType="polarArea"></app-chart>
-      </p-card>
-    </ng-container>
-  </div>
-
-   <!-- Tabela de últimos lançamentos -->
-  <p-panel header="Últimos Lançamentos" class="mt-4">
-  <!-- Tabela com os lançamentos -->
-  <p-table [value]="timeEntries" responsiveLayout="scroll">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Tarefa</th>
-        <th>Descrição</th>
-        <th>Data</th>
-        <th>Início</th>
-        <th>Fim</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-entry>
-      <tr>
-        <td>{{ entry.taskId }}</td>
-        <td>{{ entry.description }}</td>
-        <td>{{ entry.entryDate | date: 'dd/MM/yyyy' }}</td>
-        <td>{{ entry.startTime }}</td>
-        <td>{{ entry.endTime }}</td>
-      </tr>
-    </ng-template>
-  </p-table>
-  </p-panel>
-</div>
-
- <!-- Modal para lançar horas -->
- <p-dialog
- [(visible)]="displayDialog"
- header="Adicionar Horas"
- [modal]="true"
- [closable]="false"
- [style]="{ width: '450px' }"
->
- <form [formGroup]="timeEntryForm" class="p-fluid">
-   <!-- Campo Tarefa -->
-   <div class="p-field">
-     <label for="task">Tarefa</label>
-     <p-dropdown
-     id="task"
-     [options]="tasks"
-     [(ngModel)]="selectedTask"
-     placeholder="Selecione a Tarefa"
-     [editable]="true"
-     optionLabel="name"
-     appendTo="body"
-     formControlName="taskId"
-     (onChange)="onTaskSelect($event)"
-     [ngClass]="{'p-invalid': isFieldInvalid('taskId')}">
-   </p-dropdown>
-   </div>
-   <div class="p-field">
-     <label for="description">Descrição</label>
-     <textarea
-       id="description"
-       rows="5"
-       pInputTextarea
-       formControlName="description"
-       placeholder="Descreva a tarefa"
-       [autoResize]="false"
-       [ngClass]="{'p-invalid': isFieldInvalid('description')}"
-     ></textarea>
-   </div>
-
-   <!-- Campo Data -->
-   <div class="p-field">
-     <label for="entryDate">Data</label>
-     <p-calendar
-       id="entryDate"
-       formControlName="entryDate"
-       dateFormat="dd/mm/yy"
-       [showIcon]="true"
-       placeholder="Selecione a data"
-       appendTo="body"
-       [ngClass]="{'p-invalid': isFieldInvalid('entryDate')}"
-     >
-     </p-calendar>
-   </div>
-
-   <!-- Campo Hora de Início -->
-   <div class="p-field">
-     <label for="startTime">Hora Início</label>
-     <input
-       type="text"
-       id="startTime"
-       formControlName="startTime"
-       placeholder="HH:mm"
-       pInputText
-       (input)="autoFormatTime('startTime')"
-       [ngClass]="{'p-invalid': isFieldInvalid('startTime')}"
-     />
-   </div>
-
-   <!-- Campo Hora de Fim -->
-   <div class="p-field">
-     <label for="endTime">Hora Fim</label>
-     <input
-       type="text"
-       id="endTime"
-       formControlName="endTime"
-       placeholder="HH:mm"
-       pInputText
-       (input)="autoFormatTime('endTime')"
-       [ngClass]="{'p-invalid': isFieldInvalid('endTime')}"
-     />
-   </div>
- </form>
-
- <!-- Botões de Ação -->
- <ng-template pTemplate="footer">
-   <button
-     pButton
-     type="button"
-     label="Cancelar"
-     icon="pi pi-times"
-     class="p-button-text"
-     (click)="closeDialog()"
-   ></button>
-   <button
-     pButton
-     type="button"
-     label="Salvar"
-     icon="pi pi-check"
-     (click)="saveTimeEntry()"
-     [disabled]="timeEntryForm.invalid"
-   ></button>
- </ng-template>
-</p-dialog>
+    <section class="surface">
+      <div class="section-heading">
+        <h2>Últimos lançamentos</h2>
+        <a routerLink="/time-entry">Ver histórico</a>
+      </div>
+      <p *ngIf="!recent.length">Você ainda não lançou horas.</p>
+      <ul>
+        <li *ngFor="let entry of recent">
+          <strong>{{ entry.taskName }}</strong>
+          <span>{{ entry.entryDate | date:'dd/MM/yyyy' }} · {{ entry.hoursLogged | number:'1.0-2' }} h</span>
+        </li>
+      </ul>
+    </section>
+  </ng-container>
+</section>

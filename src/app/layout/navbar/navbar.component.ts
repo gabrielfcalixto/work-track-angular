@@ -1,8 +1,6 @@
-import { AuthService } from './../../auth/auth.service';
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
-import { ThemeService } from './../../services/theme.service';
-import { SidebarComponent } from '../sidebar/sidebar.component';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { AuthService } from '../../auth/auth.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,41 +8,17 @@ import { Router } from '@angular/router';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent {
-  @ViewChild('sidebar') sidenav!: SidebarComponent; // Acesse o SideNavComponent
+  readonly user = this.auth.getLoggedUser();
+  isDarkMode = document.body.classList.contains('dark-mode');
 
-
-  isDarkMode = false;
-  logoPath = 'assets/logo-hard-preta.png';
-  user: any;
-
-
-  constructor(private themeService: ThemeService, private router: Router, private authService: AuthService) {
-    this.isDarkMode = document.body.classList.contains('dark-mode');
-    this.setLogo();
-    this.user = this.authService.getLoggedUser();
-  }
+  constructor(private readonly theme: ThemeService, private readonly auth: AuthService) {}
 
   toggleTheme(): void {
-    this.themeService.toggleTheme();
+    this.theme.toggleTheme();
     this.isDarkMode = !this.isDarkMode;
-    this.setLogo();
   }
 
-  setLogo(): void {
-    this.logoPath = this.isDarkMode ? 'assets/imagens/logo-branca.png' : 'assets/imagens/logo-preta.png';
-  }
-
-  toggleSidebar(): void {
-    this.sidenav.toggleSidebar();
-  }
-
-  navigateToProfile():void
-  {
-    this.router.navigate(['/profile']); // Navega para a página de Perfil
-  }
   logout(): void {
-
-    this.router.navigate(['/login']);
+    this.auth.logout();
   }
-
 }

@@ -1,0 +1,19 @@
+.hours-overview { display: grid; grid-template-columns: minmax(0, 2fr) minmax(15rem, 1fr); gap: .75rem; }
+.card { min-width: 0; display: grid; align-content: start; gap: .7rem; padding: 1.15rem; background: var(--surface-card); border: 1px solid var(--surface-border); border-radius: .85rem; }
+h2, p { margin: 0; }
+h2 { font-size: 1.05rem; }
+p, small, .total span, time { color: var(--text-color-secondary); }
+.total { font-size: 1.65rem; font-weight: 700; }
+.total span { font-size: .9rem; font-weight: 500; }
+.chart { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .3rem; padding: 0; margin: 0; list-style: none; }
+.chart li { display: grid; grid-template-rows: auto 5rem auto; gap: .3rem; text-align: center; font-size: .75rem; }
+.bar-track { display: flex; align-items: flex-end; justify-content: center; border-bottom: 1px solid var(--surface-border); }
+.bar-track span { width: min(70%, 2.5rem); background: var(--primary-color); border-radius: .25rem .25rem 0 0; }
+.goal-header, .goal-progress, .form-actions { display: flex; align-items: center; gap: .55rem; }
+.goal-header { justify-content: space-between; }
+progress { flex: 1; min-width: 0; height: .7rem; accent-color: var(--primary-color); }
+.reached { color: var(--text-color); font-weight: 600; }
+form { display: grid; gap: .4rem; margin-top: .2rem; }
+input { width: 100%; }
+.form-actions { justify-content: end; flex-wrap: wrap; }
+@media (max-width: 740px) { .hours-overview { grid-template-columns: minmax(0, 1fr); } }

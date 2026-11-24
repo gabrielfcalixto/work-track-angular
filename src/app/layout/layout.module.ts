@@ -1,32 +1,15 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { SidebarModule } from 'primeng/sidebar';
+import { AvatarModule } from '../shared/avatar/avatar/avatar.module';
+import { LayoutComponent } from './layout.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { LayoutComponent } from './layout.component';
-import { RouterModule } from '@angular/router';
-import { SidebarModule } from 'primeng/sidebar';
-import { ButtonModule } from 'primeng/button';
-import { RippleModule } from 'primeng/ripple';
-import { StyleClassModule } from 'primeng/styleclass';
-import { PrimeNGModule } from '../prime-ng/prime-ng.module'; // Importando PrimeNGModule
-import { AvatarModule } from '../shared/avatar/avatar/avatar.module';
 
 @NgModule({
-  declarations: [
-    NavbarComponent,
-    SidebarComponent,
-    LayoutComponent,
-  ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    SidebarModule,
-    ButtonModule,
-    RippleModule,
-    StyleClassModule,
-    PrimeNGModule, // Importando PrimeNGModule para usar componentes do PrimeNG
-    AvatarModule  // Importando AvatarModule para usar o AvatarComponent
-  ],
-  providers: []
+  declarations: [LayoutComponent, NavbarComponent, SidebarComponent],
+  imports: [CommonModule, RouterModule, ButtonModule, SidebarModule, AvatarModule]
 })
-export class LayoutModule { }
+export class LayoutModule {}

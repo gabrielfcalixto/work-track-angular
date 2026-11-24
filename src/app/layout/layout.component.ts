@@ -5,10 +5,4 @@ import { Component } from '@angular/core';
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss']
 })
-export class LayoutComponent {
-  sidebarVisible: boolean = false;
-
-  toggleSidebar() {
-    this.sidebarVisible = !this.sidebarVisible;
-  }
-}
+export class LayoutComponent {}

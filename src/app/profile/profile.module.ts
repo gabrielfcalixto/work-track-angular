@@ -1,34 +1,19 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProfileComponent } from './profile.component';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import { RouterModule } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { FileUploadModule } from 'primeng/fileupload';
-import { FieldsetModule } from 'primeng/fieldset';
-import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
-import { PasswordModule } from 'primeng/password';
+import { FieldsetModule } from 'primeng/fieldset';
 import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
 import { AvatarModule } from '../shared/avatar/avatar/avatar.module';
-
+import { ProfileComponent } from './profile.component';
 
 @NgModule({
-  declarations: [
-    ProfileComponent,
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ProgressSpinnerModule,
-    CardModule,
-    FileUploadModule,
-    FieldsetModule,
-    ToastModule,
-    DialogModule,
-    PasswordModule,
-    InputTextModule,
-        AvatarModule  // Importando AvatarModule para usar o AvatarComponent
-  ]
+  declarations: [ProfileComponent],
+  imports: [CommonModule, FormsModule, AvatarModule, ButtonModule, CardModule, DialogModule, FieldsetModule,
+    InputTextModule, ToastModule, RouterModule.forChild([{ path: '', component: ProfileComponent }])]
 })
-export class ProfileModule { }
+export class ProfileModule {}

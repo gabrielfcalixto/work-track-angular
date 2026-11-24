@@ -1,22 +1,15 @@
-import { AuthService } from './auth.service';
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivate, Router, UrlTree } from '@angular/router';
+import { AuthService } from './auth.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
+  constructor(private readonly router: Router, private readonly auth: AuthService) {}
 
-  constructor(private router: Router, private authService: AuthService) {}
+  canActivate(): boolean | UrlTree {
+    if (this.auth.getLoggedUser()) return true;
 
-  canActivate(): boolean {
-    const token = localStorage.getItem('token');
-    if (token && !this.authService.isTokenExpired()) {
-      return true; // Permite o acesso à rota
-    } else {
-      this.router.navigate(['/login']); // Redireciona para o login
-      return false;
-    }
+    this.auth.clearSession();
+    return this.router.createUrlTree(['/login']);
   }
-
 }

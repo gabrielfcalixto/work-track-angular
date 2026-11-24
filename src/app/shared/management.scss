@@ -1,0 +1,12 @@
+.management { display: grid; gap: .85rem; }
+.page-header, .table-tools, .form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; }
+.page-header, .table-tools { justify-content: space-between; }
+.page-header h1, .form-error { margin: 0; }
+.export, .row-actions { white-space: nowrap; }
+.editor-form { display: grid; gap: .7rem; }
+.editor-form label, .editor-field { display: grid; gap: .3rem; }
+.editor-form input, .editor-form textarea, .editor-form select { width: 100%; }
+.editor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: .7rem; }
+.form-actions { justify-content: end; }
+.form-error { color: var(--red-600); }
+.detail { color: var(--text-color-secondary); font-size: .9rem; }

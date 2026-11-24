@@ -1,248 +1,75 @@
-<p-toast></p-toast>
-<div class="task-container">
-  <p-toolbar>
-    <h2>Tarefas</h2>
-    <div class="botoes">
-      <p-button label="Adicionar" icon="pi pi-plus" (click)="openAddDialog()"></p-button>
-      <p-button label="Gerar PDF" icon="pi pi-file-pdf" (click)="gerarPDF()" class="p-button-success"></p-button>
-    <p-button label="Gerar Excel" icon="pi pi-file-excel" (click)="gerarExcel()" class="p-button-info"></p-button>
-    </div>
-  </p-toolbar>
-
-  <p-table [value]="filteredTasks" [paginator]="true" [rows]="15">
-    <ng-template pTemplate="header">
-      <tr>
-        <th pSortableColumn="name">Nome <p-sortIcon field="name"></p-sortIcon></th>
-        <!-- <th pSortableColumn="description">Descrição <p-sortIcon field="description"></p-sortIcon></th> -->
-        <th pSortableColumn="estimatedHours">Horas <p-sortIcon field="estimatedHours"></p-sortIcon></th>
-        <!-- <th pSortableColumn="totalHours">Horas lançadas <p-sortIcon field="totalHours"></p-sortIcon></th> -->
-        <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
-        <th>Ações</th>
-      </tr>
-    </ng-template>
-
-    <ng-template pTemplate="body" let-task>
-      <tr>
-        <td>{{ task.name }}</td>
-        <!-- <td>{{ task.description }}</td> -->
-        <td>{{ task.estimatedHours }}</td>
-        <!-- <td>{{ task.totalHours }}</td> -->
-        <td>{{ getStatusName(task.status) }}</td>
-        <td>
-          <div class="botoes-acao">
-
-          <p-button icon="pi pi-pencil" (click)="openEditDialog(task)"></p-button>
-          <p-button icon="pi pi-key" (click)="openStatusDialog(task)"></p-button>
-          <!-- <p-button icon="pi pi-trash" (click)="confirmDelete(task)" severity="danger"></p-button> -->
+<p-toast />
+<p-confirmDialog />
+<section class="management">
+  <header class="page-header">
+    <h1>Tarefas</h1>
+    <p-button label="Nova tarefa" ariaLabel="Nova tarefa" icon="pi pi-plus" [disabled]="loading || !!error" (onClick)="open()" />
+  </header>
+  <div *ngIf="error" role="alert"><p>{{ error }}</p><p-button label="Tentar novamente" (onClick)="load()" /></div>
+  <p-table #table [value]="records" [loading]="loading" [globalFilterFields]="['name', 'description']"
+           [paginator]="records.length > 10" [rows]="10" dataKey="id" responsiveLayout="scroll" *ngIf="!error">
+    <ng-template pTemplate="caption">
+      <div class="table-tools">
+        <input pInputText #search type="search" placeholder="Buscar tarefas" aria-label="Buscar tarefas"
+               (input)="table.filterGlobal(search.value, 'contains')" />
+        <div class="export">
+          <p-button label="PDF" [text]="true" [disabled]="!records.length" (onClick)="export('pdf')" />
+          <p-button label="Excel" [text]="true" [disabled]="!records.length" (onClick)="export('xlsx')" />
         </div>
-
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header"><tr><th>Tarefa</th><th>Projeto</th><th>Status</th><th>Prioridade</th><th>Horas</th><th>Prazo</th><th>Ações</th></tr></ng-template>
+    <ng-template pTemplate="body" let-record>
+      <tr>
+        <td>{{ record.name }}</td><td>{{ projectName(record.projectId) }}</td><td>{{ statusLabel(record.status) }}</td>
+        <td>{{ priorityLabel(record.priority) }}</td><td>{{ record.totalHours | number:'1.0-2' }} / {{ record.estimatedHours }}</td>
+        <td>{{ record.deadline | date:'dd/MM/yyyy' }}</td>
+        <td class="row-actions">
+          <p-button icon="pi pi-pencil" ariaLabel="Editar tarefa" [text]="true" (onClick)="open(record)" />
+          <p-button icon="pi pi-trash" ariaLabel="Excluir tarefa" [text]="true" severity="danger"
+                    [disabled]="record.status !== 'NAO_INICIADA'" (onClick)="confirmDelete(record)" />
         </td>
       </tr>
     </ng-template>
+    <ng-template pTemplate="emptymessage"><tr><td colspan="7">Nenhuma tarefa encontrada.</td></tr></ng-template>
   </p-table>
+</section>
 
-
-
-  <!-- Adicionar Tarefa Dialog -->
-<p-dialog header="Adicionar Tarefa" [(visible)]="displayAddDialog" [modal]="true" [responsive]="true">
-  <div class="p-fluid">
-    <div class="p-field">
-      <label for="name">Nome</label>
-      <input id="name" [(ngModel)]="newTask.name" pInputText />
+<p-dialog [(visible)]="dialog" [header]="editingId ? 'Editar tarefa' : 'Nova tarefa'" [modal]="true"
+          [closable]="!saving" [closeOnEscape]="!saving" [draggable]="false" [style]="{ width: 'min(40rem, 94vw)' }">
+  <form [formGroup]="form" class="editor-form" (ngSubmit)="save()">
+    <label>Nome <input pInputText formControlName="name" maxlength="255" required /></label>
+    <label>Descrição <textarea pInputTextarea formControlName="description" rows="3" maxlength="255" required></textarea></label>
+    <div class="editor-grid">
+      <label>Horas estimadas <input pInputText formControlName="estimatedHours" type="number" min="0" step="0.25" required /></label>
+      <label>Prioridade <select class="p-inputtext" formControlName="priority" aria-label="Prioridade">
+        <option *ngFor="let priority of priorities" [value]="priority">{{ priorityLabels[priority] }}</option>
+      </select></label>
+      <label>Status <select class="p-inputtext" formControlName="status" aria-label="Status">
+        <option *ngFor="let status of statuses" [value]="status">{{ statusLabels[status] }}</option>
+      </select></label>
     </div>
-    <div class="p-field">
-      <label for="description">Descrição</label>
-      <input id="description" [(ngModel)]="newTask.description" pInputText />
+    <label *ngIf="!editingId; else currentProject">Projeto
+      <select class="p-inputtext" formControlName="projectId" aria-label="Projeto" required>
+        <option [ngValue]="null" disabled>Selecione</option>
+        <option *ngFor="let project of projects" [ngValue]="project.id">{{ project.name }}</option>
+      </select>
+    </label>
+    <ng-template #currentProject><span>Projeto · {{ projectName(form.controls.projectId.value ?? 0) }}</span></ng-template>
+    <a routerLink="/projects" *ngIf="!projects.length">Cadastrar primeiro projeto</a>
+    <div class="editor-field">
+      <label for="assigned-users">Pessoas responsáveis</label>
+      <p-multiSelect inputId="assigned-users" [options]="users" optionLabel="name" optionValue="id"
+                     formControlName="assignedUserIds" placeholder="Selecionar pessoas" appendTo="body" />
     </div>
-    <div class="p-field">
-      <label for="estimatedHours">Horas estimadas</label>
-      <input id="estimatedHours" type="number" [(ngModel)]="newTask.estimatedHours" pInputText />
+    <div class="editor-grid">
+      <label>Início <input pInputText formControlName="startDate" type="date" required /></label>
+      <label>Prazo <input pInputText formControlName="deadline" type="date" required /></label>
     </div>
-    <div class="p-field">
-      <label for="status">Status</label>
-      <p-dropdown
-        id="status"
-        [(ngModel)]="newTask.status"
-        [options]="status"
-        optionLabel="name"
-        optionValue="value"
-        placeholder="Selecione o status"
-        [showClear]="true"
-        appendTo="body">
-      </p-dropdown>
+    <p class="form-error" *ngIf="formError" role="alert">{{ formError }}</p>
+    <div class="form-actions">
+      <p-button type="button" label="Cancelar" [text]="true" [disabled]="saving" (onClick)="dialog = false" />
+      <p-button type="submit" label="Salvar" [loading]="saving" [disabled]="form.invalid" />
     </div>
-    <div class="p-field">
-      <label for="priority">Prioridade</label>
-      <p-dropdown
-        id="priority"
-        [(ngModel)]="newTask.priority"
-        [options]="priorityOptions"
-        optionLabel="name"
-        optionValue="value"
-        placeholder="Selecione a prioridade"
-        [showClear]="true"
-        appendTo="body">
-      </p-dropdown>
-    </div>
-    <div class="p-field">
-      <label for="project">Projeto</label>
-      <p-dropdown
-        id="project"
-        [(ngModel)]="newTask.projectId"
-        [options]="projects"
-        optionLabel="name"
-        optionValue="id"
-        placeholder="Selecione o projeto"
-        [showClear]="true"
-        appendTo="body">
-      </p-dropdown>
-    </div>
-    <div class="p-field">
-      <label for="assignedUsers">Usuários Atribuídos</label>
-      <p-multiSelect
-        id="assignedUsers"
-        [(ngModel)]="newTask.assignedUserIds"
-        [options]="users"
-        optionLabel="name"
-        optionValue="id"
-        placeholder="Selecione os usuários"
-        [showClear]="true"
-        appendTo="body">
-      </p-multiSelect> <!-- Feche a tag corretamente -->
-    </div>
-
-    <div class="p-field">
-      <label for="startDate">Data de Início</label>
-      <p-calendar
-        id="startDate"
-        [(ngModel)]="newTask.startDate"
-        dateFormat="yy-mm-dd"
-        [showIcon]="true">
-      </p-calendar>
-    </div>
-    <div class="p-field">
-      <label for="deadline">Prazo</label>
-      <p-calendar
-        id="deadline"
-        [(ngModel)]="newTask.deadline"
-        dateFormat="yy-mm-dd"
-        [showIcon]="true">
-      </p-calendar>
-    </div>
-  </div>
-  <p-footer>
-    <p-button label="Cancelar" icon="pi pi-times" (click)="displayAddDialog = false"></p-button>
-    <p-button label="Salvar" icon="pi pi-check" (click)="addTask()"></p-button>
-  </p-footer>
+  </form>
 </p-dialog>
-
-  <!-- Editar Tarefa Dialog -->
-  <p-dialog header="Editar Tarefa" [(visible)]="displayEditDialog" [modal]="true" [responsive]="true">
-    <div class="p-fluid">
-      <div class="p-field">
-        <label for="name">Nome</label>
-        <input id="name" [(ngModel)]="selectedTask.name" pInputText *ngIf="selectedTask" />
-      </div>
-      <div class="p-field">
-        <label for="description">Descrição</label>
-        <input id="description" [(ngModel)]="selectedTask.description" pInputText *ngIf="selectedTask" />
-      </div>
-      <div class="p-field">
-        <label for="estimatedHours">Horas estimadas</label>
-        <input id="estimatedHours" type="number" [(ngModel)]="selectedTask.estimatedHours" pInputText *ngIf="selectedTask" />
-      </div>
-      <div class="p-field">
-        <label for="totalHours">Horas lançadas</label>
-        <input id="totalHours" type="number" [(ngModel)]="selectedTask.totalHours" pInputText *ngIf="selectedTask" />
-      </div>
-      <div *ngIf="selectedTask" class="p-field">
-        <label for="status">Status</label>
-        <p-dropdown
-          id="status"
-          [(ngModel)]="selectedTask.status"
-          [options]="status"
-          optionLabel="name"
-          placeholder="Selecione o status"
-          [showClear]="true"
-          appendTo="body"
-          optionValue="value">
-
-        </p-dropdown>
-      </div>
-      <div *ngIf="selectedTask" class="p-field">
-        <label for="priority">Prioridade</label>
-        <p-dropdown
-          id="priority"
-          [(ngModel)]="selectedTask.priority"
-          [options]="priorityOptions"
-          optionLabel="name"
-          placeholder="Selecione a prioridade"
-          [showClear]="true"
-          appendTo="body"
-          optionValue="value">
-
-        </p-dropdown>
-      </div>
-      <div class="p-field">
-        <label for="assignedUsers">Usuários Atribuídos</label>
-        <p-multiSelect
-          id="assignedUsers"
-          [(ngModel)]="selectedTask.assignedUserIds"
-          [options]="users"
-          optionLabel="name"
-          optionValue="id"
-          placeholder="Selecione os usuários"
-          [showClear]="true"
-          appendTo="body">
-        </p-multiSelect>
-      </div>
-      <div class="p-field">
-        <label for="deadline">Prazo</label>
-        <p-calendar
-          id="deadline"
-          [(ngModel)]="selectedTask.deadline"
-          dateFormat="yy-mm-dd"
-          [showIcon]="true">
-        </p-calendar>
-      </div>
-    </div>
-    <p-footer>
-      <p-button label="Cancelar" icon="pi pi-times" (click)="displayEditDialog = false"></p-button>
-      <p-button label="Salvar" icon="pi pi-check" (click)="saveEdit()"></p-button>
-    </p-footer>
-  </p-dialog>
-
-  <!-- Status Dialog com Dropdown -->
-  <p-dialog header="Status" [(visible)]="displayPermissionDialog" [modal]="true" [responsive]="true">
-    <div class="p-fluid">
-      <div class="p-field">
-        <label for="status">Status</label>
-        <p-dropdown
-          id="status"
-          *ngIf="selectedTask"
-          [(ngModel)]="selectedTask.status"
-          [options]="status"
-          optionLabel="name"
-          placeholder="Selecione o status"
-          [showClear]="true"
-          appendTo="body"
-          optionValue="value">
-        </p-dropdown>
-      </div>
-    </div>
-    <p-footer>
-      <p-button label="Cancelar" icon="pi pi-times" (click)="displayPermissionDialog = false"></p-button>
-      <p-button label="Salvar" icon="pi pi-check" (click)="saveStatus()"></p-button>
-    </p-footer>
-  </p-dialog>
-
-  <!-- Excluir Tarefa Dialog -->
-  <p-dialog header="Excluir Tarefa" [(visible)]="displayDeleteDialog" [modal]="true" [responsive]="true">
-    <p>Tem certeza que deseja excluir essa tarefa?</p>
-    <p-footer>
-      <p-button label="Cancelar" icon="pi pi-times" (click)="displayDeleteDialog = false"></p-button>
-      <p-button label="Excluir" icon="pi pi-check" severity="danger" (click)="selectedTask ? deleteTask(selectedTask) : null"></p-button>
-    </p-footer>
-  </p-dialog>
-</div>
-
